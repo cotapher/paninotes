@@ -19,6 +19,15 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
+
+    //Jetpack Compose
+    implementation("androidx.compose:compose-compiler:0.1.0-dev09")
+    implementation("androidx.compose:compose-runtime:0.1.0-dev09")
+    implementation("androidx.ui:ui-layout:0.1.0-dev09")
+    implementation("androidx.ui:ui-material:0.1.0-dev09")
+    implementation("androidx.ui:ui-tooling:0.1.0-dev09")
+    implementation("androidx.ui:ui-framework:0.1.0-dev09")
+
     implementation("org.pushing-pixels:aurora-theming:1.0.1")
     implementation("org.pushing-pixels:aurora-component:1.0.1")
     implementation("org.pushing-pixels:aurora-window:1.0.1")
