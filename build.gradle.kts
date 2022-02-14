@@ -19,6 +19,11 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(compose.desktop.currentOs)
+    implementation("org.pushing-pixels:aurora-theming:1.0.1")
+    implementation("org.pushing-pixels:aurora-component:1.0.1")
+    implementation("org.pushing-pixels:aurora-window:1.0.1")
+    implementation("org.pushing-pixels:aurora-tools-svg-transcoder:1.0.1")
+    implementation("org.pushing-pixels:aurora-tools-svg-transcoder-gradle-plugin:1.0.1")
 }
 
 tasks.test {
