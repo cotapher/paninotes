@@ -15,10 +15,11 @@ import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.io.File
 import java.nio.file.*
+import javafx.scene.web.HTMLEditor;
 import kotlin.system.exitProcess
 
 class Main : Application() {
-    private val homeDir: Path = Paths.get("${System.getProperty("user.dir")}/test/")
+    private val homeDir: Path = Paths.get("${System.getProperty("user.dir")}/")
 
     private var currentRootPath: Path = homeDir
 
@@ -261,12 +262,16 @@ class Main : Application() {
 
         }
 
+        val htmlEditor = HTMLEditor()
+        htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
+
         // build the scene graph
         layout.top = menuSection
         layout.left = tree
-        layout.center = renderContentPane
+        layout.center = htmlEditor
         layout.bottom = statusline
         layout.padding = Insets(5.0)
+//        layout.children.addAll(menuSection, tree, htmlEditor, statusline)
 
         // create and show the scene
         val scene = Scene(layout)
@@ -274,7 +279,7 @@ class Main : Application() {
         stage.width = 800.0
         stage.height = 500.0
         stage.scene = scene
-        stage.isResizable = false
+        stage.isResizable = true
         stage.title = "File Browser"
         stage.show()
     }
