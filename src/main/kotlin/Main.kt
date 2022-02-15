@@ -2,6 +2,7 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.TextFieldValue
 import org.pushingpixels.aurora.component.model.*
 import org.pushingpixels.aurora.theming.marinerSkin
 import org.pushingpixels.aurora.window.AuroraWindow
@@ -54,6 +55,8 @@ fun main() = auroraApplication {
         )
     ) {
         App()
-        EditNoteArea()
+
+        var html: String = "Hello <b>World</b>. This <i><strike>text</strike>sentence</i> is form<b>att<u>ed</u></b> in simple html."
+        EditNoteArea(html)
     }
 }
