@@ -15,12 +15,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import androidx.compose.ui.window.singleWindowApplication
+import com.sun.javafx.application.PlatformImpl
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.Scene
+import org.pushingpixels.aurora.component.model.Command
+import org.pushingpixels.aurora.component.model.CommandGroup
+import org.pushingpixels.aurora.component.model.CommandMenuContentModel
+import org.pushingpixels.aurora.theming.marinerSkin
+import org.pushingpixels.aurora.window.AuroraWindow
+import org.pushingpixels.aurora.window.auroraApplication
 import java.awt.BorderLayout
 import java.awt.Container
 import javax.swing.JPanel
@@ -29,75 +35,126 @@ import javafx.scene.paint.Color as JFXColor
 import javafx.scene.text.Text as JFXText
 import javafx.scene.web.HTMLEditor as JFXHTMLEditor
 
-fun main() = singleWindowApplication{
-    // JavaFX components
-    val jfxpanel = remember { JFXPanel() }
-    val jfxtext = remember { JFXText() }
-//    val htmleditor = Platform.runLater{
-//        remember { JFXHTMLEditor()}
+
+
+fun main() = auroraApplication {
+    val finishListener = object : PlatformImpl.FinishListener {
+        override fun idle(implicitExit: Boolean) {}
+        override fun exitCalled() {}
+    }
+    PlatformImpl.addListener(finishListener)
+
+
+//    val interactJavafx: () -> Unit = {
+//        htmlTextStr.value = "ResettedHello <b>World</b>"
 //    }
-    var htmlTextStr = rememberSaveable { mutableStateOf("Hello <b>World</b>. This <i><strike>text</strike>sentence</i> is form<b>att<u>ed</u></b> in simple html.")}
-    // The current container (depending on how you are using the CFD,
-    // this could be ComposeWindow or ComposePanel)
-    val container = this.window // ComposeWindow
 
-    val counter = remember { mutableStateOf(0) }
-    val inc: () -> Unit = {
-        counter.value++
-        // update JavaFX text component
-        Platform.runLater {
-            jfxtext.text = "JAVAFX! ${htmlTextStr.value}"
+//    var htmleditor:JFXHTMLEditor?
+
+    AuroraWindow(
+        skin = marinerSkin(),
+        title = "Aurora Demo",
+        onCloseRequest = ::exitApplication,
+        menuCommands = CommandGroup(
+            commands = listOf(
+                Command(
+                    text = "File",
+                    secondaryContentModel = CommandMenuContentModel(
+                        CommandGroup(
+                            commands = listOf(
+                                Command(
+                                    text = "New",
+                                    action = { println("New file!") }),
+                                Command(
+                                    text = "Open",
+                                    action = { println("Open file!") }),
+                                Command(
+                                    text = "Save",
+                                    action = { println("Save file!") })
+                            )
+                        )
+                    )
+                ),
+                Command(
+                    text = "Edit",
+                    action = { println("Edit activated!") })
+            )
+        )
+    ) {
+        // JavaFX components
+        val jfxpanel = remember { JFXPanel() }
+        val jfxtext = remember { JFXText() }
+        var htmlTextStr =
+            rememberSaveable { mutableStateOf("Hello <b>World</b>. This <i><strike>text</strike>sentence</i> is form<b>att<u>ed</u></b> in simple html.") }
+        // The current container (depending on how you are using the CFD,
+        // this could be ComposeWindow or ComposePanel)
+        val container = this.window // ComposeWindow
+
+        val counter = remember { mutableStateOf(0) }
+        val inc: () -> Unit = {
+            counter.value++
+            // update JavaFX text component
+            Platform.runLater {
+                jfxtext.text = "JAVAFX! ${htmlTextStr.value}"
+            }
         }
-    }
 
-    Box(
-        modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 20.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("COMPOSE: ${htmlTextStr.value}")
-    }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.padding(top = 80.dp, bottom = 20.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 20.dp),
+            contentAlignment = Alignment.Center
         ) {
+//            Button("Interact with Javafx",interactJavafx)
+            Text("COMPOSE: ${htmlTextStr.value}")
+        }
 
-            Spacer(modifier = Modifier.height(20.dp))
-            // The "Box" is strictly necessary to properly sizing and positioning the JFXPanel container.
-            Box(
-                modifier = Modifier.height(200.dp).fillMaxWidth()
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.padding(top = 80.dp, bottom = 20.dp)
             ) {
 
+                Spacer(modifier = Modifier.height(20.dp))
+                // The "Box" is strictly necessary to properly sizing and positioning the JFXPanel container.
                 Box(
                     modifier = Modifier.height(200.dp).fillMaxWidth()
                 ) {
 
-                    JavaFXPanel(
-                        root = container,
-                        panel = jfxpanel,
-                        // function to initialize JFXPanel, Group, Scene
-                        onCreate = {
-                            Platform.runLater {
-                                val root = Group()
-                                val scene = Scene(root, JFXColor.WHITESMOKE)
-                                val htmleditor = JFXHTMLEditor()
-                                val printHTMLButton = JFXButton("Produce HTML Code")
-                                printHTMLButton.onMouseClicked = EventHandler {
-                                    println(htmleditor.htmlText)
-                                    htmlTextStr.value = htmleditor.htmlText
+                    Box(
+                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                    ) {
+
+                        JavaFXPanel(
+                            root = container,
+                            panel = jfxpanel,
+                            // function to initialize JFXPanel, Group, Scene
+                            onCreate = {
+                                Platform.runLater {
+                                    val root = Group()
+                                    val scene = Scene(root, JFXColor.WHITESMOKE)
+//                                    var htmlTextStrProperty = SimpleStringProperty(htmlTextStr.value)
+//                                    htmlTextStrProperty.addListener({ o, oldVal, newVal -> print("string changed")})
+
+//                                    jfxtext.textProperty().addListener(ChangeListener{ o, oldVal, newVal -> print("changed")})
+//                                    jfxtext.text = htmlTextStr.value
+                                    val htmleditor = JFXHTMLEditor()
+                                    val printHTMLButton = JFXButton("print html")
+                                    printHTMLButton.onMouseClicked = EventHandler {
+                                        println(htmleditor.htmlText)
+                                        htmlTextStr.value = htmleditor.htmlText
+                                    }
+                                    htmleditor.htmlText = htmlTextStr.value
+                                    root.children.addAll(htmleditor, printHTMLButton)
+                                    jfxpanel.scene = scene
                                 }
-                                htmleditor.htmlText = htmlTextStr.value
-                                root.children.addAll(htmleditor, printHTMLButton)
-                                jfxpanel.scene = scene
                             }
-                        }
-                    )
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(20.dp))
             }
-            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }
