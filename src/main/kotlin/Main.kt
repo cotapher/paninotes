@@ -1,62 +1,156 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.material.MaterialTheme
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.input.TextFieldValue
-import org.pushingpixels.aurora.component.model.*
-import org.pushingpixels.aurora.theming.marinerSkin
-import org.pushingpixels.aurora.window.AuroraWindow
-import org.pushingpixels.aurora.window.auroraApplication
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
+import androidx.compose.ui.window.singleWindowApplication
+import javafx.application.Platform
+import javafx.embed.swing.JFXPanel
+import javafx.event.EventHandler
+import javafx.scene.Group
+import javafx.scene.Scene
+import java.awt.BorderLayout
+import java.awt.Container
+import javax.swing.JPanel
+import javafx.scene.control.Button as JFXButton
+import javafx.scene.paint.Color as JFXColor
+import javafx.scene.text.Text as JFXText
+import javafx.scene.web.HTMLEditor as JFXHTMLEditor
 
-@Composable
-@Preview
-fun App() {
-//    TopAppBar(
-//        title = { Text(text = "Menu Bar") }
-//    )
-}
+fun main() = singleWindowApplication{
+    // JavaFX components
+    val jfxpanel = remember { JFXPanel() }
+    val jfxtext = remember { JFXText() }
+//    val htmleditor = Platform.runLater{
+//        remember { JFXHTMLEditor()}
+//    }
+    var htmlTextStr = rememberSaveable { mutableStateOf("Hello <b>World</b>. This <i><strike>text</strike>sentence</i> is form<b>att<u>ed</u></b> in simple html.")}
+    // The current container (depending on how you are using the CFD,
+    // this could be ComposeWindow or ComposePanel)
+    val container = this.window // ComposeWindow
 
-fun main() = auroraApplication {
-    // Set the current open note in the NotepadManager
-    NotepadManager.currentOpenNote = Note()
-    if (NotepadManager.currentOpenNote != null) {
-        NotepadManager.currentOpenNote!!.name = "Test note"
+    val counter = remember { mutableStateOf(0) }
+    val inc: () -> Unit = {
+        counter.value++
+        // update JavaFX text component
+        Platform.runLater {
+            jfxtext.text = "JAVAFX! ${htmlTextStr.value}"
+        }
     }
 
-    AuroraWindow(
-        skin = marinerSkin(),
-        title = "Aurora Demo",
-        onCloseRequest = ::exitApplication,
-        menuCommands = CommandGroup(
-            commands = listOf(
-                Command(
-                    text = "File",
-                    secondaryContentModel = CommandMenuContentModel(
-                        CommandGroup(
-                            commands = listOf(
-                                Command(
-                                    text = "New",
-                                    action = { println("New file!") }),
-                                Command(
-                                    text = "Open",
-                                    action = { println("Open file!") }),
-                                Command(
-                                    text = "Save",
-                                    action = { println("Save file!") })
-                            )
-                        )
-                    )
-                ),
-                Command(
-                    text = "Edit",
-                    action = { println("Edit activated!") })
-            )
-        )
+    Box(
+        modifier = Modifier.fillMaxWidth().height(60.dp).padding(top = 20.dp),
+        contentAlignment = Alignment.Center
     ) {
-        App()
+        Text("COMPOSE: ${htmlTextStr.value}")
+    }
 
-        var html: String = "Hello <b>World</b>. This <i><strike>text</strike>sentence</i> is form<b>att<u>ed</u></b> in simple html."
-        EditNoteArea(html)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(top = 80.dp, bottom = 20.dp)
+        ) {
+
+            Spacer(modifier = Modifier.height(20.dp))
+            // The "Box" is strictly necessary to properly sizing and positioning the JFXPanel container.
+            Box(
+                modifier = Modifier.height(200.dp).fillMaxWidth()
+            ) {
+
+                Box(
+                    modifier = Modifier.height(200.dp).fillMaxWidth()
+                ) {
+
+                    JavaFXPanel(
+                        root = container,
+                        panel = jfxpanel,
+                        // function to initialize JFXPanel, Group, Scene
+                        onCreate = {
+                            Platform.runLater {
+                                val root = Group()
+                                val scene = Scene(root, JFXColor.WHITESMOKE)
+                                val htmleditor = JFXHTMLEditor()
+                                val printHTMLButton = JFXButton("Produce HTML Code")
+                                printHTMLButton.onMouseClicked = EventHandler {
+                                    println(htmleditor.htmlText)
+                                    htmlTextStr.value = htmleditor.htmlText
+                                }
+                                htmleditor.htmlText = htmlTextStr.value
+                                root.children.addAll(htmleditor, printHTMLButton)
+                                jfxpanel.scene = scene
+                            }
+                        }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+@Composable
+fun Button(text: String = "", action: (() -> Unit)? = null) {
+    Button(
+        modifier = Modifier.size(270.dp, 40.dp),
+        onClick = { action?.invoke() }
+    ) {
+        Text(text)
+    }
+}
+
+@Composable
+public fun JavaFXPanel(
+    root: Container,
+    panel: JFXPanel,
+    onCreate: () -> Unit
+) {
+    val container = remember { JPanel() }
+    val density = LocalDensity.current.density
+
+    Layout(
+        content = {},
+        modifier = Modifier.onGloballyPositioned { childCoordinates ->
+            val coordinates = childCoordinates.parentCoordinates!!
+            val location = coordinates.localToWindow(Offset.Zero).round()
+            val size = coordinates.size
+            container.setBounds(
+                (location.x / density).toInt(),
+                (location.y / density).toInt(),
+                (size.width / density).toInt(),
+                (size.height / density).toInt()
+            )
+            container.validate()
+            container.repaint()
+        },
+        measurePolicy = { _, _ ->
+            layout(0, 0) {}
+        }
+    )
+
+    DisposableEffect(Unit) {
+        container.apply {
+            setLayout(BorderLayout(0, 0))
+            add(panel)
+
+        }
+        root.add(container)
+        onCreate.invoke()
+        onDispose {
+            root.remove(container)
+        }
     }
 }
