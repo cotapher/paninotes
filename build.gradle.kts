@@ -28,9 +28,6 @@ dependencies {
     implementation("androidx.ui:ui-tooling:0.1.0-dev09")
     implementation("androidx.ui:ui-framework:0.1.0-dev09")
 
-    // Html
-    implementation ("androidx.core:core:1.0.1")
-
     implementation("org.pushing-pixels:aurora-theming:1.0.1")
     implementation("org.pushing-pixels:aurora-component:1.0.1")
     implementation("org.pushing-pixels:aurora-window:1.0.1")
