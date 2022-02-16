@@ -7,7 +7,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import kotlin.system.exitProcess
 
-class TopMenuView(val model: Model) : Pane(), IView{
+class TopMenuView(val model: Model) : Pane(), IView {
 
     init {
         this.layoutView()
@@ -58,6 +58,6 @@ class TopMenuView(val model: Model) : Pane(), IView{
     }
 
     override fun update() {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 }

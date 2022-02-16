@@ -3,11 +3,14 @@ import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
-import javafx.scene.layout.Pane
 
-class SideIconPane: GridPane() {
+class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView): GridPane(), IView {
+
     init {
         this.layoutView()
+
+        // Default don't show the notebook pane
+        sideNotebookPaneView.isVisible = false
     }
 
     private fun layoutView() {
@@ -36,5 +39,20 @@ class SideIconPane: GridPane() {
 
         this.vgap = 3.0
         this.padding = Insets(5.0)
+
+        // Button Actions
+        notebookButton.setOnAction {
+            // Toggle the side notebook pane view
+            sideNotebookPaneView.isVisible = !sideNotebookPaneView.isVisible
+
+        }
+
+        searchButton.setOnAction {
+        }
+    }
+
+    override fun update() {
+        // TODO("Not yet implemented")
+        this.layoutView()
     }
 }
