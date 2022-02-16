@@ -48,11 +48,7 @@ class Main : Application() {
 
         layout.top = topMenuView
         layout.center = htmlEditor
-<<<<<<< HEAD
         layout.left = sidePane
-=======
-        layout.left = sideIconPane
->>>>>>> 3bf3139... Start adding the ui for the side icon pane
         layout.padding = Insets(5.0)
 
         // create and show the scene
