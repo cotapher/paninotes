@@ -32,6 +32,7 @@ class Main : Application() {
         stage.scene = scene
         stage.isResizable = true
         stage.title = "Paninotes"
+
         stage.show()
     }
 }

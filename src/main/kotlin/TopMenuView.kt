@@ -1,6 +1,5 @@
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuItem
+import javafx.application.Platform
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -10,6 +9,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
 import kotlin.system.exitProcess
+
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
 
@@ -73,6 +73,27 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         menuBar.menus.add(optionMenu)
 
         this.children.add(menuBar)
+        stage.setOnCloseRequest {
+            val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
+            confirmationAlert.title = "Are you sure you want to close?"
+            confirmationAlert.contentText = "Your changes will be saved"
+            (confirmationAlert.getDialogPane().lookupButton(ButtonType.OK) as Button).text = "Yes"
+            (confirmationAlert.getDialogPane().lookupButton(ButtonType.CANCEL) as Button).text = "No"
+            //show the popup
+            val result = confirmationAlert.showAndWait()
+
+            if (result.isPresent) {
+                println(result)
+                println(result.get())
+                if (result.get() == ButtonType.OK) {
+                    print(htmlEditor.htmlText)
+                    model.currentFile.writeText(htmlEditor.htmlText)
+                    Platform.exit()
+                    exitProcess(0)
+                }
+            }
+
+        }
     }
 
     private fun createAddToMenu(menu: Menu, menuItemName:String): MenuItem {
