@@ -11,13 +11,15 @@ class Main : Application() {
     override fun start(stage: Stage) {
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
-
+        val model = Model()
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
-        val topMenuView = TopMenuView()
+        val topMenuView = TopMenuView(model)
 
         val htmlEditor = HTMLEditor()
         htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
+
+        model.addView(topMenuView)
 
         // build the scene graph
         layout.top = topMenuView
