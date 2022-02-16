@@ -5,9 +5,10 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
+import javafx.scene.web.HTMLEditor
 import kotlin.system.exitProcess
 
-class TopMenuView(val model: Model) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -21,6 +22,7 @@ class TopMenuView(val model: Model) : Pane(), IView{
 
         // File: Quit
         val fileMenu = Menu("File")
+        val fileSave = createAddToMenu(fileMenu,"Save")
         val fileQuit = createAddToMenu(fileMenu,"Quit")
         menuBar.menus.add(fileMenu)
 
@@ -39,11 +41,18 @@ class TopMenuView(val model: Model) : Pane(), IView{
         menuBar.menus.add(actionMenu)
 
 
+        fileSave.setOnAction {
+            print(htmlEditor.htmlText)
+            model.currentFile.writeText(htmlEditor.htmlText)
+        }
+
+
         fileQuit.setOnAction {
             exitProcess(0)
         }
 
         // Add a shortcut CTRL+Q for file->quit
+        fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
         // Option:
