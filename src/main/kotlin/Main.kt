@@ -12,16 +12,21 @@ class Main : Application() {
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val model = Model()
-        val htmlEditor = HTMLEditor()
+
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
+        val htmlEditor = HTMLEditor()
         val topMenuView = TopMenuView(model,htmlEditor,stage)
+        val sideIconPane = SideIconPane()
+
+        htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
 
         model.addView(topMenuView)
 
         // build the scene graph
         layout.top = topMenuView
         layout.center = htmlEditor
+        layout.left = sideIconPane
         layout.padding = Insets(5.0)
 
         // create and show the scene
