@@ -8,36 +8,34 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import kotlin.system.exitProcess
 
-class TopMenuView(stage: Stage) : Pane() {
-    private val stage: Stage?
-
-    var fileMenu: Menu? = null
-    var fileQuit: MenuItem? = null
-    var viewMenu: Menu? = null
-    var viewHome: MenuItem? = null
-    var viewPrev: MenuItem? = null
-    var viewNext: MenuItem? = null
-    var actionMenu: Menu? = null
-    var actionRename: MenuItem? = null
-    var actionMove: MenuItem? = null
-    var actionDelete: MenuItem? = null
-    var optionMenu: Menu? = null
+class TopMenuView(val stage: Stage) : Pane() {
 
     init {
-        this.stage = stage
-
         this.layoutView()
-        this.registerActions()
     }
 
     // TODO - add the actual menu items into here
     private fun layoutView() {
+        val fileMenu: Menu
+
+        val viewMenu: Menu
+        val viewHome: MenuItem
+        val viewPrev: MenuItem
+        val viewNext: MenuItem
+        val actionMenu: Menu
+        val actionRename: MenuItem
+        val actionMove: MenuItem
+        val actionDelete: MenuItem
+        val optionMenu: Menu
+
+
         val menuBar = MenuBar()
 
         // File: Quit
+        val fileQuit: MenuItem
         fileMenu = Menu("File")
         fileQuit = MenuItem("Quit")
-        fileMenu!!.items.add(fileQuit)
+        fileMenu.items.add(fileQuit)
         menuBar.menus.add(fileMenu)
 
         // View: Home, Prev Next
@@ -45,9 +43,9 @@ class TopMenuView(stage: Stage) : Pane() {
         viewHome = MenuItem("Home")
         viewPrev = MenuItem("Prev")
         viewNext = MenuItem("Next")
-        viewMenu!!.items.add(viewHome)
-        viewMenu!!.items.add(viewPrev)
-        viewMenu!!.items.add(viewNext)
+        viewMenu.items.add(viewHome)
+        viewMenu.items.add(viewPrev)
+        viewMenu.items.add(viewNext)
         menuBar.menus.add(viewMenu)
 
         // Action: Rename, Move, Delete
@@ -55,24 +53,23 @@ class TopMenuView(stage: Stage) : Pane() {
         actionRename = MenuItem("Rename")
         actionMove = MenuItem("Move")
         actionDelete = MenuItem("Delete")
-        actionMenu!!.items.add(actionRename)
-        actionMenu!!.items.add(actionMove)
-        actionMenu!!.items.add(actionDelete)
+        actionMenu.items.add(actionRename)
+        actionMenu.items.add(actionMove)
+        actionMenu.items.add(actionDelete)
         menuBar.menus.add(actionMenu)
+
+
+        fileQuit.setOnAction {
+            exitProcess(0)
+        }
+
+        // Add a shortcut CTRL+Q for file->quit
+        fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
         // Option:
         optionMenu = Menu("Option")
         menuBar.menus.add(optionMenu)
 
         this.children.add(menuBar)
-    }
-
-    private fun registerActions() {
-        fileQuit!!.setOnAction {
-            exitProcess(0)
-        }
-
-        // Add a shortcut CTRL+Q for file->quit
-        fileQuit!!.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
     }
 }
