@@ -5,9 +5,10 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
+import javafx.scene.web.HTMLEditor
 import kotlin.system.exitProcess
 
-class TopMenuView(val model: Model) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -21,6 +22,7 @@ class TopMenuView(val model: Model) : Pane(), IView{
 
         // File: Quit
         val fileMenu = Menu("File")
+        val fileSave = createAddToMenu(fileMenu,"Save")
         val fileQuit = createAddToMenu(fileMenu,"Quit")
         menuBar.menus.add(fileMenu)
 
@@ -37,6 +39,12 @@ class TopMenuView(val model: Model) : Pane(), IView{
         val actionMove = createAddToMenu(actionMenu,"Move")
         val actionDelete = createAddToMenu(actionMenu,"Delete")
         menuBar.menus.add(actionMenu)
+
+
+        fileSave.setOnAction {
+            print(htmlEditor.htmlText)
+            model.currentFile.appendText(htmlEditor.htmlText)
+        }
 
 
         fileQuit.setOnAction {
