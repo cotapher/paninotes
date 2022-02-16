@@ -14,7 +14,7 @@ class Main : Application() {
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
-        val topMenuView = TopMenuView(stage)
+        val topMenuView = TopMenuView()
 
         val htmlEditor = HTMLEditor()
         htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
