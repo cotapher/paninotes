@@ -7,7 +7,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import kotlin.system.exitProcess
 
-class TopMenuView : Pane() {
+class TopMenuView(val model: Model) : Pane(), IView{
 
     init {
         this.layoutView()
