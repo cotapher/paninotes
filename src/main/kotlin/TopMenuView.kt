@@ -75,21 +75,26 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         this.children.add(menuBar)
         stage.setOnCloseRequest {
             val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
-            confirmationAlert.title = "Are you sure you want to close?"
-            confirmationAlert.contentText = "Your changes will be saved"
-            (confirmationAlert.getDialogPane().lookupButton(ButtonType.OK) as Button).text = "Yes"
-            (confirmationAlert.getDialogPane().lookupButton(ButtonType.CANCEL) as Button).text = "No"
+            confirmationAlert.title = "Paninotes"
+            confirmationAlert.contentText = "Save changes to ${model.currentFile.name}?"
+            confirmationAlert.buttonTypes.clear()
+            val discardButton = ButtonType("Discard")
+            val saveButton = ButtonType("Save")
+            val cancelButton = ButtonType("Cancel")
+            confirmationAlert.buttonTypes.addAll(discardButton,saveButton,cancelButton)
             //show the popup
             val result = confirmationAlert.showAndWait()
 
             if (result.isPresent) {
                 println(result)
                 println(result.get())
-                if (result.get() == ButtonType.OK) {
+                if (result.get() == saveButton) {
                     print(htmlEditor.htmlText)
                     model.currentFile.writeText(htmlEditor.htmlText)
                     Platform.exit()
                     exitProcess(0)
+                } else if (result.get() == cancelButton){
+                    it.consume()
                 }
             }
 
