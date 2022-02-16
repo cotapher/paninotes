@@ -8,7 +8,7 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import kotlin.system.exitProcess
 
-class TopMenuView(stage: Stage) : Pane() {
+class TopMenuView(stage: Stage) : Pane(), IView {
     private val stage: Stage?
 
     var fileMenu: Menu? = null
@@ -74,5 +74,9 @@ class TopMenuView(stage: Stage) : Pane() {
 
         // Add a shortcut CTRL+Q for file->quit
         fileQuit!!.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
+    }
+
+    override fun update() {
+        TODO("Not yet implemented")
     }
 }
