@@ -6,9 +6,12 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
+import javafx.stage.FileChooser
+import javafx.stage.Stage
+import java.io.File
 import kotlin.system.exitProcess
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -22,6 +25,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
 
         // File: Quit
         val fileMenu = Menu("File")
+        val fileOpen = createAddToMenu(fileMenu,"Open")
         val fileSave = createAddToMenu(fileMenu,"Save")
         val fileQuit = createAddToMenu(fileMenu,"Quit")
         menuBar.menus.add(fileMenu)
@@ -40,6 +44,14 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
         val actionDelete = createAddToMenu(actionMenu,"Delete")
         menuBar.menus.add(actionMenu)
 
+        fileOpen.setOnAction {
+            val fileDialog = FileChooser()
+            fileDialog.title = "Select an HTML File"
+            val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
+            fileDialog.extensionFilters.add(extFilter)
+            val file: File? = fileDialog.showOpenDialog(stage)
+            model.openAndReadHTMLFile(file)
+        }
 
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
@@ -52,6 +64,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
         }
 
         // Add a shortcut CTRL+Q for file->quit
+        fileOpen.accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN)
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
@@ -69,6 +82,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
     }
 
     override fun update() {
-        TODO("Not yet implemented")
+        htmlEditor.htmlText = model.currentFileContents
     }
 }
