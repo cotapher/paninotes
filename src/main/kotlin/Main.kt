@@ -15,9 +15,7 @@ class Main : Application() {
         val htmlEditor = HTMLEditor()
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
-        val topMenuView = TopMenuView(model,htmlEditor)
-
-        htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
+        val topMenuView = TopMenuView(model,htmlEditor,stage)
 
         model.addView(topMenuView)
 
@@ -33,7 +31,7 @@ class Main : Application() {
         stage.height = 500.0
         stage.scene = scene
         stage.isResizable = true
-        stage.title = "File Browser"
+        stage.title = "Paninotes"
         stage.show()
     }
 }
