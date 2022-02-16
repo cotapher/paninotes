@@ -16,6 +16,7 @@ class Main : Application() {
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
+
         val htmlEditor = HTMLEditor()
         val topMenuView = TopMenuView(model,htmlEditor,stage)
         val sideNotebookPane = SideNotebookPaneView(model)
