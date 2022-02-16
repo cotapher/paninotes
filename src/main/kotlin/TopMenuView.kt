@@ -19,8 +19,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
     // TODO - add the actual menu items into here
     private fun layoutView() {
-
-
         val menuBar = MenuBar()
 
         // File: Quit
