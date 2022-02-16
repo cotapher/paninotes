@@ -1,6 +1,5 @@
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuItem
+import javafx.application.Platform
+import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -10,6 +9,7 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
 import kotlin.system.exitProcess
+
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
 
@@ -72,6 +72,32 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         menuBar.menus.add(optionMenu)
 
         this.children.add(menuBar)
+        stage.setOnCloseRequest {
+            val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
+            confirmationAlert.title = "Paninotes"
+            confirmationAlert.contentText = "Save changes to ${model.currentFile.name}?"
+            confirmationAlert.buttonTypes.clear()
+            val discardButton = ButtonType("Discard")
+            val saveButton = ButtonType("Save")
+            val cancelButton = ButtonType("Cancel")
+            confirmationAlert.buttonTypes.addAll(discardButton,saveButton,cancelButton)
+            //show the popup
+            val result = confirmationAlert.showAndWait()
+
+            if (result.isPresent) {
+                println(result)
+                println(result.get())
+                if (result.get() == saveButton) {
+                    print(htmlEditor.htmlText)
+                    model.currentFile.writeText(htmlEditor.htmlText)
+                    Platform.exit()
+                    exitProcess(0)
+                } else if (result.get() == cancelButton){
+                    it.consume()
+                }
+            }
+
+        }
     }
 
     private fun createAddToMenu(menu: Menu, menuItemName:String): MenuItem {
