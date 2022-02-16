@@ -43,7 +43,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
 
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
-            model.currentFile.appendText(htmlEditor.htmlText)
+            model.currentFile.writeText(htmlEditor.htmlText)
         }
 
 
@@ -52,6 +52,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor) : Pane(), IView{
         }
 
         // Add a shortcut CTRL+Q for file->quit
+        fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
         // Option:
