@@ -15,6 +15,7 @@ class Main : Application() {
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
         val topMenuView = TopMenuView(model)
+        val sideIconPane = SideIconPane()
 
         val htmlEditor = HTMLEditor()
         htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
@@ -24,6 +25,7 @@ class Main : Application() {
         // build the scene graph
         layout.top = topMenuView
         layout.center = htmlEditor
+        layout.left = sideIconPane
         layout.padding = Insets(5.0)
 
         // create and show the scene

@@ -15,8 +15,6 @@ class TopMenuView(val model: Model) : Pane(), IView{
 
     // TODO - add the actual menu items into here
     private fun layoutView() {
-
-
         val menuBar = MenuBar()
 
         // File: Quit
