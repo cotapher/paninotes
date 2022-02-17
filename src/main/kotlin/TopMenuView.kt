@@ -54,7 +54,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
-            model.currentFile.writeText(htmlEditor.htmlText)
+            model.currentFile?.writeText(htmlEditor.htmlText)
         }
 
 
@@ -72,10 +72,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         menuBar.menus.add(optionMenu)
 
         this.children.add(menuBar)
+
+
+
         stage.setOnCloseRequest {
             val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
             confirmationAlert.title = "Paninotes"
-            confirmationAlert.contentText = "Save changes to ${model.currentFile.name}?"
+            confirmationAlert.contentText = "Save changes to ${model.currentFile?.name}?"
             confirmationAlert.buttonTypes.clear()
             val discardButton = ButtonType("Discard")
             val saveButton = ButtonType("Save")
@@ -89,7 +92,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                 println(result.get())
                 if (result.get() == saveButton) {
                     print(htmlEditor.htmlText)
-                    model.currentFile.writeText(htmlEditor.htmlText)
+                    model.currentFile?.writeText(htmlEditor.htmlText)
                     Platform.exit()
                     exitProcess(0)
                 } else if (result.get() == cancelButton){
