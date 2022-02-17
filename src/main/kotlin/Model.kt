@@ -42,9 +42,11 @@ class Model {
     }
 
     private fun readMetaData(HTMLString: String): MutableMap<String,String>{
+        //JSoup docs
         val doc: Document = Jsoup.parse(HTMLString)
         val metaTags: Elements = doc.getElementsByTag("meta")
         val metadataMap = mutableMapOf<String,String>()
+        //parsing metadat tags
         for (metaTag in metaTags) {
             val name: String = metaTag.attr("name")
             val content: String = metaTag.attr("content")
