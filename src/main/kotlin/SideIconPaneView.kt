@@ -15,11 +15,16 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         this.add(notebookButton, 0, 0)
         this.add(searchButton, 0, 1)
         this.add(infoButton, 0, 2)
+        
         // Default don't show the notebook pane
         sideNotebookPaneView.isVisible = false
     }
 
     private fun layoutView() {
+        notebookButton.id = "sideIconPane-notebook-button"
+        searchButton.id = "sideIconPane-search-button"
+        infoButton.id = "sideIconPane-info-button"
+
         // Set up the images and buttons for the sidebar
         val notebookImage = Image("notebook_icon.png")
         val notebookImageView = ImageView(notebookImage)
@@ -35,7 +40,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         val infoImageView = ImageView(infoImage)
         infoImageView.isPreserveRatio = true
         infoImageView.fitHeight = 20.0
-
 
         notebookButton.setPrefSize(20.0, 20.0)
         searchButton.setPrefSize(20.0, 20.0)
@@ -53,11 +57,11 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         notebookButton.setOnAction {
             // Toggle the side notebook pane view
             sideNotebookPaneView.isVisible = !sideNotebookPaneView.isVisible
-
         }
 
         searchButton.setOnAction {
         }
+
         infoButton.setOnAction {
             val popup = Alert(Alert.AlertType.INFORMATION)
             popup.title = "Note HTML Metadata Info"
@@ -67,8 +71,8 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
     }
 
     override fun update() {
-        // TODO("Not yet implemented")
         this.layoutView() //TODO don't want to refresh everything
+
         //add a condition to only show editor if there is file assigned to model.currentFile
         infoButton.isVisible = model.currentFile != null
     }

@@ -15,6 +15,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
 
     init {
         this.layoutView()
+        this.id = "sideNotebookPane"
     }
 
     private fun layoutView() {
@@ -26,8 +27,11 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                 // Get a list of all the notebooks from the Model
                 val notebooks: ArrayList<Notebook> = model.getAllNotebooks()
 
+                println("Notebooks size ${notebooks.size}")
                 for (i in notebooks.indices) {
+                    println("Notebook index $i")
                     val notebookButton = Button(notebooks[i].title)
+                    notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(110.0, 16.0)
 
                     notebookButton.setOnAction {
@@ -44,6 +48,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                 plusImageView.fitHeight = 17.0
 
                 val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
+                addNotebookButton.id = "sideNotebookPane-add-notebook-button"
 
                 addNotebookButton.setOnAction {
                    // Open the file choo
@@ -74,6 +79,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
 
                         for (i in currentNotebook.notes.indices) {
                             val noteButton = Button(currentNotebook.notes[i].title)
+                            noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(110.0, 16.0)
                             gridPane.add(noteButton, 0, i + 1)
                         }
@@ -86,6 +92,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                     plusImageView.fitHeight = 17.0
 
                     val addNoteButton = Button("ADD NOTE", plusImageView)
+                    addNoteButton.id = "sideNotebookPane-add-note-button"
                     this.bottom = addNoteButton
                 } else {
                     println("ERROR - We're in the side pane Notes paneview, but the current notebook Id is < 0")
