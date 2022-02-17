@@ -1,4 +1,5 @@
 import javafx.geometry.Insets
+import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -25,17 +26,26 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         searchImageView.isPreserveRatio = true
         searchImageView.fitHeight = 20.0
 
+        val infoImage = Image("info_icon.png")
+        val infoImageView = ImageView(infoImage)
+        infoImageView.isPreserveRatio = true
+        infoImageView.fitHeight = 20.0
+
         val notebookButton = Button()
         val searchButton = Button()
+        val infoButton = Button()
 
         notebookButton.setPrefSize(20.0, 20.0)
         searchButton.setPrefSize(20.0, 20.0)
+        infoButton.setPrefSize(20.0, 20.0)
 
         notebookButton.graphic = notebookImageView
         searchButton.graphic = searchImageView
+        infoButton.graphic = infoImageView
 
         this.add(notebookButton, 0, 0)
         this.add(searchButton, 0, 1)
+        this.add(infoButton, 0, 2)
 
         this.vgap = 3.0
         this.padding = Insets(5.0)
@@ -48,6 +58,12 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         }
 
         searchButton.setOnAction {
+        }
+        infoButton.setOnAction {
+            val popup = Alert(Alert.AlertType.INFORMATION)
+            popup.title = "Note HTML Metadata Info"
+            popup.contentText = model.currentFileMetadata.toString()
+            popup.show()
         }
     }
 
