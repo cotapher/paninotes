@@ -27,7 +27,7 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
 
                 for (i in notebooks.indices) {
                     val notebookButton = Button(notebooks[i].title)
-                    notebookButton.setPrefSize(90.0, 16.0)
+                    notebookButton.setPrefSize(110.0, 16.0)
 
                     notebookButton.setOnAction {
                         showNotesForNotebook(notebooks[i].notebookId)
@@ -43,18 +43,23 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
 
                     if (currentNotebook != null) {
                         // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
-                        val backArrowImage = Image("back_arrow.png")
+                        val backArrowImage = Image("baseline_arrow_back_black_24dp.png")
                         val backArrowImageView = ImageView(backArrowImage)
                         backArrowImageView.isPreserveRatio = true
-                        backArrowImageView.fitHeight = 5.0
+                        backArrowImageView.fitHeight = 17.0
 
                         val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
-                        currentNotebookButton.setPrefSize(90.0, 16.0)
+                        currentNotebookButton.setPrefSize(110.0, 16.0)
                         this.add(currentNotebookButton, 0, 0)
+
+                        currentNotebookButton.setOnAction {
+                            // Go back to the list of notebooks
+                            showNotebooks()
+                        }
 
                         for (i in currentNotebook.notes.indices) {
                             val noteButton = Button(currentNotebook.notes[i].title)
-                            noteButton.setPrefSize(90.0, 16.0)
+                            noteButton.setPrefSize(110.0, 16.0)
                             this.add(noteButton, 0, i + 1)
                         }
                     }
