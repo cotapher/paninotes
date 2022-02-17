@@ -1,9 +1,10 @@
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 
-class SideNotebookPaneView(val model: Model): GridPane(), IView {
+class SideNotebookPaneView(val model: Model): BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -17,7 +18,7 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
     }
 
     private fun layoutView() {
-        this.children.clear()
+        val gridPane = GridPane() // Holds the buttons for the list of notebooks and notes
 
         // Depending on the current view, we will either show a list of notebooks, or list of notes in a notebook
         when (currentView) {
@@ -33,8 +34,22 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
                         showNotesForNotebook(notebooks[i].notebookId)
                     }
 
-                    this.add(notebookButton, 0, i)
+                    gridPane.add(notebookButton, 0, i)
                 }
+
+                // At the bottom, we want to add a button to add a notebook
+                val plusImage = Image("plus_icon.png")
+                val plusImageView = ImageView(plusImage)
+                plusImageView.isPreserveRatio = true
+                plusImageView.fitHeight = 17.0
+
+                val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
+
+                addNotebookButton.setOnAction {
+                   // Open the file choo
+                }
+
+                this.bottom = addNotebookButton
             }
 
             PaneView.NOTES -> {
@@ -50,7 +65,7 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
 
                         val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
                         currentNotebookButton.setPrefSize(110.0, 16.0)
-                        this.add(currentNotebookButton, 0, 0)
+                        gridPane.add(currentNotebookButton, 0, 0)
 
                         currentNotebookButton.setOnAction {
                             // Go back to the list of notebooks
@@ -60,16 +75,27 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
                         for (i in currentNotebook.notes.indices) {
                             val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.setPrefSize(110.0, 16.0)
-                            this.add(noteButton, 0, i + 1)
+                            gridPane.add(noteButton, 0, i + 1)
                         }
                     }
+
+                    // At the bottom, we want to add a button to add a note into this notebook
+                    val plusImage = Image("plus_icon.png")
+                    val plusImageView = ImageView(plusImage)
+                    plusImageView.isPreserveRatio = true
+                    plusImageView.fitHeight = 17.0
+
+                    val addNoteButton = Button("ADD NOTE", plusImageView)
+                    this.bottom = addNoteButton
                 } else {
                     println("ERROR - We're in the side pane Notes paneview, but the current notebook Id is < 0")
                 }
             }
         }
 
-        this.vgap = 4.0
+        gridPane.vgap = 4.0
+
+        this.top = gridPane;
     }
 
     fun showNotebooks() {
