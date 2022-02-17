@@ -7,9 +7,14 @@ import javafx.scene.layout.GridPane
 
 class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView): GridPane(), IView {
 
+    private val notebookButton = Button()
+    private val searchButton = Button()
+    private val infoButton = Button()
     init {
         this.layoutView()
-
+        this.add(notebookButton, 0, 0)
+        this.add(searchButton, 0, 1)
+        this.add(infoButton, 0, 2)
         // Default don't show the notebook pane
         sideNotebookPaneView.isVisible = false
     }
@@ -31,9 +36,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         infoImageView.isPreserveRatio = true
         infoImageView.fitHeight = 20.0
 
-        val notebookButton = Button()
-        val searchButton = Button()
-        val infoButton = Button()
 
         notebookButton.setPrefSize(20.0, 20.0)
         searchButton.setPrefSize(20.0, 20.0)
@@ -43,9 +45,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         searchButton.graphic = searchImageView
         infoButton.graphic = infoImageView
 
-        this.add(notebookButton, 0, 0)
-        this.add(searchButton, 0, 1)
-        this.add(infoButton, 0, 2)
 
         this.vgap = 3.0
         this.padding = Insets(5.0)
