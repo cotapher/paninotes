@@ -1,4 +1,6 @@
 import javafx.scene.control.Button
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
 
 class SideNotebookPaneView(val model: Model): GridPane(), IView {
@@ -40,10 +42,20 @@ class SideNotebookPaneView(val model: Model): GridPane(), IView {
                     val currentNotebook = model.getNotebookById(currentNotebookId)
 
                     if (currentNotebook != null) {
+                        // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
+                        val backArrowImage = Image("back_arrow.png")
+                        val backArrowImageView = ImageView(backArrowImage)
+                        backArrowImageView.isPreserveRatio = true
+                        backArrowImageView.fitHeight = 5.0
+
+                        val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
+                        currentNotebookButton.setPrefSize(90.0, 16.0)
+                        this.add(currentNotebookButton, 0, 0)
+
                         for (i in currentNotebook.notes.indices) {
                             val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.setPrefSize(90.0, 16.0)
-                            this.add(noteButton, 0, i)
+                            this.add(noteButton, 0, i + 1)
                         }
                     }
                 } else {

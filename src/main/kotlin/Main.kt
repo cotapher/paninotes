@@ -18,12 +18,12 @@ class Main : Application() {
         val layout = BorderPane()
 
         val htmlEditor = HTMLEditor()
-        val topMenuView = TopMenuView(model,htmlEditor,stage)
+        val topMenuView = TopMenuView(model, htmlEditor, stage)
         val sideNotebookPane = SideNotebookPaneView(model)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane
-        sideNotebookPane.managedProperty().bind(sideNotebookPane.visibleProperty());
+        sideNotebookPane.managedProperty().bind(sideNotebookPane.visibleProperty())
 
         htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
 
