@@ -20,7 +20,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     // TODO - add the actual menu items into here
     private fun layoutView() {
         val menuBar = MenuBar()
-
+        //responsive menubar
+        menuBar.prefWidthProperty().bind(stage.widthProperty())
         // File: Quit
         val fileMenu = Menu("File")
         fileMenu.id = "menubar-file"
@@ -76,30 +77,31 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
 
         stage.setOnCloseRequest {
-            val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
-            confirmationAlert.title = "Paninotes"
-            confirmationAlert.contentText = "Save changes to ${model.currentFile?.name}?"
-            confirmationAlert.buttonTypes.clear()
-            val discardButton = ButtonType("Discard")
-            val saveButton = ButtonType("Save")
-            val cancelButton = ButtonType("Cancel")
-            confirmationAlert.buttonTypes.addAll(discardButton,saveButton,cancelButton)
-            //show the popup
-            val result = confirmationAlert.showAndWait()
+            if(model.currentFile != null) {
+                val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
+                confirmationAlert.title = "Paninotes"
+                confirmationAlert.contentText = "Save changes to ${model.currentFile?.name}?"
+                confirmationAlert.buttonTypes.clear()
+                val discardButton = ButtonType("Discard")
+                val saveButton = ButtonType("Save")
+                val cancelButton = ButtonType("Cancel")
+                confirmationAlert.buttonTypes.addAll(discardButton, saveButton, cancelButton)
+                //show the popup
+                val result = confirmationAlert.showAndWait()
 
-            if (result.isPresent) {
-                println(result)
-                println(result.get())
-                if (result.get() == saveButton) {
-                    print(htmlEditor.htmlText)
-                    model.currentFile?.writeText(htmlEditor.htmlText)
-                    Platform.exit()
-                    exitProcess(0)
-                } else if (result.get() == cancelButton){
-                    it.consume()
+                if (result.isPresent) {
+                    println(result)
+                    println(result.get())
+                    if (result.get() == saveButton) {
+                        print(htmlEditor.htmlText)
+                        model.currentFile?.writeText(htmlEditor.htmlText)
+                        Platform.exit()
+                        exitProcess(0)
+                    } else if (result.get() == cancelButton) {
+                        it.consume()
+                    }
                 }
             }
-
         }
     }
 
