@@ -1,3 +1,6 @@
+import javafx.scene.control.Alert
+import javafx.scene.control.Label
+import javafx.scene.control.TextInputDialog
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -7,8 +10,8 @@ import java.nio.file.Paths
 class Model {
 
     private val views = ArrayList<IView>()
-    private val testNotebookDir = Paths.get("${System.getProperty("user.dir")}/src/main/resources/testNotebook1")
-    var currentNotebook = File(testNotebookDir.toUri())
+    val testNotebookDir = File(Paths.get("${System.getProperty("user.dir")}/src/main/resources/testNotebook1").toUri())
+    var currentNotebook: File? = null
     var currentFile: File? = null
     var currentFileContents = ""
     var currentFileMetadata = readMetaData(currentFileContents)
@@ -25,6 +28,46 @@ class Model {
             view.update()
         }
     }
+
+    fun setCurrentOpenFolder(file: File?){
+        if (file != null) {
+            currentNotebook = file
+        }
+    }
+
+    fun createHTMLFile(directory: File?){
+        val popup = TextInputDialog()
+        popup.title = "Create a new note inside ${directory?.name}"
+        val currentFileOrDir = directory
+        if (currentFileOrDir?.canWrite() == true) {
+
+            popup.headerText = "Create note within $currentFileOrDir?"
+            popup.contentText = "Enter name for new Note file"
+
+            //show the popup
+            val result = popup.showAndWait()
+            if (result.isPresent) {
+                println(result)
+                println(result.get())
+                val textResult = result.get() + ".html"
+
+                val newNoteFile = File(directory.resolve(textResult).toString())
+                if (newNoteFile.exists()) {
+                    println("Error: ${newNoteFile.name} already exists")
+                    generateAlertDialogPopup(
+                        Alert.AlertType.ERROR, "Creation Error", "$newNoteFile already exists, " +
+                                "try choosing a different name"
+                    )
+                } else {
+                    //set to currentfile
+                    currentFile = newNoteFile
+                    notifyViews()
+                    }
+                }
+
+            }
+
+        }
 
     fun openAndReadHTMLFile(file: File?) {
         if (file != null) {
@@ -81,5 +124,14 @@ class Model {
         }
 
         return null
+    }
+
+    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
+        val fileExistsAlert = Alert(type)
+        fileExistsAlert.title = title
+        val errorContent = Label(content)
+        errorContent.isWrapText = true
+        fileExistsAlert.dialogPane.content = errorContent
+        fileExistsAlert.showAndWait()
     }
 }
