@@ -25,7 +25,6 @@ class Main : Application() {
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane
         sideNotebookPane.managedProperty().bind(sideNotebookPane.visibleProperty())
 
-        htmlEditor.htmlText = "Hello <a href=\"https://github.com/TestFX/TestFX\">world</a>"
 
         model.addView(topMenuView)
         model.addView(sideNotebookPane)
