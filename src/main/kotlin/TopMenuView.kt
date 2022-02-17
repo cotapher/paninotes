@@ -110,6 +110,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     }
 
     override fun update() {
-        htmlEditor.htmlText = model.currentFileContents
+        //add a condition to only show editor if there is file assigned to model.currentFile
+        if(model.currentFile != null){
+            htmlEditor.htmlText = model.currentFileContents
+            htmlEditor.isVisible = true
+        } else {
+            //hide the editor maybe welcome message
+            htmlEditor.isVisible = false
+        }
     }
 }
