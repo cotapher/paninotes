@@ -5,6 +5,7 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
+import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
@@ -20,10 +21,12 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     // TODO - add the actual menu items into here
     private fun layoutView() {
         val menuBar = MenuBar()
-
+        //responsive menubar
+        menuBar.prefWidthProperty().bind(stage.widthProperty())
         // File: Quit
         val fileMenu = Menu("File")
         fileMenu.id = "menubar-file"
+        val fileNewNote = createAddToMenu(fileMenu,"New Note")
         val fileOpen = createAddToMenu(fileMenu,"Open")
         val fileSave = createAddToMenu(fileMenu,"Save")
         val fileQuit = createAddToMenu(fileMenu,"Quit")
@@ -43,6 +46,17 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         val actionDelete = createAddToMenu(actionMenu,"Delete")
         menuBar.menus.add(actionMenu)
 
+        fileNewNote.setOnAction {
+            val directoryDialog = DirectoryChooser()
+            directoryDialog.title = "Select an Notebook Folder"
+            directoryDialog.initialDirectory = model.testNotebookDir
+            val directory: File? = directoryDialog.showDialog(stage)
+            //this the notebook
+            model.setCurrentOpenFolder(directory)
+            //create the note
+            model.createHTMLFile(directory)
+        }
+
         fileOpen.setOnAction {
             val fileDialog = FileChooser()
             fileDialog.title = "Select an HTML File"
@@ -54,7 +68,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
-            model.currentFile.writeText(htmlEditor.htmlText)
+            model.currentFile?.writeText(htmlEditor.htmlText)
         }
 
 
@@ -63,6 +77,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         }
 
         // Add a shortcut CTRL+Q for file->quit
+        fileNewNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN)
+        //need new directory, open directory
         fileOpen.accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN)
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
@@ -72,31 +88,35 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         menuBar.menus.add(optionMenu)
 
         this.children.add(menuBar)
-        stage.setOnCloseRequest {
-            val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
-            confirmationAlert.title = "Paninotes"
-            confirmationAlert.contentText = "Save changes to ${model.currentFile.name}?"
-            confirmationAlert.buttonTypes.clear()
-            val discardButton = ButtonType("Discard")
-            val saveButton = ButtonType("Save")
-            val cancelButton = ButtonType("Cancel")
-            confirmationAlert.buttonTypes.addAll(discardButton,saveButton,cancelButton)
-            //show the popup
-            val result = confirmationAlert.showAndWait()
 
-            if (result.isPresent) {
-                println(result)
-                println(result.get())
-                if (result.get() == saveButton) {
-                    print(htmlEditor.htmlText)
-                    model.currentFile.writeText(htmlEditor.htmlText)
-                    Platform.exit()
-                    exitProcess(0)
-                } else if (result.get() == cancelButton){
-                    it.consume()
+
+
+        stage.setOnCloseRequest {
+            if(model.currentFile != null) {
+                val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
+                confirmationAlert.title = "Paninotes"
+                confirmationAlert.contentText = "Save changes to ${model.currentFile?.name}?"
+                confirmationAlert.buttonTypes.clear()
+                val discardButton = ButtonType("Discard")
+                val saveButton = ButtonType("Save")
+                val cancelButton = ButtonType("Cancel")
+                confirmationAlert.buttonTypes.addAll(discardButton, saveButton, cancelButton)
+                //show the popup
+                val result = confirmationAlert.showAndWait()
+
+                if (result.isPresent) {
+                    println(result)
+                    println(result.get())
+                    if (result.get() == saveButton) {
+                        print(htmlEditor.htmlText)
+                        model.currentFile?.writeText(htmlEditor.htmlText)
+                        Platform.exit()
+                        exitProcess(0)
+                    } else if (result.get() == cancelButton) {
+                        it.consume()
+                    }
                 }
             }
-
         }
     }
 
@@ -107,6 +127,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     }
 
     override fun update() {
-        htmlEditor.htmlText = model.currentFileContents
+        //add a condition to only show editor if there is file assigned to model.currentFile
+        if(model.currentFile != null){
+            htmlEditor.htmlText = model.currentFileContents
+            htmlEditor.isVisible = true
+        } else {
+            //hide the editor maybe welcome message
+            htmlEditor.isVisible = false
+        }
     }
 }
