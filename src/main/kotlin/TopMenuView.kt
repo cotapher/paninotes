@@ -8,11 +8,12 @@ import javafx.scene.web.HTMLEditor
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import org.jsoup.Jsoup
 import java.io.File
 import kotlin.system.exitProcess
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor, val stage: Stage) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -46,6 +47,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor, val stage: Stage
         menuBar.menus.add(actionMenu)
         // Option:
         val optionMenu = Menu("Option")
+        val optionSearch = createAddToMenu(optionMenu, "Search")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -65,22 +67,11 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor, val stage: Stage
 
         fileNewNote.setOnAction {
             val directoryDialog = DirectoryChooser()
-            directoryDialog.title = "Select a Notebook Folder"
+            directoryDialog.title = "Select an Notebook Folder"
             directoryDialog.initialDirectory = model.testNotebookDir
             val directory: File? = directoryDialog.showDialog(stage)
-
-            // get the notebook at this file path
-            // if there is no notebook at this path, then we create a new notebook for this file path
-            var notebook: Notebook? = model.getNotebookAtFilePath(directory)
-            if (notebook == null && directory != null) {
-                notebook = model.createNotebook(directory?.name)
-                notebook.filePath = directory
-                model.addNotebook(notebook)
-            }
-
             //this the notebook
-            model.currentOpenNotebook = notebook
-
+            model.setCurrentOpenFolder(directory)
             //create the note
             model.createHTMLFilePopup(directory)
         }
@@ -112,6 +103,54 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor, val stage: Stage
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
 
+        optionSearch.setOnAction{
+            val dialog = TextInputDialog("")
+            dialog.title = "Search"
+            dialog.headerText = "Find Word"
+
+            (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
+
+            val oldText = htmlEditor.htmlText
+            val result = dialog.showAndWait()
+            if (result.isPresent) {
+                val entered = result.get()
+                if (entered.compareTo("") == 0) {
+                    (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+                    dialog.show()
+                    dialog.headerText = "No Input"
+                } else {
+                    val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                    var inputtedText = htmlEditor.htmlText
+                    println(htmlEditor.htmlText)
+                    println(noHtmlTags)
+
+                    val delim = " "
+                    val list = noHtmlTags.split(delim)
+                    var wordIndexes = ArrayList<Int>()
+                    var outputString = ""
+                    for ((i, item) in list.withIndex()) {
+                        if (i != 0) {
+                            outputString += " "
+                        }
+                        if((item.lowercase()).compareTo(entered.lowercase()) == 0 ) {
+                            outputString = outputString + "<mark>" + item + "</mark>"
+                            wordIndexes.add(i)
+                        } else {
+                            outputString += item
+                        }
+                    }
+                    println(outputString)
+                    val oldText = htmlEditor.htmlText
+                    htmlEditor.htmlText = outputString
+
+                    (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+
+                    dialog.headerText = "Found " + wordIndexes.size
+                    dialog.showAndWait()
+                    htmlEditor.htmlText = oldText
+                }
+            }
+        }
 
         this.children.add(menuBar)
 
