@@ -91,12 +91,6 @@ class Model {
         }
     }
 
-    fun createHTMLFileInNotebook(notebook: Notebook?) {
-        if (notebook != null) {
-            createHTMLFilePopup(notebook.filePath)
-        }
-    }
-
     fun createHTMLFilePopup(directory: File?){
         val popup = TextInputDialog()
         popup.title = "Create a new note inside ${directory?.name}"
@@ -126,16 +120,22 @@ class Model {
                         "try choosing a different name"
             )
         } else {
-            //set to current file
+            // set to current file
             currentFile = newNoteFile
+
+            createNoteFile(textResult, newNoteFile)
             notifyViews()
         }
 
     }
 
-    fun createNoteFile(notebook: Notebook, noteName: String) {
-        val newNoteFile = File(notebook.filePath?.resolve(noteName).toString())
-        newNoteFile.writeText("") // Create an empty note/file
+    fun createNoteFile(noteName: String, notePath: File) {
+        // We open the notebook in the current open notebook
+        notePath.writeText("") // Create an empty note/file
+        val note = Note(noteName)
+        note.filePath = notePath;
+        currentOpenNotebook?.addNote(note)
+        notifyViews()
     }
 
     fun openAndReadHTMLFile(file: File?) {
