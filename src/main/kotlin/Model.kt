@@ -11,7 +11,7 @@ import java.nio.file.Paths
 class Model {
 
     private val views = ArrayList<IView>()
-    val testNotebookDir = File(Paths.get("${System.getProperty("user.dir")}/src/main/resources/testNotebook1").toUri())
+    val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
     var currentNotebook: File? = null
     var currentFile: File? = null
     var currentFileContents = ""
@@ -51,14 +51,14 @@ class Model {
                 println(result)
                 println(result.get())
                 val textResult = result.get() + ".html"
-                createHTMLFileWithName(textResult, directory)
+                setCurrentFile(textResult, directory)
             }
 
             }
 
         }
 
-    fun createHTMLFileWithName(textResult: String, directory: File) {
+    fun setCurrentFile(textResult: String, directory: File) {
         val newNoteFile = File(directory.resolve(textResult).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
