@@ -9,6 +9,10 @@ internal class ModelTest {
 
     val model = Model()
 
+    val mockHtmlFileContents = "<html dir=\"ltr\"><head>\n" +
+            "    <meta name=\"title\" content=\"THIS IS A HIDDEN TITLE\">\n" +
+            "</head><body contenteditable=\"true\">Hello <a href=\"https://github.com/TestFX/TestFX\">world</a></body></html>"
+
     @Test
     fun setCurrentOpenFolderTest() {
         //Changes the current open folder
@@ -20,13 +24,18 @@ internal class ModelTest {
     @Test
     fun createHTMLFileWithNameTest() {
         val dir = model.testNotebookDir
-        val testFileName: String = "THISISFROMTESTSUITE"
+        val testFileName = "THISISFROMTESTSUITE"
         model.createHTMLFileWithName(testFileName, dir)
         assertEquals(testFileName, model.currentFile?.name)
     }
 
     @Test
     fun openAndReadHTMLFileTest() {
+        val dir = model.testNotebookDir
+        val testFileName = "THISISFROMTESTSUITE"
+
+        model.createHTMLFileWithName(testFileName, dir)
+        assertEquals(testFileName, model.currentFile?.name)
     }
 
     @Test
@@ -46,10 +55,9 @@ internal class ModelTest {
     }
 
     @Test
-    fun readHTMLFile() {
-    }
-
-    @Test
-    fun readMetaData() {
+    fun readMetaDataTest() {
+        val expected = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
+        val actual = model.readMetaData(mockHtmlFileContents)
+        assertEquals(expected,actual)
     }
 }
