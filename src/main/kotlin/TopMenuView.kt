@@ -32,19 +32,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         val fileQuit = createAddToMenu(fileMenu,"Quit")
         menuBar.menus.add(fileMenu)
 
-        // View: Home, Prev Next
-        val viewMenu = Menu("View")
-        val viewHome = createAddToMenu(viewMenu,"Home")
-        val viewPrev = createAddToMenu(viewMenu,"Prev")
-        val viewNext = createAddToMenu(viewMenu,"Next")
-        menuBar.menus.add(viewMenu)
-
-        // Action: Rename, Move, Delete
-        val actionMenu = Menu("Action")
-        val actionRename = createAddToMenu(actionMenu,"Rename")
-        val actionMove = createAddToMenu(actionMenu,"Move")
-        val actionDelete = createAddToMenu(actionMenu,"Delete")
-        menuBar.menus.add(actionMenu)
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
@@ -55,14 +42,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         fileOpen.id = "menuitem-fileOpen"
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
-        viewMenu.id = "menu-viewMenu"
-        viewHome.id = "menuitem-viewHome"
-        viewPrev.id = "menuitem-viewPrev"
-        viewNext.id = "menuitem-viewNext"
-        actionMenu.id = "menu-actionMenu"
-        actionDelete.id = "menuitem-actionDelete"
-        actionRename.id = "menuitem-actionRename"
-        actionMove.id = "menuitem-actionMove"
         optionMenu.id = "menu-optionMenu"
 
         fileNewNote.setOnAction {
