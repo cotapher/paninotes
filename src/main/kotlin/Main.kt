@@ -18,7 +18,7 @@ class Main : Application() {
         val layout = BorderPane()
 
         val htmlEditor = HTMLEditor()
-        val topMenuView = TopMenuView(model,htmlEditor,stage)
+        val topMenuView = TopMenuView(model, htmlEditor, stage)
         val sideNotebookPane = SideNotebookPaneView(model)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
 
