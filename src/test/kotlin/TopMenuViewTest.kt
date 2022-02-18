@@ -28,6 +28,6 @@ class TopMenuViewTest {
 
     @Test
     fun first_test(robot: FxRobot) {
-        FxAssert.verifyThat("#menubar-file", LabeledMatchers.hasText("File"))
+        FxAssert.verifyThat("#menu-fileMenu", LabeledMatchers.hasText("File"))
     }
 }

@@ -25,7 +25,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         menuBar.prefWidthProperty().bind(stage.widthProperty())
         // File: Quit
         val fileMenu = Menu("File")
-        fileMenu.id = "menubar-file"
         val fileNewNote = createAddToMenu(fileMenu,"New Note")
         val fileOpen = createAddToMenu(fileMenu,"Open")
         val fileSave = createAddToMenu(fileMenu,"Save")
@@ -45,6 +44,24 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         val actionMove = createAddToMenu(actionMenu,"Move")
         val actionDelete = createAddToMenu(actionMenu,"Delete")
         menuBar.menus.add(actionMenu)
+        // Option:
+        val optionMenu = Menu("Option")
+        menuBar.menus.add(optionMenu)
+
+        fileMenu.id = "menu-fileMenu"
+        fileNewNote.id = "menuitem-fileNewNote"
+        fileOpen.id = "menuitem-fileOpen"
+        fileSave.id = "menuitem-fileSave"
+        fileQuit.id = "menuitem-fileQuit"
+        viewMenu.id = "menu-viewMenu"
+        viewHome.id = "menuitem-viewHome"
+        viewPrev.id = "menuitem-viewPrev"
+        viewNext.id = "menuitem-viewNext"
+        actionMenu.id = "menu-actionMenu"
+        actionDelete.id = "menuitem-actionDelete"
+        actionRename.id = "menuitem-actionRename"
+        actionMove.id = "menuitem-actionMove"
+        optionMenu.id = "menu-optionMenu"
 
         fileNewNote.setOnAction {
             val directoryDialog = DirectoryChooser()
@@ -54,7 +71,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             //this the notebook
             model.setCurrentOpenFolder(directory)
             //create the note
-            model.createHTMLFile(directory)
+            model.createHTMLFilePopup(directory)
         }
 
         fileOpen.setOnAction {
@@ -83,9 +100,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
-        // Option:
-        val optionMenu = Menu("Option")
-        menuBar.menus.add(optionMenu)
+
 
         this.children.add(menuBar)
 
