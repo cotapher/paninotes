@@ -30,17 +30,6 @@ class Main : Application() {
         model.addView(sideNotebookPane)
         model.addView(sideIconPane)
 
-        // hardcode some notes and notebooks for testing
-        val notebook1 = model.createNotebook("notebook1")
-        notebook1.addNote(Note("note11"))
-        notebook1.addNote(Note("note12"))
-        val notebook2 = model.createNotebook("notebook2")
-        notebook2.addNote(Note("note21"))
-        notebook2.addNote(Note("note22"))
-        notebook2.addNote(Note("note23"))
-        model.addNotebook(notebook1)
-        model.addNotebook(notebook2)
-
         // build the scene graph
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)
