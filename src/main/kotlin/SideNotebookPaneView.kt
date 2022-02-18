@@ -95,6 +95,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                             noteButton.setOnAction {
                                 val fileDialog = FileChooser()
                                 fileDialog.title = "Select an HTML File"
+                                fileDialog.initialDirectory = model.testNotebookDir
                                 val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
                                 fileDialog.extensionFilters.add(extFilter)
                                 val file: File? = fileDialog.showOpenDialog(stage)

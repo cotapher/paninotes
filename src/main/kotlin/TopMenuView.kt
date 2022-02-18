@@ -79,6 +79,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         fileOpen.setOnAction {
             val fileDialog = FileChooser()
             fileDialog.title = "Select an HTML File"
+            fileDialog.initialDirectory = model.testNotebookDir
             val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
             fileDialog.extensionFilters.add(extFilter)
             val file: File? = fileDialog.showOpenDialog(stage)
