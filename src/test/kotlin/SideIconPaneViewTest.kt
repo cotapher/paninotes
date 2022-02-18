@@ -1,4 +1,5 @@
 import javafx.scene.Scene
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
@@ -62,5 +63,8 @@ class SideIconPaneViewTest {
         // After clicking on the info button, an alert dialog should pop up
         robot.clickOn("#sideIconPane-info-button")
         FxAssert.verifyThat(".dialog-pane",  isVisible())
+
+        // Press enter to close the info popup
+        robot.press(KeyCode.ENTER).release(KeyCode.ENTER)
     }
 }

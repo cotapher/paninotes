@@ -27,9 +27,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                 // Get a list of all the notebooks from the Model
                 val notebooks: ArrayList<Notebook> = model.getAllNotebooks()
 
-                println("Notebooks size ${notebooks.size}")
                 for (i in notebooks.indices) {
-                    println("Notebook index $i")
                     val notebookButton = Button(notebooks[i].title)
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(110.0, 16.0)
@@ -69,6 +67,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                         backArrowImageView.fitHeight = 17.0
 
                         val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
+                        currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
                         currentNotebookButton.setPrefSize(110.0, 16.0)
                         gridPane.add(currentNotebookButton, 0, 0)
 
