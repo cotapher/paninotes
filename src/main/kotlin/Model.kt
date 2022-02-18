@@ -1,3 +1,4 @@
+
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.control.TextInputDialog
@@ -35,7 +36,7 @@ class Model {
         }
     }
 
-    fun createHTMLFile(directory: File?){
+    fun createHTMLFilePopup(directory: File?){
         val popup = TextInputDialog()
         popup.title = "Create a new note inside ${directory?.name}"
         val currentFileOrDir = directory
@@ -50,24 +51,27 @@ class Model {
                 println(result)
                 println(result.get())
                 val textResult = result.get() + ".html"
-
-                val newNoteFile = File(directory.resolve(textResult).toString())
-                if (newNoteFile.exists()) {
-                    println("Error: ${newNoteFile.name} already exists")
-                    generateAlertDialogPopup(
-                        Alert.AlertType.ERROR, "Creation Error", "$newNoteFile already exists, " +
-                                "try choosing a different name"
-                    )
-                } else {
-                    //set to currentfile
-                    currentFile = newNoteFile
-                    notifyViews()
-                    }
-                }
+                createHTMLFileWithName(textResult, directory)
+            }
 
             }
 
         }
+
+    fun createHTMLFileWithName(textResult: String, directory: File) {
+        val newNoteFile = File(directory.resolve(textResult).toString())
+        if (newNoteFile.exists()) {
+            println("Error: ${newNoteFile.name} already exists")
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "Creation Error", "$newNoteFile already exists, " +
+                        "try choosing a different name"
+            )
+        } else {
+            //set to currentfile
+            currentFile = newNoteFile
+            notifyViews()
+        }
+    }
 
     fun openAndReadHTMLFile(file: File?) {
         if (file != null) {
@@ -84,11 +88,11 @@ class Model {
         notifyViews()
     }
 
-    private fun readHTMLFile(file:File?): String? {
+    fun readHTMLFile(file:File?): String? {
         return file?.readText(Charsets.UTF_8)
     }
 
-    private fun readMetaData(HTMLString: String): MutableMap<String,String>{
+    fun readMetaData(HTMLString: String): MutableMap<String,String>{
         //JSoup docs
         val doc: Document = Jsoup.parse(HTMLString)
         val metaTags: Elements = doc.getElementsByTag("meta")
