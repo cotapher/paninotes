@@ -3,7 +3,8 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.layout.GridPane
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
 
 class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView): GridPane(), IView {
 
@@ -12,6 +13,12 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
     private val infoButton = Button()
     init {
         this.layoutView()
+        this.border = Border(
+            BorderStroke(
+                Color.BLACK,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT
+            )
+        )
         this.add(notebookButton, 0, 0)
         this.add(searchButton, 0, 1)
         this.add(infoButton, 0, 2)
