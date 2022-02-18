@@ -12,7 +12,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor, val stage: Stage) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -65,11 +65,22 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
         fileNewNote.setOnAction {
             val directoryDialog = DirectoryChooser()
-            directoryDialog.title = "Select an Notebook Folder"
+            directoryDialog.title = "Select a Notebook Folder"
             directoryDialog.initialDirectory = model.testNotebookDir
             val directory: File? = directoryDialog.showDialog(stage)
+
+            // get the notebook at this file path
+            // if there is no notebook at this path, then we create a new notebook for this file path
+            var notebook: Notebook? = model.getNotebookAtFilePath(directory)
+            if (notebook == null && directory != null) {
+                notebook = model.createNotebook(directory?.name)
+                notebook.filePath = directory
+                model.addNotebook(notebook)
+            }
+
             //this the notebook
-            model.setCurrentOpenFolder(directory)
+            model.currentOpenNotebook = notebook
+
             //create the note
             model.createHTMLFilePopup(directory)
         }

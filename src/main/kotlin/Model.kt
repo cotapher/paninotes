@@ -6,6 +6,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Paths
 
 class Model {
@@ -13,6 +14,7 @@ class Model {
     private val views = ArrayList<IView>()
     val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
     var currentNotebook: File? = null
+    var currentOpenNotebook: Notebook? = null
     var currentFile: File? = null
     var currentFileContents = ""
     var currentFileMetadata = readMetaData(currentFileContents)
@@ -36,6 +38,59 @@ class Model {
         }
     }
 
+    fun getNotebookAtFilePath(filePath: File?): Notebook? {
+        if (filePath != null) {
+            for (notebook in notebooks) {
+                if (notebook.filePath?.path.equals(filePath.path)) {
+                    return notebook
+                }
+            }
+        }
+
+        return null
+    }
+
+    fun createNotebookFolderPopup(parentDirectory: File?) {
+        val popup = TextInputDialog()
+        popup.title = "Paninotes"
+
+        if (parentDirectory?.canWrite() == true) {
+            popup.headerText = "Create Notebook"
+            popup.contentText = "Enter name for new notebook:"
+
+            //show the popup
+            val result = popup.showAndWait()
+            if (result.isPresent) {
+                val notebookNameResult = result.get()
+                createNotebookFolderWithName(notebookNameResult, parentDirectory)
+            }
+        }
+    }
+
+    private fun createNotebookFolderWithName(notebookName: String, parentDirectory: File) {
+        val newNotebookFolder = File(parentDirectory.resolve(notebookName).toString())
+
+        if (newNotebookFolder.exists()) {
+            println("Error: ${newNotebookFolder.name} already exists")
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "Creation Error", "$newNotebookFolder notebook already exists, " +
+                        "try choosing a different name"
+            )
+        } else {
+            // actually create the folder in storage
+            Files.createDirectories(Paths.get(newNotebookFolder.path))
+
+            // create the notebook in the app
+            val newNotebook = createNotebook(notebookName)
+            newNotebook.filePath = newNotebookFolder
+            addNotebook(newNotebook)
+
+            // set to current folder
+            setCurrentOpenFolder(newNotebookFolder)
+            notifyViews()
+        }
+    }
+
     fun createHTMLFilePopup(directory: File?){
         val popup = TextInputDialog()
         popup.title = "Create a new note inside ${directory?.name}"
@@ -53,10 +108,8 @@ class Model {
                 val textResult = result.get() + ".html"
                 setCurrentFile(textResult, directory)
             }
-
-            }
-
         }
+    }
 
     fun setCurrentFile(textResult: String, directory: File) {
         val newNoteFile = File(directory.resolve(textResult).toString())
@@ -67,10 +120,22 @@ class Model {
                         "try choosing a different name"
             )
         } else {
-            //set to currentfile
+            // set to current file
             currentFile = newNoteFile
+
+            createNoteFile(textResult, newNoteFile)
             notifyViews()
         }
+
+    }
+
+    fun createNoteFile(noteName: String, notePath: File) {
+        // We open the notebook in the current open notebook
+        notePath.writeText("") // Create an empty note/file
+        val note = Note(noteName)
+        note.filePath = notePath;
+        currentOpenNotebook?.addNote(note)
+        notifyViews()
     }
 
     fun openAndReadHTMLFile(file: File?) {
@@ -97,7 +162,7 @@ class Model {
         val doc: Document = Jsoup.parse(HTMLString)
         val metaTags: Elements = doc.getElementsByTag("meta")
         val metadataMap = mutableMapOf<String,String>()
-        //parsing metadat tags
+        //parsing metadata tags
         for (metaTag in metaTags) {
             val name: String = metaTag.attr("name")
             val content: String = metaTag.attr("content")
