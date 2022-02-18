@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import javafx.stage.DirectoryChooser
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
 
@@ -91,6 +92,14 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                             val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(110.0, 16.0)
+                            noteButton.setOnAction {
+                                val fileDialog = FileChooser()
+                                fileDialog.title = "Select an HTML File"
+                                val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
+                                fileDialog.extensionFilters.add(extFilter)
+                                val file: File? = fileDialog.showOpenDialog(stage)
+                                model.openAndReadHTMLFile(file)
+                            }
                             gridPane.add(noteButton, 0, i + 1)
                         }
                     }
