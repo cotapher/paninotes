@@ -21,7 +21,6 @@ class Main : Application() {
         val topMenuView = TopMenuView(model, htmlEditor, stage)
         val sideNotebookPane = SideNotebookPaneView(model, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
-
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane
         sideNotebookPane.managedProperty().bind(sideNotebookPane.visibleProperty())
 
@@ -29,18 +28,7 @@ class Main : Application() {
         model.addView(topMenuView)
         model.addView(sideNotebookPane)
         model.addView(sideIconPane)
-
-        // hardcode some notes and notebooks for testing
-        val notebook1 = model.createNotebook("notebook1")
-        notebook1.addNote(Note("note11"))
-        notebook1.addNote(Note("note12"))
-        val notebook2 = model.createNotebook("notebook2")
-        notebook2.addNote(Note("note21"))
-        notebook2.addNote(Note("note22"))
-        notebook2.addNote(Note("note23"))
-        model.addNotebook(notebook1)
-        model.addNotebook(notebook2)
-
+        model.notifyViews()
         // build the scene graph
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)

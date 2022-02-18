@@ -28,7 +28,8 @@ internal class ModelTest {
     @Test
     fun setCurrentFileTest() {
         val dir = model.testNotebookDir
-        val testFileName = "thiscanbeanyfile.html"
+        val testFileName = "setCurrentTestFile.html"
+        dir.resolve(testFileName).delete()
         model.setCurrentFile(testFileName, dir)
         assertEquals(testFileName, model.currentFile?.name)
     }
@@ -39,22 +40,6 @@ internal class ModelTest {
         model.openAndReadHTMLFile(testHTMLFile)
         assertEquals(expectedMetadata,model.currentFileMetadata)
         assertEquals(mockHtmlFileContents,model.currentFileContents)
-    }
-
-    @Test
-    fun createNotebookTest() {
-    }
-
-    @Test
-    fun addNotebookTest() {
-    }
-
-    @Test
-    fun getAllNotebooksTest() {
-    }
-
-    @Test
-    fun getNotebookByIdTest() {
     }
 
     @Test
