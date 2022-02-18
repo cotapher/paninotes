@@ -19,7 +19,7 @@ dependencies {
 }
 
 application {
-    mainClassName = 'Main'
+    mainClass.set('Main')
 }
 
 javafx {
