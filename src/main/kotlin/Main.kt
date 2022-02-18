@@ -19,7 +19,7 @@ class Main : Application() {
 
         val htmlEditor = HTMLEditor()
         val topMenuView = TopMenuView(model, htmlEditor, stage)
-        val sideNotebookPane = SideNotebookPaneView(model)
+        val sideNotebookPane = SideNotebookPaneView(model, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane

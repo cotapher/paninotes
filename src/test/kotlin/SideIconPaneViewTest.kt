@@ -17,7 +17,7 @@ class SideIconPaneViewTest {
     @Start
     private fun start(stage: Stage) {
         val model = Model()
-        val sideNotebookPane = SideNotebookPaneView(model)
+        val sideNotebookPane = SideNotebookPaneView(model, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
         val layout = BorderPane()
         val sidePane = HBox()

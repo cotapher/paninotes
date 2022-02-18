@@ -3,8 +3,11 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
+import javafx.stage.DirectoryChooser
+import javafx.stage.Stage
+import java.io.File
 
-class SideNotebookPaneView(val model: Model): BorderPane(), IView {
+class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -34,6 +37,7 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
 
                     notebookButton.setOnAction {
                         showNotesForNotebook(notebooks[i].notebookId)
+                        model.currentOpenNotebook = notebooks[i]
                     }
 
                     gridPane.add(notebookButton, 0, i)
@@ -49,7 +53,14 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
 
                 addNotebookButton.setOnAction {
-                   // Open the file choo
+                    // Open the DirectoryChooser so the user can choose where they want to store their notebook
+                    val directoryDialog = DirectoryChooser()
+                    directoryDialog.title = "Select where you want to store the notebook"
+                    directoryDialog.initialDirectory = model.testNotebookDir
+                    val directory: File? = directoryDialog.showDialog(stage)
+
+                    // open the dialog to create the notebook
+                   model.createNotebookFolderPopup(directory)
                 }
 
                 this.bottom = addNotebookButton
@@ -92,6 +103,14 @@ class SideNotebookPaneView(val model: Model): BorderPane(), IView {
 
                     val addNoteButton = Button("ADD NOTE", plusImageView)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
+
+                    addNoteButton.setOnAction {
+                        // create the note in the current open notebook
+                        if (model.currentOpenNotebook != null) {
+                            model.createHTMLFileInNotebook(model.currentOpenNotebook)
+                        }
+                    }
+
                     this.bottom = addNoteButton
                 } else {
                     println("ERROR - We're in the side pane Notes paneview, but the current notebook Id is < 0")
