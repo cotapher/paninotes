@@ -3,9 +3,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
+import java.io.File
+import java.nio.file.Paths
 
 @ExtendWith(ApplicationExtension::class)
 internal class ModelTest {
+    val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
+    val testHTMLFile = File(Paths.get("src/main/resources/testNotebook1/testNote.html").toUri())
 
     val model = Model()
 
@@ -22,20 +26,19 @@ internal class ModelTest {
     }
 
     @Test
-    fun createHTMLFileWithNameTest() {
+    fun setCurrentFileTest() {
         val dir = model.testNotebookDir
-        val testFileName = "THISISFROMTESTSUITE"
-        model.createHTMLFileWithName(testFileName, dir)
+        val testFileName = "thiscanbeanyfile.html"
+        model.setCurrentFile(testFileName, dir)
         assertEquals(testFileName, model.currentFile?.name)
     }
 
     @Test
     fun openAndReadHTMLFileTest() {
-        val dir = model.testNotebookDir
-        val testFileName = "THISISFROMTESTSUITE"
-
-        model.createHTMLFileWithName(testFileName, dir)
-        assertEquals(testFileName, model.currentFile?.name)
+        val expectedMetadata = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
+        model.openAndReadHTMLFile(testHTMLFile)
+        assertEquals(expectedMetadata,model.currentFileMetadata)
+        assertEquals(mockHtmlFileContents,model.currentFileContents)
     }
 
     @Test
@@ -56,8 +59,8 @@ internal class ModelTest {
 
     @Test
     fun readMetaDataTest() {
-        val expected = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
-        val actual = model.readMetaData(mockHtmlFileContents)
-        assertEquals(expected,actual)
+        val expectedMetadata = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
+        val actualMetadata = model.readMetaData(mockHtmlFileContents)
+        assertEquals(expectedMetadata,actualMetadata)
     }
 }
