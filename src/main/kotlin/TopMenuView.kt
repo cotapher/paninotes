@@ -50,7 +50,9 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             directoryDialog.initialDirectory = model.testNotebookDir
             val directory: File? = directoryDialog.showDialog(stage)
             //this the notebook
-            model.setCurrentOpenFolder(directory)
+            if (directory != null) {
+                model.currentNotebook = directory
+            }
             //create the note
             model.createHTMLFilePopup(directory)
         }

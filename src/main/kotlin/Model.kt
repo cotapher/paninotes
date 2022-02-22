@@ -32,12 +32,6 @@ class Model {
         }
     }
 
-    fun setCurrentOpenFolder(file: File?){
-        if (file != null) {
-            currentNotebook = file
-        }
-    }
-
     fun getNotebookAtFilePath(filePath: File?): Notebook? {
         if (filePath != null) {
             for (notebook in notebooks) {
@@ -86,7 +80,9 @@ class Model {
             addNotebook(newNotebook)
 
             // set to current folder
-            setCurrentOpenFolder(newNotebookFolder)
+            if (newNotebookFolder != null) {
+                currentNotebook = newNotebookFolder
+            }
             notifyViews()
         }
     }
