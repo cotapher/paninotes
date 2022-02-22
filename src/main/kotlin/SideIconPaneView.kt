@@ -73,7 +73,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         infoButton.setOnAction {
             val popup = Alert(Alert.AlertType.INFORMATION)
             popup.title = "Note HTML Metadata Info"
-            popup.dialogPane.content =  Label(model.currentFileMetadata.toString())
+            popup.dialogPane.content =  Label(model.currentNote?.fileMetadata.toString())
             popup.show()
         }
     }
@@ -82,6 +82,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         this.layoutView() //TODO don't want to refresh everything
 
         //add a condition to only show editor if there is file assigned to model.currentFile
-        infoButton.isVisible = model.currentFile != null
+        infoButton.isVisible = model.currentNote != null
     }
 }

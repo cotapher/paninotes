@@ -1,3 +1,4 @@
+
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -6,7 +7,6 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
 import javafx.stage.DirectoryChooser
-import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.jsoup.Jsoup
 import java.io.File
@@ -50,24 +50,26 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             directoryDialog.initialDirectory = model.testNotebookDir
             val directory: File? = directoryDialog.showDialog(stage)
             //this the notebook
-            model.setCurrentOpenFolder(directory)
+            if (directory != null) {
+                model.currentNotebook = directory
+            }
             //create the note
             model.createHTMLFilePopup(directory)
         }
 
         fileOpen.setOnAction {
-            val fileDialog = FileChooser()
-            fileDialog.title = "Select an HTML File"
-            fileDialog.initialDirectory = model.testNotebookDir
-            val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
-            fileDialog.extensionFilters.add(extFilter)
-            val file: File? = fileDialog.showOpenDialog(stage)
-            model.openAndReadHTMLFile(file)
+//            val fileDialog = FileChooser()
+//            fileDialog.title = "Select an HTML File"
+//            fileDialog.initialDirectory = model.testNotebookDir
+//            val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
+//            fileDialog.extensionFilters.add(extFilter)
+//            val file: File? = fileDialog.showOpenDialog(stage)
+//            model.openNote(file) TODO
         }
 
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
-            model.currentFile?.writeText(htmlEditor.htmlText)
+            model.currentNote?.saveNote(htmlEditor.htmlText)
         }
 
 
@@ -137,10 +139,10 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
 
         stage.setOnCloseRequest {
-            if(model.currentFile != null) {
+            if(model.currentNote != null) {
                 val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
                 confirmationAlert.title = "Paninotes"
-                confirmationAlert.contentText = "Save changes to ${model.currentFile?.name}?"
+                confirmationAlert.contentText = "Save changes to ${model.currentNote?.fileName}?"
                 confirmationAlert.buttonTypes.clear()
                 val discardButton = ButtonType("Discard")
                 val saveButton = ButtonType("Save")
@@ -154,7 +156,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                     println(result.get())
                     if (result.get() == saveButton) {
                         print(htmlEditor.htmlText)
-                        model.currentFile?.writeText(htmlEditor.htmlText)
+                        model.currentNote?.saveNote(htmlEditor.htmlText)
                         Platform.exit()
                         exitProcess(0)
                     } else if (result.get() == cancelButton) {
@@ -173,8 +175,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
     override fun update() {
         //add a condition to only show editor if there is file assigned to model.currentFile
-        if(model.currentFile != null){
-            htmlEditor.htmlText = model.currentFileContents
+        if(model.currentNote != null){
+            htmlEditor.htmlText = model.currentNote?.fileContents
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message
