@@ -1,19 +1,26 @@
 
 import javafx.application.Platform
+import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
+import javafx.scene.paint.Color
 import javafx.scene.web.HTMLEditor
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.JMetro
+import jfxtras.styles.jmetro.Style
 import org.jsoup.Jsoup
 import java.io.File
 import kotlin.system.exitProcess
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
     init {
         this.layoutView()
@@ -35,6 +42,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
+        val optionTheme = createAddToMenu(optionMenu, "Change Theme")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -132,6 +140,11 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                     htmlEditor.htmlText = oldText
                 }
             }
+        }
+
+        optionTheme.setOnAction {
+            if (jMetro.style == Style.LIGHT) jMetro.style = Style.DARK
+            else jMetro.style = Style.LIGHT
         }
 
         this.children.add(menuBar)
