@@ -12,4 +12,7 @@ class Note {
 
     @Column(nullable = false)
     private val name: String? = null //...
+    override fun toString(): String {
+        return "Note(id=$id, name=$name)"
+    }
 }
