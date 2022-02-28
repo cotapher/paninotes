@@ -9,7 +9,7 @@ import java.nio.file.Paths
 class Model {
 
     private val views = ArrayList<IView>()
-    val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
+    val NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentNotebook: File? = null
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
@@ -39,25 +39,23 @@ class Model {
         return null
     }
 
-    fun createNotebookFolderPopup(parentDirectory: File?) {
+    fun createNotebookPopup() {
         val popup = TextInputDialog()
         popup.title = "Paninotes"
 
-        if (parentDirectory?.canWrite() == true) {
-            popup.headerText = "Create Notebook"
-            popup.contentText = "Enter name for new notebook:"
+        popup.headerText = "Create Notebook"
+        popup.contentText = "Enter name for new notebook:"
 
-            //show the popup
-            val result = popup.showAndWait()
-            if (result.isPresent) {
-                val notebookNameResult = result.get()
-                createNotebookFolderWithName(notebookNameResult, parentDirectory)
-            }
+        //show the popup
+        val result = popup.showAndWait()
+        if (result.isPresent) {
+            val notebookNameResult = result.get()
+            createNotebookWithName(notebookNameResult)
         }
     }
 
-    private fun createNotebookFolderWithName(notebookName: String, parentDirectory: File) {
-        val newNotebookFolder = File(parentDirectory.resolve(notebookName).toString())
+    private fun createNotebookWithName(notebookName: String) {
+        val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
             println("Error: ${newNotebookFolder.name} already exists")
@@ -68,6 +66,8 @@ class Model {
         } else {
             // actually create the folder in storage
             Files.createDirectories(Paths.get(newNotebookFolder.path))
+
+            // create a meta .notebook file in the folder, to identify it as a notebook
 
             // create the notebook in the app
             val newNotebook = createNotebook(notebookName)

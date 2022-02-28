@@ -4,9 +4,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import java.io.File
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -61,14 +59,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
 
                 addNotebookButton.setOnAction {
-                    // Open the DirectoryChooser so the user can choose where they want to store their notebook
-                    val directoryDialog = DirectoryChooser()
-                    directoryDialog.title = "Select where you want to store the notebook"
-                    directoryDialog.initialDirectory = model.testNotebookDir
-                    val directory: File? = directoryDialog.showDialog(stage)
-
-                    // open the dialog to create the notebook
-                   model.createNotebookFolderPopup(directory)
+                    // Open the dialog to create the notebook
+                    model.createNotebookPopup()
                 }
 
                 this.bottom = addNotebookButton

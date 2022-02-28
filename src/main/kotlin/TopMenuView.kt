@@ -47,7 +47,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         fileNewNote.setOnAction {
             val directoryDialog = DirectoryChooser()
             directoryDialog.title = "Select an Notebook Folder"
-            directoryDialog.initialDirectory = model.testNotebookDir
+            directoryDialog.initialDirectory = model.NOTEBOOK_DIR
             val directory: File? = directoryDialog.showDialog(stage)
             //this the notebook
             if (directory != null) {

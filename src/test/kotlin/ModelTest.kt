@@ -20,7 +20,7 @@ internal class ModelTest {
     @Test
     fun setCurrentOpenFolderTest() {
         //Changes the current open folder
-        val dir = model.testNotebookDir
+        val dir = model.NOTEBOOK_DIR
         model.currentNotebook = dir
         assertEquals(this.model.currentNotebook, dir)
     }
