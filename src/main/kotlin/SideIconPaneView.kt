@@ -15,18 +15,14 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
     private val infoButton = Button()
     init {
         this.layoutView()
-//        this.border = Border(
-//            BorderStroke(
-//                Color.BLACK,
-//                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT
-//            )
-//        )
         this.add(notebookButton, 0, 0)
         this.add(searchButton, 0, 1)
         this.add(infoButton, 0, 2)
         
         // Default don't show the notebook pane
         sideNotebookPaneView.isVisible = false
+
+        this.styleClass.add("front-pane")
     }
 
     private fun layoutView() {

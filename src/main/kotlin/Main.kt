@@ -1,19 +1,20 @@
 
+import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetro
 import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.Style
-import org.controlsfx.control.StatusBar
 
 class Main : Application() {
 
     override fun start(stage: Stage) {
+        CSSFX.start()
+
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val model = Model()
@@ -41,10 +42,11 @@ class Main : Application() {
         layout.top = topMenuView
         layout.center = htmlEditor
         layout.left = sidePane
-        layout.padding = Insets(5.0)
 
         // create and show the scene
         val scene = Scene(layout)
+
+        scene.stylesheets.add("css/test.css")
 
         // apply jmetro
         jMetro.scene = scene
