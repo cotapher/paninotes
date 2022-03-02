@@ -76,9 +76,11 @@
 
 .front-pane {
     -fx-background-color: lightgrey;
+    -fx-view-order: 1.0;
 }
 
 .middle-pane {
     -fx-background-color: grey;
+    -fx-view-order: 2.0;
 }
 

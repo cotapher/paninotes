@@ -1,9 +1,9 @@
 
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
-import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetro

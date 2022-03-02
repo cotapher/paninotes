@@ -5,7 +5,7 @@ import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import java.io.File
