@@ -42,6 +42,7 @@ class Note(notePath: File) {
         println(metadataMap.toString())
         return metadataMap
     }
+
     fun saveNote(HTMLString:String){
         filePath?.writeText(HTMLString)
     }

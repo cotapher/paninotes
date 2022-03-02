@@ -16,6 +16,28 @@ class Model {
     private val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
+    init {
+        initializeNotebooks()
+    }
+
+    private fun initializeNotebooks() {
+        // Initialize and create all the notebook objects from iterating through the Notebook directory
+        NOTEBOOK_DIR.listFiles()?.forEach { notebook ->
+            val newNotebook = createNotebook(notebook.name)
+            newNotebook.filePath = notebook
+            addNotebook(newNotebook)
+
+            // For each notebook, also initialize all the notes in the notebook
+            notebook.listFiles()?.forEach { note ->
+                val newNote = Note(note)
+                newNote.setContents()
+                newNotebook.addNote(newNote)
+            }
+        }
+
+        notifyViews()
+    }
+
     // view management
     fun addView(view: IView) {
         views.add(view)
@@ -67,8 +89,6 @@ class Model {
             // actually create the folder in storage
             Files.createDirectories(Paths.get(newNotebookFolder.path))
 
-            // create a meta .notebook file in the folder, to identify it as a notebook
-
             // create the notebook in the app
             val newNotebook = createNotebook(notebookName)
             newNotebook.filePath = newNotebookFolder
@@ -94,16 +114,14 @@ class Model {
             //show the popup
             val result = popup.showAndWait()
             if (result.isPresent) {
-                println(result)
-                println(result.get())
-                val textResult = result.get() + ".html"
-                setCurrentFile(textResult, directory)
+                val noteFileName = result.get() + ".html"
+                setCurrentFile(noteFileName, directory)
             }
         }
     }
 
-    fun setCurrentFile(textResult: String, directory: File) {
-        val newNoteFile = File(directory.resolve(textResult).toString())
+    fun setCurrentFile(noteFileName: String, directory: File) {
+        val newNoteFile = File(directory.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
             generateAlertDialogPopup(
