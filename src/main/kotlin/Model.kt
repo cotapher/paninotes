@@ -9,7 +9,7 @@ import java.nio.file.Paths
 class Model {
 
     private val views = ArrayList<IView>()
-    val NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
+    var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentNotebook: File? = null
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
@@ -96,6 +96,7 @@ class Model {
 
             // set to current folder
             if (newNotebookFolder != null) {
+                currentOpenNotebook = newNotebook
                 currentNotebook = newNotebookFolder
             }
             notifyViews()
