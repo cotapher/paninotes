@@ -21,31 +21,9 @@ internal class ModelTest {
     fun setCurrentOpenFolderTest() {
         //Changes the current open folder
         val dir = model.testNotebookDir
-        model.setCurrentOpenFolder(dir)
+        model.currentNotebook = dir
         assertEquals(this.model.currentNotebook, dir)
     }
 
-    @Test
-    fun setCurrentFileTest() {
-        val dir = model.testNotebookDir
-        val testFileName = "setCurrentTestFile.html"
-        dir.resolve(testFileName).delete()
-        model.setCurrentFile(testFileName, dir)
-        assertEquals(testFileName, model.currentFile?.name)
-    }
 
-    @Test
-    fun openAndReadHTMLFileTest() {
-        val expectedMetadata = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
-        model.openAndReadHTMLFile(testHTMLFile)
-        assertEquals(expectedMetadata,model.currentFileMetadata)
-        assertEquals(mockHtmlFileContents,model.currentFileContents)
-    }
-
-    @Test
-    fun readMetaDataTest() {
-        val expectedMetadata = mutableMapOf<String,String>("title" to "THIS IS A HIDDEN TITLE")
-        val actualMetadata = model.readMetaData(mockHtmlFileContents)
-        assertEquals(expectedMetadata,actualMetadata)
-    }
 }

@@ -96,11 +96,11 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         }
 
                         for (i in currentNotebook.notes.indices) {
-                            val noteButton = Button(currentNotebook.notes[i].title)
+                            val noteButton = Button(currentNotebook.notes[i].fileName)
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(110.0, 16.0)
                             noteButton.setOnAction {
-                                model.openAndReadHTMLFile(currentNotebook.notes[i].filePath)
+                                model.openNote(currentNotebook.notes[i])
                             }
                             gridPane.add(noteButton, 0, i + 1)
                         }

@@ -2,9 +2,6 @@
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.control.TextInputDialog
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -15,9 +12,7 @@ class Model {
     val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
     var currentNotebook: File? = null
     var currentOpenNotebook: Notebook? = null
-    var currentFile: File? = null
-    var currentFileContents = ""
-    var currentFileMetadata = readMetaData(currentFileContents)
+    var currentNote: Note? = null
     private val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
@@ -29,12 +24,6 @@ class Model {
     fun notifyViews() {
         for (view in views) {
             view.update()
-        }
-    }
-
-    fun setCurrentOpenFolder(file: File?){
-        if (file != null) {
-            currentNotebook = file
         }
     }
 
@@ -86,7 +75,9 @@ class Model {
             addNotebook(newNotebook)
 
             // set to current folder
-            setCurrentOpenFolder(newNotebookFolder)
+            if (newNotebookFolder != null) {
+                currentNotebook = newNotebookFolder
+            }
             notifyViews()
         }
     }
@@ -121,56 +112,24 @@ class Model {
             )
         } else {
             // set to current file
-            currentFile = newNoteFile
-
-            createNoteFile(textResult, newNoteFile)
+            val newNote = Note(newNoteFile)
+            openNote(newNote)
+            currentOpenNotebook?.addNote(newNote)
             notifyViews()
         }
 
     }
 
-    fun createNoteFile(noteName: String, notePath: File) {
-        // We open the notebook in the current open notebook
-        notePath.writeText("") // Create an empty note/file
-        val note = Note(noteName)
-        note.filePath = notePath;
-        currentOpenNotebook?.addNote(note)
+    fun openNote(note: Note?) {
+        currentNote = note
+        currentNote?.setContents()
+        currentNote?.setMetaData()
         notifyViews()
     }
 
-    fun openAndReadHTMLFile(file: File?) {
-        if (file != null) {
-            currentFile = file
-        }
-        val htmlFileText = readHTMLFile(currentFile)
-        val htmlMetadata = htmlFileText?.let { readMetaData(it) }
-        if (htmlFileText != null) {
-            currentFileContents = htmlFileText
-        }
-        if (htmlMetadata != null) {
-            currentFileMetadata = htmlMetadata
-        }
-        notifyViews()
-    }
 
-    fun readHTMLFile(file:File?): String? {
-        return file?.readText(Charsets.UTF_8)
-    }
 
-    fun readMetaData(HTMLString: String): MutableMap<String,String>{
-        //JSoup docs
-        val doc: Document = Jsoup.parse(HTMLString)
-        val metaTags: Elements = doc.getElementsByTag("meta")
-        val metadataMap = mutableMapOf<String,String>()
-        //parsing metadata tags
-        for (metaTag in metaTags) {
-            val name: String = metaTag.attr("name")
-            val content: String = metaTag.attr("content")
-            metadataMap[name] = content
-        }
-        println(metadataMap.toString())
-        return metadataMap
-    }
+
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 
     fun createNotebook(title: String): Notebook {

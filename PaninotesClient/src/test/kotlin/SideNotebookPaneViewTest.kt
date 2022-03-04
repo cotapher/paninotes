@@ -1,3 +1,4 @@
+
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -8,8 +9,9 @@ import org.testfx.api.FxAssert
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import org.testfx.matcher.base.NodeMatchers.*
+import org.testfx.matcher.base.NodeMatchers.isVisible
 import org.testfx.matcher.control.LabeledMatchers
+import java.io.File
 
 @ExtendWith(ApplicationExtension::class)
 class SideNotebookPaneViewTest {
@@ -33,12 +35,12 @@ class SideNotebookPaneViewTest {
 
         // Add some mock notebooks and notes
         val notebook1 = model.createNotebook("book1")
-        notebook1.addNote(Note("note11"))
-        notebook1.addNote(Note("note12"))
+        notebook1.addNote(Note(File("note11")))
+        notebook1.addNote(Note(File("note12")))
         val notebook2 = model.createNotebook("book1")
-        notebook2.addNote(Note("note21"))
-        notebook2.addNote(Note("note22"))
-        notebook2.addNote(Note("note23"))
+        notebook2.addNote(Note(File("note21")))
+        notebook2.addNote(Note(File("note22")))
+        notebook2.addNote(Note(File("note23")))
         model.addNotebook(notebook1)
         model.addNotebook(notebook2)
     }
