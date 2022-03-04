@@ -5,6 +5,10 @@
       <module name="Paninotes" target="17" />
       <module name="Paninotes.main" target="17" />
       <module name="Paninotes.test" target="17" />
+      <module name="PaninotesClient.main" target="11" />
+      <module name="PaninotesClient.test" target="11" />
+      <module name="PaninotesServer.main" target="11" />
+      <module name="PaninotesServer.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
