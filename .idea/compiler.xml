@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="Paninotes" target="17" />
-      <module name="Paninotes.main" target="17" />
-      <module name="Paninotes.test" target="17" />
-      <module name="PaninotesClient.main" target="11" />
-      <module name="PaninotesClient.test" target="11" />
-      <module name="PaninotesServer.main" target="11" />
-      <module name="PaninotesServer.test" target="11" />
-    </bytecodeTargetLevel>
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.22/9c08ea24c6eb714e2d6170e8122c069a0ba9aacf/lombok-1.18.22.jar" />
+        </processorPath>
+        <module name="PaninotesServer.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="16" />
   </component>
 </project>
