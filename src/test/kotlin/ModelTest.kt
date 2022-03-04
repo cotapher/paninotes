@@ -27,8 +27,10 @@ internal class ModelTest {
             "</head><body contenteditable=\"true\">Hello <a href=\"https://github.com/TestFX/TestFX\">world</a></body></html>"
 
     private fun clearTestNotebookDirectory() {
-        for (file in testNotebookDir.listFiles()) {
-            file.delete()
+        if (testNotebookDir.exists()) {
+            for (file in testNotebookDir.listFiles()) {
+                file.delete()
+            }
         }
     }
 
