@@ -19,9 +19,4 @@ data class Note(
     val id: Int? = null,
     @Column(name = "title")
     var title: String? = null
-) : java.io.Serializable {
-
-
-
-
-}
+)
