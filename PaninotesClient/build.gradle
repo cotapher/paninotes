@@ -21,6 +21,7 @@ dependencies {
     implementation 'fr.brouillard.oss:cssfx:11.5.0'
     implementation 'com.github.iAmGio:animated:0.4.1'
     implementation 'io.github.typhon0:AnimateFX:1.2.2'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
 }

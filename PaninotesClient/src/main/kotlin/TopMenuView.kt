@@ -1,4 +1,6 @@
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.scene.control.*
@@ -17,11 +19,15 @@ import jfxtras.styles.jmetro.JMetro
 import jfxtras.styles.jmetro.Style
 import org.jsoup.Jsoup
 import java.io.File
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import kotlin.system.exitProcess
 
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
-
+    val mapper = jacksonObjectMapper()
     init {
         this.layoutView()
     }
@@ -43,6 +49,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
         val optionTheme = createAddToMenu(optionMenu, "Change Theme")
+        val optionTestHTTP = createAddToMenu(optionMenu,"HTTPTEST")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -147,6 +154,24 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             else jMetro.style = Style.LIGHT
         }
 
+        optionTestHTTP.setOnAction {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080"))
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        }
         this.children.add(menuBar)
 
 
