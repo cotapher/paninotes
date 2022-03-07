@@ -16,11 +16,7 @@ class Model {
     private val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
-    init {
-        initializeNotebooks()
-    }
-
-    private fun initializeNotebooks() {
+    fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
         NOTEBOOK_DIR.listFiles()?.forEach { notebook ->
             val newNotebook = createNotebook(notebook.name)

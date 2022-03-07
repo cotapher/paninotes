@@ -39,6 +39,7 @@ internal class ModelTest {
     private fun start(stage: Stage) {
         // Set the model's notebook directory to our test directory
         model.NOTEBOOK_DIR = testNotebookDir
+        model.initializeNotebooks()
 
         // Clear the test notebook directory before each test
         clearTestNotebookDirectory()
@@ -58,18 +59,6 @@ internal class ModelTest {
         stage.show()
     }
 
-
-    private fun getKeycodesFromString(str: String): Array<KeyCode> {
-        val keyCodes: Array<KeyCode> = Array(str.length) {KeyCode.A}
-
-        str.forEachIndexed { index, char ->
-            var keyCode: Int = KeyEvent.getExtendedKeyCodeForChar(char.code)
-            keyCodes[index] = KeyCode.valueOf(KeyEvent.getKeyText(keyCode))
-        }
-
-        return keyCodes
-    }
-
     @Test
     fun setCurrentOpenFolderTest() {
         //Changes the current open folder
@@ -87,7 +76,7 @@ internal class ModelTest {
         robot.clickOn("#sideNotebookPane-add-notebook-button")
 
         // Typing in the notebook's name, then hitting Enter to exit the popup
-        robot.type(*getKeycodesFromString(testNotebookName))
+        robot.type(*TestUtils.getKeycodesFromString(testNotebookName))
         robot.type(KeyCode.ENTER)
 
         // Check that the notebook was created in the model and that it's the current notebook

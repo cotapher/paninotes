@@ -12,13 +12,21 @@ import org.testfx.framework.junit5.Start
 import org.testfx.matcher.base.NodeMatchers.isVisible
 import org.testfx.matcher.control.LabeledMatchers
 import java.io.File
+import java.nio.file.Paths
 
 @ExtendWith(ApplicationExtension::class)
 class SideNotebookPaneViewTest {
+    val testNotebookDir = File(Paths.get("src/main/resources/SideNotebookPaneViewNotebooks").toUri())
 
     @Start
     private fun start(stage: Stage) {
+
         val model = Model()
+        // Set the model's notebook directory to our test directory
+        // The test directory will have some fake notebooks and notes in there
+        model.NOTEBOOK_DIR = testNotebookDir
+        model.initializeNotebooks()
+
         val sideNotebookPane = SideNotebookPaneView(model, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane)
         val layout = BorderPane()
@@ -32,17 +40,6 @@ class SideNotebookPaneViewTest {
 
         stage.scene = Scene(layout)
         stage.show()
-
-        // Add some mock notebooks and notes
-        val notebook1 = model.createNotebook("book1")
-        notebook1.addNote(Note(File("note11")))
-        notebook1.addNote(Note(File("note12")))
-        val notebook2 = model.createNotebook("book1")
-        notebook2.addNote(Note(File("note21")))
-        notebook2.addNote(Note(File("note22")))
-        notebook2.addNote(Note(File("note23")))
-        model.addNotebook(notebook1)
-        model.addNotebook(notebook2)
     }
 
     @Test
