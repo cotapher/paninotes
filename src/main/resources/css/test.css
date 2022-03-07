@@ -1,7 +1,7 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
 * {
-    -fx-my-menu-color: lightgrey;                  /* Change according to your needs */
-    -fx-my-menu-color-highlighted: #455a64;      /* Change according to your needs */
+    -fx-my-menu-color: #ececec;                  /* Change according to your needs */
+    -fx-my-menu-color-highlighted: #CCCCCC;      /* Change according to your needs */
     -fx-my-menu-font-color: #FFFFFF;             /* Change according to your needs */
     -fx-my-menu-font-color-highlighted: #FFFFFF; /* Change according to your needs */
 }
@@ -75,12 +75,12 @@
 }
 
 .front-pane {
-    -fx-background-color: lightgrey;
+    -fx-background-color: -fx-my-menu-color;
     -fx-view-order: 1.0;
 }
 
 .middle-pane {
-    -fx-background-color: grey;
+    -fx-background-color: #CCCCCC;
     -fx-view-order: 2.0;
 }
 
