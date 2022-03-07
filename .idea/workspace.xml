@@ -4,32 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d98976c-21aa-4347-8ade-96a31e17d7d1" name="Changes" comment="remove modules">
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/Controller.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/NoteEntity.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/NoteListResponse.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/NoteRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/resources/application.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PaninotesServer/src/main/resources/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Paninotes_CS398_Project.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jpa-buddy.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Paninotes.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Paninotes.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/Paninotes.test.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/PaninotesServer.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/PaninotesServer.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/PaninotesServer.test.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaninotesClient/note11" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaninotesClient/note12" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaninotesClient/note21" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaninotesClient/note23" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PaninotesServer/src/main/resources/application.properties" beforeDir="false" />
+    <list default="true" id="4d98976c-21aa-4347-8ade-96a31e17d7d1" name="Changes" comment="Create the schema.sql manually instead of hibernate">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PaninotesClient/src/main/kotlin/TopMenuView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/PaninotesClient/src/main/kotlin/TopMenuView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/Controller.kt" beforeDir="false" afterPath="$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/Controller.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -135,6 +114,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -154,7 +137,14 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.PaninotesServerApplication">
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.PaninotesClient [run]">
     <configuration name="PaninotesClient [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -259,11 +249,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.PaninotesClient [run]" />
         <item itemvalue="Spring Boot.PaninotesServerApplication" />
         <item itemvalue="Gradle.PaninotesServer [bootRun]" />
         <item itemvalue="Gradle.PaninotesServer [clean]" />
         <item itemvalue="Gradle.Tests in 'PaninotesClient'" />
-        <item itemvalue="Gradle.PaninotesClient [run]" />
       </list>
     </recent_temporary>
   </component>
@@ -277,7 +267,8 @@
       <updated>1646423843848</updated>
       <workItem from="1646423845034" duration="2674000" />
       <workItem from="1646426534964" duration="1270000" />
-      <workItem from="1646427817117" duration="975000" />
+      <workItem from="1646427817117" duration="2246000" />
+      <workItem from="1646675107076" duration="2030000" />
     </task>
     <task id="LOCAL-00001" summary="Merge branch 'master' of git.uwaterloo.ca:k348li/398-team-project into Spring-server&#10;&#10;# Conflicts:&#10;#&#9;PaninotesClient/src/main/kotlin/TopMenuView.kt&#10;#&#9;src/main/kotlin/Note.kt">
       <created>1646424970869</created>
@@ -314,7 +305,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646426960704</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Create the schema.sql manually instead of hibernate">
+      <created>1646429096489</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1646429096489</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -348,7 +346,8 @@
     <MESSAGE value="Merge branch 'master' of git.uwaterloo.ca:k348li/398-team-project into Spring-server&#10;&#10;# Conflicts:&#10;#&#9;PaninotesClient/src/main/kotlin/TopMenuView.kt&#10;#&#9;src/main/kotlin/Note.kt" />
     <MESSAGE value="reset by copy files" />
     <MESSAGE value="remove modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove modules" />
+    <MESSAGE value="Create the schema.sql manually instead of hibernate" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create the schema.sql manually instead of hibernate" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -357,6 +356,11 @@
           <url>file://$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/PaninotesServerApplication.kt</url>
           <line>9</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/PaninotesServer/src/main/kotlin/com/paninotes/paninotesserver/Controller.kt</url>
+          <line>17</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
