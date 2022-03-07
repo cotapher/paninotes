@@ -10,7 +10,6 @@ class Model {
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
-    var currentNotebook: File? = null
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
     private val notebooks = ArrayList<Notebook>()
@@ -94,10 +93,9 @@ class Model {
             newNotebook.filePath = newNotebookFolder
             addNotebook(newNotebook)
 
-            // set to current folder
+            // set to current notebook
             if (newNotebookFolder != null) {
                 currentOpenNotebook = newNotebook
-                currentNotebook = newNotebookFolder
             }
             notifyViews()
         }

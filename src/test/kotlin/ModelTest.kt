@@ -71,14 +71,6 @@ internal class ModelTest {
     }
 
     @Test
-    fun setCurrentOpenFolderTest() {
-        //Changes the current open folder
-        val dir = model.NOTEBOOK_DIR
-        model.currentNotebook = dir
-        assertEquals(this.model.currentNotebook, dir)
-    }
-
-    @Test
     fun createNotebookWithPopup(robot: FxRobot) {
         // We need to click the notebook button in the side icon pane for the notebook pane to pop up
         robot.clickOn("#sideIconPane-notebook-button")

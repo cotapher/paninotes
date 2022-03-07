@@ -45,7 +45,10 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         optionMenu.id = "menu-optionMenu"
 
         fileNewNote.setOnAction {
-            val directoryDialog = DirectoryChooser()
+            // If there is currently a notebook open, then we will automatically create a new note in that notebook
+
+
+           /* val directoryDialog = DirectoryChooser()
             directoryDialog.title = "Select an Notebook Folder"
             directoryDialog.initialDirectory = model.NOTEBOOK_DIR
             val directory: File? = directoryDialog.showDialog(stage)
@@ -54,7 +57,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                 model.currentNotebook = directory
             }
             //create the note
-            model.createHTMLFilePopup(directory)
+            model.createHTMLFilePopup(directory)*/
         }
 
         fileOpen.setOnAction {
