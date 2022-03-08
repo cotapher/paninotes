@@ -6,10 +6,8 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
-import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import org.jsoup.Jsoup
-import java.io.File
 import kotlin.system.exitProcess
 
 
@@ -46,7 +44,18 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
 
         fileNewNote.setOnAction {
             // If there is currently a notebook open, then we will automatically create a new note in that notebook
+            if (model.currentOpenNotebook != null) {
+                model.createHTMLFilePopup(model.currentOpenNotebook!!.filePath)
+            } else {
+                // Get list of all notebook names
+                val notebookNames: List<String> = model.notebooks.map({ it.title })
 
+                // Open a choice dialog to prompt the user what notebook they want to create the note in
+                val chooseNotebookDialog: ChoiceDialog<*> = ChoiceDialog<Any?>(notebookNames[0], notebookNames)
+
+                chooseNotebookDialog.showAndWait()
+
+            }
 
            /* val directoryDialog = DirectoryChooser()
             directoryDialog.title = "Select an Notebook Folder"

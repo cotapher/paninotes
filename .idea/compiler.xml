@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="Paninotes" target="17" />
-      <module name="Paninotes.main" target="17" />
-      <module name="Paninotes.test" target="17" />
+      <module name="PaninotesServer" target="11" />
+      <module name="PaninotesServer.main" target="11" />
+      <module name="PaninotesServer.test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

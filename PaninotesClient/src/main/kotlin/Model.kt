@@ -12,7 +12,7 @@ class Model {
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
-    private val notebooks = ArrayList<Notebook>()
+    val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
     init {
@@ -46,6 +46,16 @@ class Model {
         for (view in views) {
             view.update()
         }
+    }
+
+    fun getNotebookByTitle(title:String): Notebook? {
+        for (notebook in notebooks) {
+            if (notebook.title == title) {
+                return notebook
+            }
+        }
+
+        return null;
     }
 
     fun getNotebookAtFilePath(filePath: File?): Notebook? {
@@ -143,9 +153,6 @@ class Model {
         currentNote?.setMetaData()
         notifyViews()
     }
-
-
-
 
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 

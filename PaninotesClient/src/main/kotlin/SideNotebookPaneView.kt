@@ -85,6 +85,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         currentNotebookButton.setOnAction {
                             // Go back to the list of notebooks
                             showNotebooks()
+
+                            // In the Model, set the currentOpenNotebook back to null
+                            model.currentOpenNotebook = null;
                         }
 
                         for (i in currentNotebook.notes.indices) {
