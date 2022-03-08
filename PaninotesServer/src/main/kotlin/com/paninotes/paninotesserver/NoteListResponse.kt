@@ -1,4 +1,4 @@
-package com.paninotes.server
+package com.paninotes.paninotesserver
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
