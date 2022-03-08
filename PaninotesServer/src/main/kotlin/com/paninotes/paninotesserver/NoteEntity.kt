@@ -4,6 +4,7 @@ package com.paninotes.paninotesserver
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import org.hibernate.Hibernate
+import org.springframework.lang.NonNull
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -19,7 +20,11 @@ data class Note(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
     @Column(name = "title")
-    var title: String? = null
+    @NonNull
+    var title: String? = null,
+    @Column(name = "htmltext")
+    @NonNull
+    var htmlText: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
