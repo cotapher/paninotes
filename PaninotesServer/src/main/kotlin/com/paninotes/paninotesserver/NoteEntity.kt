@@ -1,20 +1,16 @@
 package com.paninotes.paninotesserver
 
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import org.hibernate.Hibernate
+import org.hibernate.annotations.Nationalized
+import org.hibernate.annotations.Type
+import org.hibernate.type.NClobType
 import org.springframework.lang.NonNull
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
+
 //import kotlinx.
 @Entity
-@JsonSerialize
-@JsonDeserialize
-//@Serializable
+@Table(name = "note")
 data class Note(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +20,10 @@ data class Note(
     var title: String? = null,
     @Column(name = "htmltext")
     @NonNull
-    var htmlText: String? = null
+    @Lob
+    @Basic
+    @Nationalized
+    var htmlText: String? = null //gives nclob
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
