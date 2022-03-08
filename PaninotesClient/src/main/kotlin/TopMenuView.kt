@@ -41,7 +41,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
-        val optionTestHTTP = createAddToMenu(optionMenu,"HTTPTEST")
+        val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -158,7 +158,9 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             }
         }
 
-        optionTestHTTP.setOnAction {
+        optionRestoreBackup.setOnAction {
+            //TODO Create a dialog box that confirms overwrite
+
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080"))

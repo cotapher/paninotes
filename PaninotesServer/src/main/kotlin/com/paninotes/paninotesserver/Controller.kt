@@ -18,7 +18,4 @@ class Controller {
         val response = NoteListResponse(noteList)
         return Collections.singletonList(response)
     }
-
-
-
 }
