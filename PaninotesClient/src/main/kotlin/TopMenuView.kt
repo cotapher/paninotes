@@ -1,17 +1,11 @@
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.application.Platform
-import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
 import javafx.scene.web.HTMLEditor
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
@@ -27,6 +21,8 @@ import kotlin.system.exitProcess
 
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
+    private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css").toExternalForm()
+    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css").toExternalForm()
     val mapper = jacksonObjectMapper()
     init {
         this.layoutView()
@@ -150,9 +146,19 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         optionTheme.setOnAction {
-            if (jMetro.style == Style.LIGHT) jMetro.style = Style.DARK
-            else jMetro.style = Style.LIGHT
-            jMetro.reApplyTheme()
+            val ss = jMetro.scene.stylesheets
+            if (jMetro.style == Style.LIGHT) {
+                ss.clear()
+//                jMetro.overridingStylesheets.remove(LIGHT_STYLESHEET_URL)
+                jMetro.style = Style.DARK
+                ss.add(DARK_STYLESHEET_URL)
+            }
+            else {
+                ss.clear()
+//                jMetro.overridingStylesheets.remove(DARK_STYLESHEET_URL)
+                jMetro.style = Style.LIGHT
+                ss.add(LIGHT_STYLESHEET_URL)
+            }
         }
 
         optionTestHTTP.setOnAction {

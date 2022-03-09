@@ -12,6 +12,8 @@ import jfxtras.styles.jmetro.Style
 
 class Main : Application() {
 
+    private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css").toExternalForm()
+
     override fun start(stage: Stage) {
         CSSFX.start()
 
@@ -46,8 +48,6 @@ class Main : Application() {
         // create and show the scene
         val scene = Scene(layout)
 
-//        scene.stylesheets.add("css/test.css")
-
         // apply jmetro
         jMetro.scene = scene
         layout.styleClass.add(JMetroStyleClass.BACKGROUND)
@@ -59,5 +59,7 @@ class Main : Application() {
         stage.title = "Paninotes"
 
         stage.show()
+
+        jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
     }
 }

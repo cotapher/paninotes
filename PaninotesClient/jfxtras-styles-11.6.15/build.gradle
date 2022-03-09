@@ -1,6 +1,0 @@
-allprojects {
-    group = 'org.jfxtras'
-}
-
-
-
