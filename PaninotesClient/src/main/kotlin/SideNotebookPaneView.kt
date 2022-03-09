@@ -143,7 +143,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
     }
 
     override fun update() {
-       // TODO("Not yet implemented")
         this.layoutView()
     }
 }

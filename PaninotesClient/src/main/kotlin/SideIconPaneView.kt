@@ -57,7 +57,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         searchButton.graphic = searchImageView
         infoButton.graphic = infoImageView
 
-
         this.vgap = 3.0
         this.padding = Insets(5.0)
 

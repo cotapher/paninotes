@@ -12,6 +12,7 @@ class Model {
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
+    var openNotes = ArrayList<Note>()
     val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
@@ -139,6 +140,13 @@ class Model {
         currentNote = note
         currentNote?.setContents()
         currentNote?.setMetaData()
+
+        if (note != null) {
+            if (!openNotes.contains(note)) {
+                openNotes.add(note)
+            }
+        }
+
         notifyViews()
     }
 
