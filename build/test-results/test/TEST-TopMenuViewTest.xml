@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="TopMenuViewTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-03-07T03:40:32" hostname="KELLY_PC" time="0.653">
-  <properties/>
-  <testcase name="first_test(FxRobot)" classname="TopMenuViewTest" time="0.653"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
