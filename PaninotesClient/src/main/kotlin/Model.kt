@@ -54,18 +54,6 @@ class Model {
         return null;
     }
 
-    fun getNotebookAtFilePath(filePath: File?): Notebook? {
-        if (filePath != null) {
-            for (notebook in notebooks) {
-                if (notebook.filePath?.path.equals(filePath.path)) {
-                    return notebook
-                }
-            }
-        }
-
-        return null
-    }
-
     fun createNotebookPopup() {
         val popup = TextInputDialog()
         popup.title = "Paninotes"
@@ -107,25 +95,29 @@ class Model {
         }
     }
 
-    fun createHTMLFilePopup(directory: File?){
-        val popup = TextInputDialog()
-        popup.title = "Create a new note inside ${directory?.name}"
-        val currentFileOrDir = directory
-        if (currentFileOrDir?.canWrite() == true) {
+    fun createNotePopup(notebook: Notebook){
+        val directory: File? = notebook.filePath
 
-            popup.headerText = "Create note within $currentFileOrDir?"
-            popup.contentText = "Enter name for new Note file"
+        if (directory != null) {
+            val popup = TextInputDialog()
+            popup.title = "Paninotes"
+            val currentFileOrDir = directory
+            if (currentFileOrDir?.canWrite() == true) {
 
-            //show the popup
-            val result = popup.showAndWait()
-            if (result.isPresent) {
-                val noteFileName = result.get() + ".html"
-                setCurrentFile(noteFileName, directory)
+                popup.headerText = "Create a new note inside ${directory?.name}"
+                popup.contentText = "Enter name for new Note file"
+
+                //show the popup
+                val result = popup.showAndWait()
+                if (result.isPresent) {
+                    val noteFileName = result.get() + ".html"
+                    setCurrentNote(noteFileName, directory)
+                }
             }
         }
     }
 
-    fun setCurrentFile(noteFileName: String, directory: File) {
+    fun setCurrentNote(noteFileName: String, directory: File) {
         val newNoteFile = File(directory.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")

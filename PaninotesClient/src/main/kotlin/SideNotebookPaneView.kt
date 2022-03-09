@@ -113,7 +113,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     addNoteButton.setOnAction {
                         // create the note in the current open notebook
                         if (model.currentOpenNotebook != null) {
-                            model.createHTMLFilePopup(model.currentOpenNotebook!!.filePath)
+                            model.createNotePopup(model.currentOpenNotebook!!)
                         }
                     }
 
