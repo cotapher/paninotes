@@ -16,15 +16,9 @@ import java.nio.file.Paths
 
 @ExtendWith(ApplicationExtension::class)
 internal class ModelTest {
-    val testNotebookDir = File(Paths.get("src/main/resources/NotebooksModelTest").toUri())
-
-    val testNotebookName = "notebooka"
-
-    val model = Model()
-
-    val mockHtmlFileContents = "<html dir=\"ltr\"><head>\n" +
-            "    <meta name=\"title\" content=\"THIS IS A HIDDEN TITLE\">\n" +
-            "</head><body contenteditable=\"true\">Hello <a href=\"https://github.com/TestFX/TestFX\">world</a></body></html>"
+    private val testNotebookDir = File(Paths.get("src/main/resources/NotebooksModelTest").toUri())
+    private val testNotebookName = "notebooka"
+    private val model = Model()
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
@@ -33,7 +27,6 @@ internal class ModelTest {
             }
         }
     }
-
 
     @Start
     private fun start(stage: Stage) {
@@ -80,7 +73,4 @@ internal class ModelTest {
         // Now clear the test notebook directory
         clearTestNotebookDirectory()
     }
-
-
-
 }
