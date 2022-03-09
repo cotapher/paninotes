@@ -1,4 +1,6 @@
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -10,10 +12,14 @@ import javafx.stage.Stage
 import org.jsoup.Jsoup
 import java.util.*
 import kotlin.collections.ArrayList
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import kotlin.system.exitProcess
 
-
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
+    val mapper = jacksonObjectMapper()
 
     init {
         this.layoutView()
@@ -35,6 +41,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
+        val optionTestHTTP = createAddToMenu(optionMenu,"HTTPTEST")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -72,17 +79,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                     }
                 }
             }
-
-           /* val directoryDialog = DirectoryChooser()
-            directoryDialog.title = "Select an Notebook Folder"
-            directoryDialog.initialDirectory = model.NOTEBOOK_DIR
-            val directory: File? = directoryDialog.showDialog(stage)
-            //this the notebook
-            if (directory != null) {
-                model.currentNotebook = directory
-            }
-            //create the note
-            model.createHTMLFilePopup(directory)*/
         }
 
         fileOpen.setOnAction {
@@ -162,6 +158,24 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             }
         }
 
+        optionTestHTTP.setOnAction {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080"))
+                .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        }
         this.children.add(menuBar)
 
 
