@@ -16,10 +16,4 @@ class Notebook(id: Int, title: String) {
     fun addNote(note: Note) {
         notes.add(note)
     }
-
-    override fun equals(other: Any?): Boolean {
-        return (other is Notebook)
-                && notebookId == other.notebookId
-                && title == other.title
-    }
 }
