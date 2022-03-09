@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Paninotes.iml" filepath="$PROJECT_DIR$/.idea/modules/Paninotes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Paninotes.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Paninotes.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Paninotes.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Paninotes.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesClient.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesClient.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesClient.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesClient.test.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesClient.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesServer.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesServer.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesServer.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PaninotesServer.test.iml" filepath="$PROJECT_DIR$/.idea/modules/PaninotesServer.test.iml" />
+    </modules>
+  </component>
+</project>

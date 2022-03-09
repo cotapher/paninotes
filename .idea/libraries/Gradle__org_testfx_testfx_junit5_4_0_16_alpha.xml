@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.testfx:testfx-junit5:4.0.16-alpha">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.testfx/testfx-junit5/4.0.16-alpha/8b30294c1e6a1086dd8cf445b5deeda846be1424/testfx-junit5-4.0.16-alpha.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.testfx/testfx-junit5/4.0.16-alpha/762f05b802efffb6de9c149ca8b84062a16b5997/testfx-junit5-4.0.16-alpha-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
