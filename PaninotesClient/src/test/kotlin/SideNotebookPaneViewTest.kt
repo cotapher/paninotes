@@ -16,7 +16,7 @@ import java.nio.file.Paths
 
 @ExtendWith(ApplicationExtension::class)
 class SideNotebookPaneViewTest {
-    val testNotebookDir = File(Paths.get("src/main/resources/SideNotebookPaneViewNotebooks").toUri())
+    val testNotebookDir = File(Paths.get("src/main/resources/SideNotebookPaneViewTestNotebooks").toUri())
 
     @Start
     private fun start(stage: Stage) {
