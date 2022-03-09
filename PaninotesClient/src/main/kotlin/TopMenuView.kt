@@ -152,6 +152,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         optionTheme.setOnAction {
             if (jMetro.style == Style.LIGHT) jMetro.style = Style.DARK
             else jMetro.style = Style.LIGHT
+            jMetro.reApplyTheme()
         }
 
         optionTestHTTP.setOnAction {

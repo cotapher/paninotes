@@ -46,7 +46,7 @@ class Main : Application() {
         // create and show the scene
         val scene = Scene(layout)
 
-        scene.stylesheets.add("css/test.css")
+//        scene.stylesheets.add("css/test.css")
 
         // apply jmetro
         jMetro.scene = scene
