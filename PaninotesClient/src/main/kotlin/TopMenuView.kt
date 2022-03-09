@@ -8,19 +8,19 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
-import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import org.jsoup.Jsoup
-import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import kotlin.system.exitProcess
 
-
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
     val mapper = jacksonObjectMapper()
+
     init {
         this.layoutView()
     }
@@ -52,16 +52,33 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         optionMenu.id = "menu-optionMenu"
 
         fileNewNote.setOnAction {
-            val directoryDialog = DirectoryChooser()
-            directoryDialog.title = "Select an Notebook Folder"
-            directoryDialog.initialDirectory = model.testNotebookDir
-            val directory: File? = directoryDialog.showDialog(stage)
-            //this the notebook
-            if (directory != null) {
-                model.currentNotebook = directory
+            // If there is currently a notebook open, then we will automatically create a new note in that notebook
+            if (model.currentOpenNotebook != null) {
+                model.createNotePopup(model.currentOpenNotebook!!)
+            } else {
+                // Get list of all notebook names
+                val notebookNames: List<String> = model.notebooks.map({ it.title })
+
+                // Open a choice dialog to prompt the user what notebook they want to create the note in
+                val chooseNotebookDialog: ChoiceDialog<String> = ChoiceDialog(notebookNames[0], notebookNames)
+                chooseNotebookDialog.title = "Paninotes"
+                chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
+
+                val result: Optional<String> = chooseNotebookDialog.showAndWait()
+
+                // If the result is present, that means the user pressed the OK button
+                // Otherwise, they pressed cancel, and we don't want to add the notebook
+                if (result.isPresent) {
+                    // get the selected item
+                    val selectedNotebookTitle: String = chooseNotebookDialog.selectedItem as String
+                    if (selectedNotebookTitle.isNotEmpty()) {
+                        val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
+                        if (selectedNotebook != null) {
+                            model.createNotePopup(selectedNotebook!!)
+                        }
+                    }
+                }
             }
-            //create the note
-            model.createHTMLFilePopup(directory)
         }
 
         fileOpen.setOnAction {

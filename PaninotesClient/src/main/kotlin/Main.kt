@@ -13,6 +13,7 @@ class Main : Application() {
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
         val model = Model()
+        model.initializeNotebooks()
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()

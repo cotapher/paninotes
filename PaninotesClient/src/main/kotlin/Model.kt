@@ -9,12 +9,29 @@ import java.nio.file.Paths
 class Model {
 
     private val views = ArrayList<IView>()
-    val testNotebookDir = File(Paths.get("src/main/resources/testNotebook1").toUri())
-    var currentNotebook: File? = null
+    var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
-    private val notebooks = ArrayList<Notebook>()
+    val notebooks = ArrayList<Notebook>()
     var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
+
+    fun initializeNotebooks() {
+        // Initialize and create all the notebook objects from iterating through the Notebook directory
+        NOTEBOOK_DIR.listFiles()?.forEach { notebook ->
+            val newNotebook = createNotebook(notebook.name)
+            newNotebook.filePath = notebook
+            addNotebook(newNotebook)
+
+            // For each notebook, also initialize all the notes in the notebook
+            notebook.listFiles()?.forEach { note ->
+                val newNote = Note(note)
+                newNote.setContents()
+                newNotebook.addNote(newNote)
+            }
+        }
+
+        notifyViews()
+    }
 
     // view management
     fun addView(view: IView) {
@@ -27,37 +44,33 @@ class Model {
         }
     }
 
-    fun getNotebookAtFilePath(filePath: File?): Notebook? {
-        if (filePath != null) {
-            for (notebook in notebooks) {
-                if (notebook.filePath?.path.equals(filePath.path)) {
-                    return notebook
-                }
+    fun getNotebookByTitle(title:String): Notebook? {
+        for (notebook in notebooks) {
+            if (notebook.title == title) {
+                return notebook
             }
         }
 
-        return null
+        return null;
     }
 
-    fun createNotebookFolderPopup(parentDirectory: File?) {
+    fun createNotebookPopup() {
         val popup = TextInputDialog()
         popup.title = "Paninotes"
 
-        if (parentDirectory?.canWrite() == true) {
-            popup.headerText = "Create Notebook"
-            popup.contentText = "Enter name for new notebook:"
+        popup.headerText = "Create Notebook"
+        popup.contentText = "Enter name for new notebook:"
 
-            //show the popup
-            val result = popup.showAndWait()
-            if (result.isPresent) {
-                val notebookNameResult = result.get()
-                createNotebookFolderWithName(notebookNameResult, parentDirectory)
-            }
+        //show the popup
+        val result = popup.showAndWait()
+        if (result.isPresent) {
+            val notebookNameResult = result.get()
+            createNotebookWithName(notebookNameResult)
         }
     }
 
-    private fun createNotebookFolderWithName(notebookName: String, parentDirectory: File) {
-        val newNotebookFolder = File(parentDirectory.resolve(notebookName).toString())
+    private fun createNotebookWithName(notebookName: String) {
+        val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
             println("Error: ${newNotebookFolder.name} already exists")
@@ -74,36 +87,38 @@ class Model {
             newNotebook.filePath = newNotebookFolder
             addNotebook(newNotebook)
 
-            // set to current folder
+            // set to current notebook
             if (newNotebookFolder != null) {
-                currentNotebook = newNotebookFolder
+                currentOpenNotebook = newNotebook
             }
             notifyViews()
         }
     }
 
-    fun createHTMLFilePopup(directory: File?){
-        val popup = TextInputDialog()
-        popup.title = "Create a new note inside ${directory?.name}"
-        val currentFileOrDir = directory
-        if (currentFileOrDir?.canWrite() == true) {
+    fun createNotePopup(notebook: Notebook){
+        val directory: File? = notebook.filePath
 
-            popup.headerText = "Create note within $currentFileOrDir?"
-            popup.contentText = "Enter name for new Note file"
+        if (directory != null) {
+            val popup = TextInputDialog()
+            popup.title = "Paninotes"
+            val currentFileOrDir = directory
+            if (currentFileOrDir?.canWrite() == true) {
 
-            //show the popup
-            val result = popup.showAndWait()
-            if (result.isPresent) {
-                println(result)
-                println(result.get())
-                val textResult = result.get() + ".html"
-                setCurrentFile(textResult, directory)
+                popup.headerText = "Create a new note inside ${directory?.name}"
+                popup.contentText = "Enter name for new Note file"
+
+                //show the popup
+                val result = popup.showAndWait()
+                if (result.isPresent) {
+                    val noteFileName = result.get() + ".html"
+                    setCurrentNote(noteFileName, directory)
+                }
             }
         }
     }
 
-    fun setCurrentFile(textResult: String, directory: File) {
-        val newNoteFile = File(directory.resolve(textResult).toString())
+    fun setCurrentNote(noteFileName: String, directory: File) {
+        val newNoteFile = File(directory.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
             generateAlertDialogPopup(
@@ -126,9 +141,6 @@ class Model {
         currentNote?.setMetaData()
         notifyViews()
     }
-
-
-
 
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 
