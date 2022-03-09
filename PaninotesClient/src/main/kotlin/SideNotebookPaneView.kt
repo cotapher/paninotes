@@ -91,7 +91,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         }
 
                         for (i in currentNotebook.notes.indices) {
-                            val noteButton = Button(currentNotebook.notes[i].fileName)
+                            val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(110.0, 16.0)
                             noteButton.setOnAction {

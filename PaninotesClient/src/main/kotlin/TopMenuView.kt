@@ -1,6 +1,5 @@
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
@@ -186,7 +185,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
             if(model.currentNote != null) {
                 val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
                 confirmationAlert.title = "Paninotes"
-                confirmationAlert.contentText = "Save changes to ${model.currentNote?.fileName}?"
+                confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
                 confirmationAlert.buttonTypes.clear()
                 val discardButton = ButtonType("Discard")
                 val saveButton = ButtonType("Save")
@@ -220,7 +219,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     override fun update() {
         //add a condition to only show editor if there is file assigned to model.currentFile
         if(model.currentNote != null){
-            htmlEditor.htmlText = model.currentNote?.fileContents
+            htmlEditor.htmlText = model.currentNote?.htmlText
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message
