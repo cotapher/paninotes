@@ -5,12 +5,12 @@ import java.io.File
 
 class Note(notePath: File) {
     var filePath: File? = null
-    var fileName: String? = null
-    var fileContents: String? = ""
+    var title: String? = null
+    var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
     init {
         this.filePath = notePath
-        this.fileName = resolveNameFromPath()
+        this.title = resolveNameFromPath()
         this.filePath?.createNewFile()
     }
 
@@ -18,10 +18,10 @@ class Note(notePath: File) {
         return filePath?.nameWithoutExtension
     }
     fun setContents() {
-        fileContents = readHTMLFile(filePath)
+        htmlText = readHTMLFile(filePath)
     }
     fun setMetaData() {
-        fileMetadata = fileContents?.let { readMetaData(it) }
+        fileMetadata = htmlText?.let { readMetaData(it) }
     }
 
     fun readHTMLFile(file:File?): String? {
