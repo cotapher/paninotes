@@ -4,6 +4,7 @@ import org.jsoup.select.Elements
 import java.io.File
 
 class Note(notePath: File) {
+    var id: Int? = null
     var filePath: File? = null
     var fileName: String? = null
     var fileContents: String? = ""
@@ -37,6 +38,7 @@ class Note(notePath: File) {
         for (metaTag in metaTags) {
             val name: String = metaTag.attr("name")
             val content: String = metaTag.attr("content")
+            id = metaTag.attr("id").toIntOrNull()
             metadataMap[name] = content
         }
         println(metadataMap.toString())
