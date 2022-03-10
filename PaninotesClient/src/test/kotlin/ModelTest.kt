@@ -18,7 +18,7 @@ import java.nio.file.Paths
 internal class ModelTest {
     private val testNotebookDir = File(Paths.get("src/main/resources/NotebooksModelTest").toUri())
     private val testNotebookName = "notebooka"
-    private val model = Model()
+    private val model = Model(Stage())
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {

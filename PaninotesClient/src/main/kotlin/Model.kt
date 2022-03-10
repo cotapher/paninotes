@@ -1,12 +1,14 @@
 
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
-import javafx.scene.control.TextInputDialog
+import javafx.stage.Stage
+import jfxtras.styles.jmetro.FlatAlert
+import jfxtras.styles.jmetro.FlatTextInputDialog
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class Model {
+class Model (val stage: Stage) {
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
@@ -56,22 +58,7 @@ class Model {
         return null
     }
 
-    fun createNotebookPopup() {
-        val popup = TextInputDialog()
-        popup.title = "Paninotes"
-
-        popup.headerText = "Create Notebook"
-        popup.contentText = "Enter name for new notebook:"
-
-        //show the popup
-        val result = popup.showAndWait()
-        if (result.isPresent) {
-            val notebookNameResult = result.get()
-            createNotebookWithName(notebookNameResult)
-        }
-    }
-
-    private fun createNotebookWithName(notebookName: String) {
+    fun createNotebookWithName(notebookName: String) {
         val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
@@ -101,8 +88,8 @@ class Model {
         val directory: File? = notebook.filePath
 
         if (directory != null) {
-            val popup = TextInputDialog()
-            popup.title = "Paninotes"
+            val popup = FlatTextInputDialog()
+            popup.initOwner(stage)
             val currentFileOrDir = directory
             if (currentFileOrDir?.canWrite() == true) {
 
@@ -188,7 +175,8 @@ class Model {
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
-        val fileExistsAlert = Alert(type)
+        val fileExistsAlert = FlatAlert(type)
+        fileExistsAlert.initOwner(stage)
         fileExistsAlert.title = title
         val errorContent = Label(content)
         errorContent.isWrapText = true

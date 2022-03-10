@@ -5,6 +5,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
+import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.MDL2IconFont
 
@@ -72,7 +73,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         }
 
         infoButton.setOnAction {
-            val popup = Alert(Alert.AlertType.INFORMATION)
+            val popup = FlatAlert(Alert.AlertType.INFORMATION)
             popup.title = "Note HTML Metadata Info"
             popup.dialogPane.content =  Label(model.currentNote?.fileMetadata.toString())
             popup.show()

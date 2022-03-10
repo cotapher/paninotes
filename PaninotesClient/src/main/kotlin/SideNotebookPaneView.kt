@@ -7,6 +7,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.FlatTextInputDialog
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -61,7 +62,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                 addNotebookButton.setOnAction {
                     // Open the dialog to create the notebook
-                    model.createNotebookPopup()
+                    createNotebookPopup()
                 }
 
                 this.bottom = addNotebookButton
@@ -143,6 +144,21 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         currentNotebookId = notebookId
 
         this.layoutView()
+    }
+
+    fun createNotebookPopup() {
+        val popup = FlatTextInputDialog()
+        popup.initOwner(stage)
+
+        popup.headerText = "Create Notebook"
+        popup.contentText = "Enter name for new notebook:"
+
+        //show the popup
+        val result = popup.showAndWait()
+        if (result.isPresent) {
+            val notebookNameResult = result.get()
+            model.createNotebookWithName(notebookNameResult)
+        }
     }
 
     override fun update() {

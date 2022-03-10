@@ -16,7 +16,7 @@ class SideIconPaneViewTest {
 
     @Start
     private fun start(stage: Stage) {
-        val model = Model()
+        val model = Model(stage)
         model.initializeNotebooks()
 
         val sideNotebookPane = SideNotebookPaneView(model, stage)
