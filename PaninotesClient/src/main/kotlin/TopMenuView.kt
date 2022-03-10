@@ -8,6 +8,8 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.JMetro
+import jfxtras.styles.jmetro.Style
 import org.jsoup.Jsoup
 import java.io.File
 import java.net.URI
@@ -19,7 +21,11 @@ import java.util.*
 import kotlin.system.exitProcess
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
+
+    private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
+    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
+
     val mapper = jacksonObjectMapper()
 
     init {
@@ -42,6 +48,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
+        val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
         val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
         val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
         menuBar.menus.add(optionMenu)
@@ -157,6 +164,22 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
                     dialog.showAndWait()
                     htmlEditor.htmlText = oldText
                 }
+            }
+        }
+
+        optionTheme.setOnAction {
+            val ss = jMetro.scene.stylesheets
+            if (jMetro.style == Style.LIGHT) {
+                ss.clear()
+                jMetro.style = Style.DARK
+                ss.add(DARK_STYLESHEET_URL)
+                optionTheme.text = "Use Light theme"
+            }
+            else {
+                ss.clear()
+                jMetro.style = Style.LIGHT
+                ss.add(LIGHT_STYLESHEET_URL)
+                optionTheme.text = "Use Dark theme"
             }
         }
 
