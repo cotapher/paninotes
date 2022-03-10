@@ -95,6 +95,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(110.0, 16.0)
                             noteButton.setOnAction {
+                                // Open the clicked note
                                 model.openNote(currentNotebook.notes[i])
                             }
                             gridPane.add(noteButton, 0, i + 1)

@@ -68,6 +68,17 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                 this.selectionModel.select(tab)
             }
         }
+
+        // Make sure the active tab corresponds to the model's current note
+        if (model.currentNote != null) {
+            val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.fileName!!
+            for (i in 0 until this.tabs.size) {
+                if (this.tabs[i].text == currentNotebookAndNoteName) {
+                    this.selectionModel.select(this.tabs[i])
+                    break
+                }
+            }
+        }
     }
 
     override fun update() {
