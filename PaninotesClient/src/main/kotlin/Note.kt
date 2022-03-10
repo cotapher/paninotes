@@ -3,15 +3,14 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
 
-class Note(notePath: File) {
-    var filePath: File? = null
+class Note(var filePath: File? =null ) {
+    var id: Int? = null
     var title: String? = null
     var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
     var notebook: Notebook? = null
 
     init {
-        this.filePath = notePath
         this.title = resolveNameFromPath()
         this.filePath?.createNewFile()
     }

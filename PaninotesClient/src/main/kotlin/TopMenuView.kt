@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
@@ -243,9 +244,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             if(response.statusCode() == 200){
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
+                //TODO need integrate with view
+                //now we want to add ids to note objects
+//                val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+//                val idx = model.notebooks.indexOfFirst{it.title == notebookWithID.title}
+//                model.notebooks[idx] = notebookWithID
+//                model.currentOpenNotebook = notebookWithID
+//                model.notifyViews()
             } else {
                 print("ERROR ${response.statusCode()}")
                 print(response.body().toString())

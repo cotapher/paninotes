@@ -34,9 +34,28 @@ class Controller {
 
     @PostMapping("/backupNotebook")
     @ResponseBody
-    fun backupNotebook(@RequestBody newNotebook:Notebook): String{
-        notebookRepository?.save(newNotebook)
-        return "Notebook Saved"
+    fun backupNotebook(@RequestBody newNotebook:Notebook): Notebook? {
+        val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
+        if(matchingNotebooks?.size == 0) {
+            println("Notebook not found by title, inserting into db")
+            //return the notes with ids
+            return notebookRepository?.save(newNotebook)
+
+        } else {
+            //there should only be one make
+            println("Notebook exist")
+
+            val matchingNotebook = matchingNotebooks!!.first()
+            val matchingNotebookNotes = matchingNotebook.notes!!
+            //compare which note objects have changed
+            val newNotes = newNotebook.notes!!
+            val merged = (matchingNotebookNotes union newNotes.toSet())
+            val newNoteList = merged.toMutableList()
+            matchingNotebookNotes.clear()
+            matchingNotebookNotes.addAll(newNoteList)
+            return notebookRepository?.save(matchingNotebook)
+        }
+
     }
 
     @GetMapping("/deleteAll")
