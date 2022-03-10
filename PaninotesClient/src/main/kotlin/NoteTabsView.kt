@@ -31,7 +31,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         model.openNotes.forEach { note ->
             // Check if we already have a tab for this open note
             // This string will be unique for each tab, since every notebook must have a different name
-            val notebookAndNoteName: String = note.notebook!!.title + "/" + note.fileName!!
+            val notebookAndNoteName: String = note.notebook!!.title + "/" + note.title!!
 
             if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
                 val tab = Tab(notebookAndNoteName)
@@ -71,7 +71,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 
         // Make sure the active tab corresponds to the model's current note
         if (model.currentNote != null) {
-            val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.fileName!!
+            val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
             for (i in 0 until this.tabs.size) {
                 if (this.tabs[i].text == currentNotebookAndNoteName) {
                     this.selectionModel.select(this.tabs[i])

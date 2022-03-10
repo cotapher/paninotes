@@ -51,7 +51,7 @@ class Note(notePath: File) {
 
     override fun equals(other: Any?): Boolean {
         return (other is Note)
-            && other.fileName == fileName
+            && other.title == title
                 && other.notebook?.title == notebook?.title
 
     }

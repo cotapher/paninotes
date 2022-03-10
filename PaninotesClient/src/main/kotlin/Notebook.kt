@@ -19,7 +19,7 @@ class Notebook(id: Int, title: String) {
 
     fun getNoteByTitle(noteTitle: String): Note? {
         for (note in notes) {
-            if (note.fileName == noteTitle) {
+            if (note.title == noteTitle) {
                 return note
             }
         }
