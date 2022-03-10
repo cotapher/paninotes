@@ -21,7 +21,6 @@ class Model {
     var currentNote: Note? = null
     var openNotes = ArrayList<Note>()
     val notebooks = ArrayList<Notebook>()
-    var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
@@ -173,8 +172,7 @@ class Model {
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 
     fun createNotebook(title: String): Notebook {
-        currentNotebookIndex++
-        return Notebook(currentNotebookIndex, title)
+        return Notebook(title)
     }
 
     fun addNotebook(notebook: Notebook) {
@@ -184,14 +182,6 @@ class Model {
 
     fun getAllNotebooks(): ArrayList<Notebook> {
         return notebooks
-    }
-
-    fun getNotebookById(id: Int): Notebook? {
-        for (notebook in notebooks) {
-            if (notebook.notebookId == id) return notebook
-        }
-
-        return null
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
@@ -222,7 +212,7 @@ class Model {
             val notebookWithID: Notebook = mapper.readValue(response.body().toString())
             //map notes back to notebook
             notebookWithID.notes.forEach { it.notebook = notebookWithID }
-            notebookWithID.notes.forEach { it.notebookId = notebookWithID.notebookId }
+            notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
             val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
             notebooks[idx] = notebookWithID
             currentOpenNotebook = notebookWithID
@@ -264,16 +254,32 @@ class Model {
 
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080"))
+            .uri(URI.create("http://localhost:8080/notebooks"))
             .GET()
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         if(response.statusCode() == 200){
             println("Success ${response.statusCode()}")
             print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
+                val notebookList: List<Notebook> = mapper.readValue(response.body().toString())
+                print(notebookList.size)
+                print(notebookList.toString())
+
+                notebookList.forEach { notebook ->
+                    val newNotebook = createNotebook(notebook.title)
+                    newNotebook.filePath = notebook.filePath
+                    addNotebook(newNotebook)
+
+                    // For each notebook, also initialize all the notes in the notebook
+                    notebook.notes.forEach { note ->
+                        val newNote = Note(note.filePath)
+                        newNote.notebook = newNotebook
+                        newNote.setContents()
+                        newNotebook.addNote(newNote)
+                    }
+                }
+
+            notifyViews()
         } else {
             print("ERROR ${response.statusCode()}")
             print(response.body().toString())

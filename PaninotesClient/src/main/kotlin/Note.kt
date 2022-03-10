@@ -49,12 +49,12 @@ class Note(var filePath: File? =null ) {
 
     fun saveNote(HTMLString:String){
         filePath?.writeText(HTMLString)
+        setContents()
     }
 
     override fun equals(other: Any?): Boolean {
         return (other is Note)
             && other.title == title
                 && other.notebook?.title == notebook?.title
-
     }
 }

@@ -28,8 +28,9 @@ class Controller {
 
     @GetMapping("/notebooks")
     @ResponseBody
-    fun getAllNotebooks(): MutableList<Notebook>? {
-        return notebookRepository?.findAll()?.toMutableList()
+    fun getAllNotebooks(): MutableList<Notebook> {
+        // return NotebookListResponse(notebookList)
+        return notebookRepository?.findAll()!!.toMutableList<Notebook>()
     }
 
     @PostMapping("/backupNotebook")
@@ -49,12 +50,20 @@ class Controller {
 
             val matchingNotebook = matchingNotebooks!!.first()
             val matchingNotebookNotes = matchingNotebook.notes!!
+            // Delete the old notes in that notebook in the database
+            matchingNotebookNotes.forEach {
+                noteRepository?.deleteById(it.id!!)
+            }
+            /*
             //compare which note objects have changed
             val newNotes = newNotebook.notes!!
             val merged = (matchingNotebookNotes union newNotes.toSet())
             val newNoteList = merged.toMutableList()
+             */
+
             matchingNotebookNotes.clear()
-            matchingNotebookNotes.addAll(newNoteList)
+            matchingNotebookNotes.addAll(newNotebook.notes!!)
+
             return notebookRepository?.save(matchingNotebook)
         }
 

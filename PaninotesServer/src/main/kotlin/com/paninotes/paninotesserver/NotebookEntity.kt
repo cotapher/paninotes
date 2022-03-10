@@ -11,7 +11,7 @@ import javax.persistence.*
 data class Notebook(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    var id: Int? = null,
     @Column(name = "title")
     @NonNull
     var title: String? = null,
