@@ -10,9 +10,12 @@ import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
 import org.testfx.matcher.base.NodeMatchers.*
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @ExtendWith(ApplicationExtension::class)
 class SideIconPaneViewTest {
+    private val delay: CountDownLatch = CountDownLatch(1)
 
     @Start
     private fun start(stage: Stage) {
@@ -53,10 +56,12 @@ class SideIconPaneViewTest {
 
         // After clicking on the notebook button, the notebook pane should now open
         robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(3, TimeUnit.SECONDS); // wait for the animation to finish
         FxAssert.verifyThat("#sideNotebookPane",  isVisible())
 
         // After clicking on the notebook button again, the notebook pane should close
         robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(3, TimeUnit.SECONDS); // wait for the animation to finish
         FxAssert.verifyThat("#sideNotebookPane",  isInvisible())
     }
 
