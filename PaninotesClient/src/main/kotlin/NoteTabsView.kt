@@ -43,6 +43,10 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                 }
 
                 tab.setOnClosed {
+                    // Remove the note from the open notes in the model
+                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
+                    model.closeNote(closedNote)
+
                     // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
                     // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
                     // So, make sure that the tab actually gets closed/removed
@@ -58,13 +62,10 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                     }
 
                     if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
-
-                    // Remove the note from the open notes in the model
-                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
-                    model.closeNote(closedNote)
                 }
 
                 this.tabs.add(tab)
+                this.selectionModel.select(tab)
             }
         }
     }

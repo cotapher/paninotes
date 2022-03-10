@@ -41,7 +41,7 @@ class Note(notePath: File) {
             val content: String = metaTag.attr("content")
             metadataMap[name] = content
         }
-        println(metadataMap.toString())
+
         return metadataMap
     }
 
