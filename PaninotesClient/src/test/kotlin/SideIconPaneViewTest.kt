@@ -20,7 +20,7 @@ class SideIconPaneViewTest {
         model.initializeNotebooks()
 
         val sideNotebookPane = SideNotebookPaneView(model, stage)
-        val sideIconPane = SideIconPaneView(model, sideNotebookPane)
+        val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)

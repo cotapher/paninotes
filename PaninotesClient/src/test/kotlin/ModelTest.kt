@@ -3,14 +3,12 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
-import java.awt.event.KeyEvent
 import java.io.File
 import java.nio.file.Paths
 
@@ -18,7 +16,7 @@ import java.nio.file.Paths
 internal class ModelTest {
     private val testNotebookDir = File(Paths.get("src/main/resources/NotebooksModelTest").toUri())
     private val testNotebookName = "notebooka"
-    private val model = Model(Stage())
+    private val model = Model()
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
@@ -38,7 +36,7 @@ internal class ModelTest {
         clearTestNotebookDirectory()
 
         val sideNotebookPane = SideNotebookPaneView(model, stage)
-        val sideIconPane = SideIconPaneView(model, sideNotebookPane)
+        val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)

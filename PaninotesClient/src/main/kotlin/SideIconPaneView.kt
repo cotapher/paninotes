@@ -5,11 +5,12 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
+import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.MDL2IconFont
 
-class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView): GridPane(), IView {
+class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView, val stage: Stage): GridPane(), IView {
 
     private val notebookButton = Button()
     private val searchButton = Button()
@@ -74,6 +75,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
 
         infoButton.setOnAction {
             val popup = FlatAlert(Alert.AlertType.INFORMATION)
+            popup.initOwner(stage)
             popup.title = "Note HTML Metadata Info"
             popup.dialogPane.content =  Label(model.currentNote?.fileMetadata.toString())
             popup.show()

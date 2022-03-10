@@ -3,11 +3,10 @@ import animatefx.animation.SlideOutLeft
 import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatTextInputDialog
+import jfxtras.styles.jmetro.MDL2IconFont
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -51,12 +50,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 }
 
                 // At the bottom, we want to add a button to add a notebook
-                val plusImage = Image("plus_icon.png")
-                val plusImageView = ImageView(plusImage)
-                plusImageView.isPreserveRatio = true
-                plusImageView.fitHeight = 17.0
+                val plusIcon = MDL2IconFont("\uE710")
 
-                val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
+                val addNotebookButton = Button("ADD NOTEBOOK", plusIcon)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
                 addNotebookButton.prefWidth = 135.0
 
@@ -74,12 +70,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                     if (currentNotebook != null) {
                         // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
-                        val backArrowImage = Image("baseline_arrow_back_black_24dp.png")
-                        val backArrowImageView = ImageView(backArrowImage)
-                        backArrowImageView.isPreserveRatio = true
-                        backArrowImageView.fitHeight = 17.0
+                        val backArrowIcon = MDL2IconFont("\uE72B")
 
-                        val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
+                        val currentNotebookButton = Button(currentNotebook.title, backArrowIcon)
                         currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
                         currentNotebookButton.setPrefSize(135.0, 16.0)
                         vBox.children.add(0, currentNotebookButton)
@@ -105,12 +98,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     }
 
                     // At the bottom, we want to add a button to add a note into this notebook
-                    val plusImage = Image("plus_icon.png")
-                    val plusImageView = ImageView(plusImage)
-                    plusImageView.isPreserveRatio = true
-                    plusImageView.fitHeight = 17.0
+                    val plusIcon = MDL2IconFont("\uE710")
 
-                    val addNoteButton = Button("ADD NOTE", plusImageView)
+                    val addNoteButton = Button("ADD NOTE", plusIcon)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
                     addNoteButton.prefWidth = 135.0
 

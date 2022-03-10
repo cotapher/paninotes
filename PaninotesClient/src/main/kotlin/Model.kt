@@ -8,7 +8,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class Model (val stage: Stage) {
+class Model (val stage: Stage? = null) {
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
