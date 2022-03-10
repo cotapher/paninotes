@@ -2,25 +2,20 @@
 * {
     -fx-my-menu-color: #ececec;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #CCCCCC;      /* Change according to your needs */
-    -fx-my-menu-font-color: #FFFFFF;             /* Change according to your needs */
-    -fx-my-menu-font-color-highlighted: #FFFFFF; /* Change according to your needs */
 }
 
 /* MENU BAR + Top-level MENU BUTTONS */
 /*** The menu bar itself ***/
 .menu-bar {
     -fx-background-color: -fx-my-menu-color;
-    -fx-effect: innershadow(gaussian, grey, 1, 0, 0, -1);
+
+    /* this is lying its not an error */
+    -fx-effect: innershadow(gaussian, derive(grey, 60%), 1, 0, 0, -1);
 }
 
 /*** Top-level menu itself (not selected / hovered) ***/
 .menu-bar > .container > .menu-button {
     -fx-background-color: -fx-my-menu-color;
-}
-
-/*** Top-level menu's label (disabled) ***/
-.menu-bar > .container > .menu-button > .label:disabled {
-    -fx-opacity: 1.0;
 }
 
 /*** Top-level menu itself (selected / hovered) ***/

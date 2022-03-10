@@ -28,6 +28,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
     }
 
     private fun layoutView() {
+        // Animated VBox holds the buttons for the list of notebooks and notes
+        // TODO - refactor to add elements to vBox without resetting vBox to make the animations nice
         val vBox = AnimatedVBox(AnimationPair(FadeInUp(), SlideOutLeft()).setSpeed(3.0, 3.0))
 
         // Depending on the current view, we will either show a list of notebooks, or list of notes in a notebook
@@ -57,7 +59,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                 val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
-                addNotebookButton.prefWidth = 135.0;
+                addNotebookButton.prefWidth = 135.0
 
                 addNotebookButton.setOnAction {
                     // Open the DirectoryChooser so the user can choose where they want to store their notebook
@@ -131,7 +133,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
         vBox.spacing = 1.0
 
-        this.top = vBox;
+        this.top = vBox
     }
 
     fun showNotebooks() {

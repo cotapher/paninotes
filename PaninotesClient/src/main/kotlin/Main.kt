@@ -12,10 +12,13 @@ import jfxtras.styles.jmetro.Style
 
 class Main : Application() {
 
-    private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css").toExternalForm()
+    private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css")?.toExternalForm()
 
     override fun start(stage: Stage) {
+        // activate css live update
         CSSFX.start()
+
+        val jMetro = JMetro(Style.LIGHT)
 
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
@@ -23,7 +26,6 @@ class Main : Application() {
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val layout = BorderPane()
-        val jMetro = JMetro(Style.LIGHT)
 
         val htmlEditor = HTMLEditor()
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
@@ -50,6 +52,7 @@ class Main : Application() {
 
         // apply jmetro
         jMetro.scene = scene
+        jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
         layout.styleClass.add(JMetroStyleClass.BACKGROUND)
 
         stage.width = 800.0
@@ -59,7 +62,5 @@ class Main : Application() {
         stage.title = "Paninotes"
 
         stage.show()
-
-        jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
     }
 }

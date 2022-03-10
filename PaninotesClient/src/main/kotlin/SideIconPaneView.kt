@@ -5,6 +5,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
+import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.MDL2IconFont
 
 class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView): GridPane(), IView {
@@ -12,6 +13,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
     private val notebookButton = Button()
     private val searchButton = Button()
     private val infoButton = Button()
+
     init {
         this.layoutView()
         this.add(notebookButton, 0, 0)
@@ -22,6 +24,9 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         sideNotebookPaneView.isVisible = false
 
         this.styleClass.add("front-pane")
+        notebookButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
+        searchButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
+        infoButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
     }
 
     private fun layoutView() {
@@ -30,28 +35,9 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         infoButton.id = "sideIconPane-info-button"
 
         // Set up the images and buttons for the sidebar
-//        val notebookImage = Image("notebook_icon.png")
-//        val notebookImageView = ImageView(notebookImage)
-//        notebookImageView.isPreserveRatio = true
-//        notebookImageView.fitHeight = 20.0
-//
-//        val searchImage = Image("search_icon.png")
-//        val searchImageView = ImageView(searchImage)
-//        searchImageView.isPreserveRatio = true
-//        searchImageView.fitHeight = 20.0
-//
-//        val infoImage = Image("info_icon.png")
-//        val infoImageView = ImageView(infoImage)
-//        infoImageView.isPreserveRatio = true
-//        infoImageView.fitHeight = 20.0
-
         notebookButton.setPrefSize(20.0, 20.0)
         searchButton.setPrefSize(20.0, 20.0)
         infoButton.setPrefSize(20.0, 20.0)
-
-//        notebookButton.graphic = notebookImageView
-//        searchButton.graphic = searchImageView
-//        infoButton.graphic = infoImageView
 
         // JMetro MDL2 icons
         val notebookIcon = MDL2IconFont("\uE700")

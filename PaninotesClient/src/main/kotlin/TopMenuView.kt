@@ -21,9 +21,12 @@ import kotlin.system.exitProcess
 
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
-    private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css").toExternalForm()
-    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css").toExternalForm()
+
+    private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
+    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
+
     val mapper = jacksonObjectMapper()
+
     init {
         this.layoutView()
     }
@@ -44,7 +47,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
-        val optionTheme = createAddToMenu(optionMenu, "Change Theme")
+        val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
         val optionTestHTTP = createAddToMenu(optionMenu,"HTTPTEST")
         menuBar.menus.add(optionMenu)
 
@@ -149,15 +152,15 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             val ss = jMetro.scene.stylesheets
             if (jMetro.style == Style.LIGHT) {
                 ss.clear()
-//                jMetro.overridingStylesheets.remove(LIGHT_STYLESHEET_URL)
                 jMetro.style = Style.DARK
                 ss.add(DARK_STYLESHEET_URL)
+                optionTheme.text = "Use Light theme"
             }
             else {
                 ss.clear()
-//                jMetro.overridingStylesheets.remove(DARK_STYLESHEET_URL)
                 jMetro.style = Style.LIGHT
                 ss.add(LIGHT_STYLESHEET_URL)
+                optionTheme.text = "Use Dark theme"
             }
         }
 
