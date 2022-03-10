@@ -4,6 +4,7 @@ package com.paninotes.paninotesserver
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
 import org.springframework.lang.NonNull
+import java.io.File
 import javax.persistence.*
 
 @Entity
@@ -20,7 +21,9 @@ data class Note(
     @Lob
     @Basic
     @Nationalized
-    var htmlText: String? = null //gives nclob
+    var htmlText: String? = null, //gives nclob
+    @Column(name = "filepath")
+    var filePath: File? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

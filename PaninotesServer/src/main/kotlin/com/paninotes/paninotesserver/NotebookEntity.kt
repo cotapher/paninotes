@@ -2,6 +2,7 @@ package com.paninotes.paninotesserver
 
 
 import org.springframework.lang.NonNull
+import java.io.File
 import javax.persistence.*
 
 @Entity
@@ -13,6 +14,10 @@ data class Notebook(
     @Column(name = "title")
     @NonNull
     var title: String? = null,
+
+    @Column(name= "filepath")
+    var filePath: File? = null,
+
     @OneToMany(
         orphanRemoval = true,
         cascade = [CascadeType.ALL]
