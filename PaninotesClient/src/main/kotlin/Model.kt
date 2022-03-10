@@ -1,12 +1,19 @@
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.control.TextInputDialog
 import java.io.File
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Paths
 
 class Model {
+    val mapper = jacksonObjectMapper()
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
@@ -194,5 +201,79 @@ class Model {
         errorContent.isWrapText = true
         fileExistsAlert.dialogPane.content = errorContent
         fileExistsAlert.showAndWait()
+    }
+
+    // Server
+
+    fun makeBackup() {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/backupNotebook"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        if (response.statusCode() == 200) {
+            println("Success ${response.statusCode()}")
+            print(response.body().toString())
+            //TODO need integrate with view
+//            now we want to add ids to note objects
+            val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+            val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
+            notebooks[idx] = notebookWithID
+            currentOpenNotebook = notebookWithID
+            notifyViews()
+        } else {
+            print("ERROR ${response.statusCode()}")
+            print(response.body().toString())
+        }
+    }
+
+    fun testSendNote() {
+        val client = HttpClient.newBuilder().build()
+        val path = Paths.get(System.getProperty("user.dir")).resolve("src/main/resources/testNotebook1/fancynotes.html")
+        val testFile = File(path.toUri())
+        val testNote: Note = Note(testFile)
+        testNote.setContents()
+        testNote.setMetaData()
+        val requestBody = mapper.writeValueAsString(testNote)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/new"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        if(response.statusCode() == 200){
+            println("Success ${response.statusCode()}")
+            print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+        } else {
+            print("ERROR ${response.statusCode()}")
+            print(response.body().toString())
+        }
+    }
+
+    fun restoreBackup() {
+        //TODO Create a dialog box that confirms overwrite
+
+        val client = HttpClient.newBuilder().build()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080"))
+            .GET()
+            .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        if(response.statusCode() == 200){
+            println("Success ${response.statusCode()}")
+            print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+        } else {
+            print("ERROR ${response.statusCode()}")
+            print(response.body().toString())
+        }
     }
 }
