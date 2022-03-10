@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -8,6 +9,7 @@ class Note(var filePath: File? =null ) {
     var title: String? = null
     var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
+    @JsonIgnore
     var notebook: Notebook? = null
 
     init {
