@@ -1,7 +1,7 @@
-
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.application.Platform
 import javafx.scene.control.*
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
@@ -70,22 +70,32 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 // Get list of all notebook names
                 val notebookNames: List<String> = model.notebooks.map({ it.title })
 
-                // Open a choice dialog to prompt the user what notebook they want to create the note in
-                val chooseNotebookDialog: ChoiceDialog<String> = ChoiceDialog(notebookNames[0], notebookNames)
-                chooseNotebookDialog.title = "Paninotes"
-                chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
+                // If there is no notebooks, show an error popup telling the user to create a notebook first
+                if (notebookNames.isEmpty()) {
+                    val warningPopup = Alert(AlertType.WARNING)
+                    warningPopup.title = "Paninotes"
+                    warningPopup.headerText = "No Notebooks!"
+                    warningPopup.contentText = "You have no notebooks! You can only create a note in a notebook"
 
-                val result: Optional<String> = chooseNotebookDialog.showAndWait()
+                    warningPopup.showAndWait()
+                } else {
+                    // Open a choice dialog to prompt the user what notebook they want to create the note in
+                    val chooseNotebookDialog: ChoiceDialog<String> = ChoiceDialog(notebookNames[0], notebookNames)
+                    chooseNotebookDialog.title = "Paninotes"
+                    chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
 
-                // If the result is present, that means the user pressed the OK button
-                // Otherwise, they pressed cancel, and we don't want to add the notebook
-                if (result.isPresent) {
-                    // get the selected item
-                    val selectedNotebookTitle: String = chooseNotebookDialog.selectedItem as String
-                    if (selectedNotebookTitle.isNotEmpty()) {
-                        val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
-                        if (selectedNotebook != null) {
-                            model.createNotePopup(selectedNotebook!!)
+                    val result: Optional<String> = chooseNotebookDialog.showAndWait()
+
+                    // If the result is present, that means the user pressed the OK button
+                    // Otherwise, they pressed cancel, and we don't want to add the notebook
+                    if (result.isPresent) {
+                        // get the selected item
+                        val selectedNotebookTitle: String = chooseNotebookDialog.selectedItem as String
+                        if (selectedNotebookTitle.isNotEmpty()) {
+                            val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
+                            if (selectedNotebook != null) {
+                                model.createNotePopup(selectedNotebook!!)
+                            }
                         }
                     }
                 }
