@@ -6,9 +6,7 @@ import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
-import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import java.io.File
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -62,14 +60,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 addNotebookButton.prefWidth = 135.0
 
                 addNotebookButton.setOnAction {
-                    // Open the DirectoryChooser so the user can choose where they want to store their notebook
-                    val directoryDialog = DirectoryChooser()
-                    directoryDialog.title = "Select where you want to store the notebook"
-                    directoryDialog.initialDirectory = model.testNotebookDir
-                    val directory: File? = directoryDialog.showDialog(stage)
-
-                    // open the dialog to create the notebook
-                   model.createNotebookFolderPopup(directory)
+                    // Open the dialog to create the notebook
+                    model.createNotebookPopup()
                 }
 
                 this.bottom = addNotebookButton
@@ -94,10 +86,13 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         currentNotebookButton.setOnAction {
                             // Go back to the list of notebooks
                             showNotebooks()
+
+                            // In the Model, set the currentOpenNotebook back to null
+                            model.currentOpenNotebook = null;
                         }
 
                         for (i in currentNotebook.notes.indices) {
-                            val noteButton = Button(currentNotebook.notes[i].fileName)
+                            val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(135.0, 16.0)
                             noteButton.setOnAction {
@@ -120,7 +115,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     addNoteButton.setOnAction {
                         // create the note in the current open notebook
                         if (model.currentOpenNotebook != null) {
-                            model.createHTMLFilePopup(model.currentOpenNotebook!!.filePath)
+                            model.createNotePopup(model.currentOpenNotebook!!)
                         }
                     }
 

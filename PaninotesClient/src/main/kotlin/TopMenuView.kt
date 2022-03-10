@@ -7,7 +7,6 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
-import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetro
 import jfxtras.styles.jmetro.Style
@@ -17,6 +16,8 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.file.Paths.get
+import java.util.*
 import kotlin.system.exitProcess
 
 
@@ -48,7 +49,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
         val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
-        val optionTestHTTP = createAddToMenu(optionMenu,"HTTPTEST")
+        val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
+        val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -59,16 +61,33 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         optionMenu.id = "menu-optionMenu"
 
         fileNewNote.setOnAction {
-            val directoryDialog = DirectoryChooser()
-            directoryDialog.title = "Select an Notebook Folder"
-            directoryDialog.initialDirectory = model.testNotebookDir
-            val directory: File? = directoryDialog.showDialog(stage)
-            //this the notebook
-            if (directory != null) {
-                model.currentNotebook = directory
+            // If there is currently a notebook open, then we will automatically create a new note in that notebook
+            if (model.currentOpenNotebook != null) {
+                model.createNotePopup(model.currentOpenNotebook!!)
+            } else {
+                // Get list of all notebook names
+                val notebookNames: List<String> = model.notebooks.map({ it.title })
+
+                // Open a choice dialog to prompt the user what notebook they want to create the note in
+                val chooseNotebookDialog: ChoiceDialog<String> = ChoiceDialog(notebookNames[0], notebookNames)
+                chooseNotebookDialog.title = "Paninotes"
+                chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
+
+                val result: Optional<String> = chooseNotebookDialog.showAndWait()
+
+                // If the result is present, that means the user pressed the OK button
+                // Otherwise, they pressed cancel, and we don't want to add the notebook
+                if (result.isPresent) {
+                    // get the selected item
+                    val selectedNotebookTitle: String = chooseNotebookDialog.selectedItem as String
+                    if (selectedNotebookTitle.isNotEmpty()) {
+                        val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
+                        if (selectedNotebook != null) {
+                            model.createNotePopup(selectedNotebook!!)
+                        }
+                    }
+                }
             }
-            //create the note
-            model.createHTMLFilePopup(directory)
         }
 
         fileOpen.setOnAction {
@@ -164,11 +183,39 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             }
         }
 
-        optionTestHTTP.setOnAction {
+        optionRestoreBackup.setOnAction {
+            //TODO Create a dialog box that confirms overwrite
+
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080"))
                 .GET()
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        }
+
+        optionTestSend.setOnAction {
+            val client = HttpClient.newBuilder().build()
+            val path = get(System.getProperty("user.dir")).resolve("src/main/resources/testNotebook1/fancynotes.html")
+            val testFile = File(path.toUri())
+            val testNote: Note = Note(testFile)
+            testNote.setContents()
+            testNote.setMetaData()
+            val requestBody = mapper.writeValueAsString(testNote)
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/new"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if(response.statusCode() == 200){
@@ -190,7 +237,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             if(model.currentNote != null) {
                 val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
                 confirmationAlert.title = "Paninotes"
-                confirmationAlert.contentText = "Save changes to ${model.currentNote?.fileName}?"
+                confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
                 confirmationAlert.buttonTypes.clear()
                 val discardButton = ButtonType("Discard")
                 val saveButton = ButtonType("Save")
@@ -224,7 +271,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
     override fun update() {
         //add a condition to only show editor if there is file assigned to model.currentFile
         if(model.currentNote != null){
-            htmlEditor.htmlText = model.currentNote?.fileContents
+            htmlEditor.htmlText = model.currentNote?.htmlText
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message

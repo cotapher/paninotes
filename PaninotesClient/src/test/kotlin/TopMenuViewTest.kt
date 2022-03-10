@@ -2,6 +2,7 @@ import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.JMetro
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxAssert
@@ -16,9 +17,11 @@ class TopMenuViewTest {
     @Start
     private fun start(stage: Stage) {
         val model = Model()
+        model.initializeNotebooks()
         val htmlEditor = HTMLEditor()
         val layout = BorderPane()
-        val topMenuView = TopMenuView(model, htmlEditor, stage)
+        val jMetro = JMetro()
+        val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
 
         layout.top = topMenuView
 
