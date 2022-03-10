@@ -3,12 +3,9 @@ package com.paninotes.paninotesserver
 
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
-import org.hibernate.annotations.Type
-import org.hibernate.type.NClobType
 import org.springframework.lang.NonNull
 import javax.persistence.*
 
-//import kotlinx.
 @Entity
 @Table(name = "note")
 data class Note(
