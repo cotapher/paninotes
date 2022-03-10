@@ -4,11 +4,12 @@ import org.jsoup.select.Elements
 import java.io.File
 
 class Note(notePath: File) {
-    var id: Int? = null
     var filePath: File? = null
     var fileName: String? = null
     var fileContents: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
+    var notebook: Notebook? = null
+
     init {
         this.filePath = notePath
         this.fileName = resolveNameFromPath()
@@ -38,7 +39,6 @@ class Note(notePath: File) {
         for (metaTag in metaTags) {
             val name: String = metaTag.attr("name")
             val content: String = metaTag.attr("content")
-            id = metaTag.attr("id").toIntOrNull()
             metadataMap[name] = content
         }
         println(metadataMap.toString())
@@ -49,4 +49,10 @@ class Note(notePath: File) {
         filePath?.writeText(HTMLString)
     }
 
+    override fun equals(other: Any?): Boolean {
+        return (other is Note)
+            && other.fileName == fileName
+                && other.notebook?.title == notebook?.title
+
+    }
 }

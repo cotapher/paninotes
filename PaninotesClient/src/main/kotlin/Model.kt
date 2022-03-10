@@ -26,6 +26,7 @@ class Model {
             // For each notebook, also initialize all the notes in the notebook
             notebook.listFiles()?.forEach { note ->
                 val newNote = Note(note)
+                newNote.notebook = newNotebook
                 newNote.setContents()
                 newNotebook.addNote(newNote)
             }
@@ -45,14 +46,14 @@ class Model {
         }
     }
 
-    fun getNotebookByTitle(title:String): Notebook? {
+    fun getNotebookByTitle(title: String): Notebook? {
         for (notebook in notebooks) {
             if (notebook.title == title) {
                 return notebook
             }
         }
 
-        return null;
+        return null
     }
 
     fun createNotebookPopup() {
@@ -112,14 +113,14 @@ class Model {
                 val result = popup.showAndWait()
                 if (result.isPresent) {
                     val noteFileName = result.get() + ".html"
-                    setCurrentNote(noteFileName, directory)
+                    setCurrentNote(noteFileName, notebook)
                 }
             }
         }
     }
 
-    fun setCurrentNote(noteFileName: String, directory: File) {
-        val newNoteFile = File(directory.resolve(noteFileName).toString())
+    fun setCurrentNote(noteFileName: String, notebook: Notebook) {
+        val newNoteFile = File(notebook.filePath!!.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
             generateAlertDialogPopup(
@@ -129,6 +130,7 @@ class Model {
         } else {
             // set to current file
             val newNote = Note(newNoteFile)
+            newNote.notebook = notebook
             openNote(newNote)
             currentOpenNotebook?.addNote(newNote)
             notifyViews()
