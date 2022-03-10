@@ -28,8 +28,10 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage)
     // TODO - add the actual menu items into here
     private fun layoutView() {
         val menuBar = MenuBar()
+
         //responsive menubar
         menuBar.prefWidthProperty().bind(stage.widthProperty())
+
         // File: Quit
         val fileMenu = Menu("File")
         val fileNewNote = createAddToMenu(fileMenu,"New Note")

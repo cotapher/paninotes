@@ -6,6 +6,9 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
     init {
         this.layoutView()
         this.id = "noteTabs"
+
+        // Hacky thing so when the TabPane is not visible, it doesn't take up any empty space
+        this.managedProperty().bind(this.visibleProperty())
     }
 
     private fun getNoteFromNotebookAndNoteName(notebookAndNoteName: String): Note? {
@@ -22,10 +25,14 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
     }
 
     private fun layoutView() {
+        // If there are no open notes, then hide the TabPane
+        this.isVisible = model.openNotes.size > 0
+
         model.openNotes.forEach { note ->
             // Check if we already have a tab for this open note
             // This string will be unique for each tab, since every notebook must have a different name
             val notebookAndNoteName: String = note.notebook!!.title + "/" + note.fileName!!
+
             if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
                 val tab = Tab(notebookAndNoteName)
 
@@ -36,10 +43,6 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                 }
 
                 tab.setOnClosed {
-                    // Remove the note from the open notes in the model
-                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
-                    model.openNotes.remove(closedNote)
-
                     // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
                     // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
                     // So, make sure that the tab actually gets closed/removed
@@ -54,7 +57,11 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                         }
                     }
 
-                    this.tabs.removeAt(tabIndex)
+                    if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
+
+                    // Remove the note from the open notes in the model
+                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
+                    model.closeNote(closedNote)
                 }
 
                 this.tabs.add(tab)

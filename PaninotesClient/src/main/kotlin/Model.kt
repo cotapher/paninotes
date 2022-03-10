@@ -152,6 +152,17 @@ class Model {
         notifyViews()
     }
 
+    fun closeNote(closedNote: Note?) {
+        openNotes.remove(closedNote)
+
+        // if there are 0 openNotes, then the currentNote is null
+        if (openNotes.size == 0) {
+            currentNote = null
+        }
+
+        notifyViews()
+    }
+
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 
     fun createNotebook(title: String): Notebook {
