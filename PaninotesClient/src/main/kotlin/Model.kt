@@ -131,8 +131,8 @@ class Model {
             // set to current file
             val newNote = Note(newNoteFile)
             newNote.notebook = notebook
+            notebook.addNote(newNote)
             openNote(newNote)
-            currentOpenNotebook?.addNote(newNote)
             notifyViews()
         }
 
