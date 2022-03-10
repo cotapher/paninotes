@@ -5,7 +5,7 @@ class Notebook(id: Int, title: String) {
     private set
 
     var title: String = ""
-    val notes = ArrayList<Note>()
+    val notes = mutableListOf<Note>()
     var filePath: File? = null
 
     init {

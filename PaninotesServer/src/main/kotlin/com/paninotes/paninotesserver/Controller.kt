@@ -9,6 +9,8 @@ import java.util.*
 class Controller {
     @Autowired
     private val noteRepository: NoteRepository? = null
+    @Autowired
+    private val notebookRepository: NotebookRepository? = null
     @GetMapping("/")
     @ResponseBody
     fun getAllNotes(): MutableList<NoteListResponse>? {
@@ -21,6 +23,28 @@ class Controller {
     @ResponseBody
     fun backupNote(@RequestBody newNote:Note): String{
         noteRepository?.save(newNote)
-        return "THIS WORKS"
+        return "Note Saved"
     }
+
+    @GetMapping("/notebooks")
+    @ResponseBody
+    fun getAllNotebooks(): MutableList<Notebook>? {
+        return notebookRepository?.findAll()?.toMutableList()
+    }
+
+    @PostMapping("/backupNotebook")
+    @ResponseBody
+    fun backupNotebook(@RequestBody newNotebook:Notebook): String{
+        notebookRepository?.save(newNotebook)
+        return "Notebook Saved"
+    }
+
+    @GetMapping("/deleteAll")
+    @ResponseBody
+    fun deleteAllData(): String {
+        notebookRepository?.deleteAll()
+        noteRepository?.deleteAll()
+        return "ALL DATA DELETED"
+    }
+
 }

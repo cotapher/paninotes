@@ -52,6 +52,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
         val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
         val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
+        val optionBackupCurrentNotebook = createAddToMenu(optionMenu,"Backup Current Notebook")
+        val optionDeleteAllData = createAddToMenu(optionMenu,"Delete Backup Data")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -205,6 +207,46 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 .uri(URI.create("http://localhost:8080/new"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        }
+
+        optionBackupCurrentNotebook.setOnAction {
+            val client = HttpClient.newBuilder().build()
+            val requestBody = mapper.writeValueAsString(model.currentOpenNotebook)
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/backupNotebook"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        }
+
+        optionDeleteAllData.setOnAction {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/deleteAll"))
+                .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if(response.statusCode() == 200){
