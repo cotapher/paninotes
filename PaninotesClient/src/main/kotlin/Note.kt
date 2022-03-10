@@ -9,6 +9,7 @@ class Note(var filePath: File? =null ) {
     var title: String? = null
     var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
+    var notebookId: Int? =null
     @JsonIgnore
     var notebook: Notebook? = null
 

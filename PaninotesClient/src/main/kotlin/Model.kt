@@ -220,6 +220,9 @@ class Model {
             //TODO need integrate with view
 //            now we want to add ids to note objects
             val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+            //map notes back to notebook
+            notebookWithID.notes.forEach { it.notebook = notebookWithID }
+            notebookWithID.notes.forEach { it.notebookId = notebookWithID.notebookId }
             val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
             notebooks[idx] = notebookWithID
             currentOpenNotebook = notebookWithID

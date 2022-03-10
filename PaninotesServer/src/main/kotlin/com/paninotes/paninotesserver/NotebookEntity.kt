@@ -1,6 +1,7 @@
 package com.paninotes.paninotesserver
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.lang.NonNull
 import java.io.File
 import javax.persistence.*
@@ -17,10 +18,10 @@ data class Notebook(
 
     @Column(name= "filepath")
     var filePath: File? = null,
-
     @OneToMany(
         orphanRemoval = true,
-        cascade = [CascadeType.ALL]
+        cascade = [CascadeType.ALL],
+//        mappedBy = "notebook"
     )
     var notes: MutableList<Note>? = null
 ) {

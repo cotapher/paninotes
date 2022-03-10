@@ -38,6 +38,8 @@ class Controller {
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if(matchingNotebooks?.size == 0) {
             println("Notebook not found by title, inserting into db")
+            //associate notes with notebooks
+//            newNotebook.notes?.forEach { it.notebook = newNotebook }
             //return the notes with ids
             return notebookRepository?.save(newNotebook)
 

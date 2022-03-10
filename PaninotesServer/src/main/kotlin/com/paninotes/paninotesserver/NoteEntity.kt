@@ -1,6 +1,7 @@
 package com.paninotes.paninotesserver
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
 import org.springframework.lang.NonNull
@@ -23,7 +24,10 @@ data class Note(
     @Nationalized
     var htmlText: String? = null, //gives nclob
     @Column(name = "filepath")
-    var filePath: File? = null
+    var filePath: File? = null,
+//    @ManyToOne(cascade = [CascadeType.ALL])
+//    var notebook: Notebook? =null,
+
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
