@@ -8,6 +8,8 @@ class Note(notePath: File) {
     var title: String? = null
     var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
+    var notebook: Notebook? = null
+
     init {
         this.filePath = notePath
         this.title = resolveNameFromPath()
@@ -39,7 +41,7 @@ class Note(notePath: File) {
             val content: String = metaTag.attr("content")
             metadataMap[name] = content
         }
-        println(metadataMap.toString())
+
         return metadataMap
     }
 
@@ -47,4 +49,10 @@ class Note(notePath: File) {
         filePath?.writeText(HTMLString)
     }
 
+    override fun equals(other: Any?): Boolean {
+        return (other is Note)
+            && other.title == title
+                && other.notebook?.title == notebook?.title
+
+    }
 }

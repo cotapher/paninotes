@@ -96,6 +96,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                             noteButton.id = "sideNotebookPane-note-button-$i"
                             noteButton.setPrefSize(135.0, 16.0)
                             noteButton.setOnAction {
+                                // Open the clicked note
                                 model.openNote(currentNotebook.notes[i])
                             }
                             vBox.children.add(noteButton)
@@ -145,7 +146,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
     }
 
     override fun update() {
-       // TODO("Not yet implemented")
         this.layoutView()
     }
 }

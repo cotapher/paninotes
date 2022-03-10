@@ -16,4 +16,14 @@ class Notebook(id: Int, title: String) {
     fun addNote(note: Note) {
         notes.add(note)
     }
+
+    fun getNoteByTitle(noteTitle: String): Note? {
+        for (note in notes) {
+            if (note.title == noteTitle) {
+                return note
+            }
+        }
+
+        return null
+    }
 }

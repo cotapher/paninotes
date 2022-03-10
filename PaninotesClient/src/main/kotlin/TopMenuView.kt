@@ -35,12 +35,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
     // TODO - add the actual menu items into here
     private fun layoutView() {
         val menuBar = MenuBar()
+
         //responsive menubar
         menuBar.prefWidthProperty().bind(stage.widthProperty())
+
         // File: Quit
         val fileMenu = Menu("File")
         val fileNewNote = createAddToMenu(fileMenu,"New Note")
-        val fileOpen = createAddToMenu(fileMenu,"Open")
         val fileSave = createAddToMenu(fileMenu,"Save")
         val fileQuit = createAddToMenu(fileMenu,"Quit")
         menuBar.menus.add(fileMenu)
@@ -57,7 +58,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
         fileMenu.id = "menu-fileMenu"
         fileNewNote.id = "menuitem-fileNewNote"
-        fileOpen.id = "menuitem-fileOpen"
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
         optionMenu.id = "menu-optionMenu"
@@ -92,16 +92,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             }
         }
 
-        fileOpen.setOnAction {
-//            val fileDialog = FileChooser()
-//            fileDialog.title = "Select an HTML File"
-//            fileDialog.initialDirectory = model.testNotebookDir
-//            val extFilter = FileChooser.ExtensionFilter("HTML files (*.html)", "*.html")
-//            fileDialog.extensionFilters.add(extFilter)
-//            val file: File? = fileDialog.showOpenDialog(stage)
-//            model.openNote(file) TODO
-        }
-
         fileSave.setOnAction {
             print(htmlEditor.htmlText)
             model.currentNote?.saveNote(htmlEditor.htmlText)
@@ -115,7 +105,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         // Add a shortcut CTRL+Q for file->quit
         fileNewNote.accelerator = KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN)
         //need new directory, open directory
-        fileOpen.accelerator = KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN)
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
 
