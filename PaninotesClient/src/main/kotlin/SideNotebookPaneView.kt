@@ -1,9 +1,11 @@
-
+import animatefx.animation.FadeInUp
+import animatefx.animation.SlideOutLeft
+import eu.iamgio.animated.AnimatedVBox
+import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.layout.*
-import javafx.scene.paint.Color
+import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 
 
@@ -18,17 +20,15 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
     init {
         this.layoutView()
-        this.border = Border(
-            BorderStroke(
-                Color.BLACK,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT
-            )
-        )
         this.id = "sideNotebookPane"
+
+        this.styleClass.add("middle-pane")
     }
 
     private fun layoutView() {
-        val gridPane = GridPane() // Holds the buttons for the list of notebooks and notes
+        // Animated VBox holds the buttons for the list of notebooks and notes
+        // TODO - refactor to add elements to vBox without resetting vBox to make the animations nice
+        val vBox = AnimatedVBox(AnimationPair(FadeInUp(), SlideOutLeft()).setSpeed(3.0, 3.0))
 
         // Depending on the current view, we will either show a list of notebooks, or list of notes in a notebook
         when (currentView) {
@@ -39,14 +39,14 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 for (i in notebooks.indices) {
                     val notebookButton = Button(notebooks[i].title)
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
-                    notebookButton.setPrefSize(110.0, 16.0)
+                    notebookButton.setPrefSize(135.0, 16.0)
 
                     notebookButton.setOnAction {
                         showNotesForNotebook(notebooks[i].notebookId)
                         model.currentOpenNotebook = notebooks[i]
                     }
 
-                    gridPane.add(notebookButton, 0, i)
+                    vBox.children.add(notebookButton)
                 }
 
                 // At the bottom, we want to add a button to add a notebook
@@ -57,6 +57,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                 val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
+                addNotebookButton.prefWidth = 135.0
 
                 addNotebookButton.setOnAction {
                     // Open the dialog to create the notebook
@@ -79,8 +80,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                         val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
                         currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
-                        currentNotebookButton.setPrefSize(110.0, 16.0)
-                        gridPane.add(currentNotebookButton, 0, 0)
+                        currentNotebookButton.setPrefSize(135.0, 16.0)
+                        vBox.children.add(0, currentNotebookButton)
 
                         currentNotebookButton.setOnAction {
                             // Go back to the list of notebooks
@@ -93,12 +94,12 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         for (i in currentNotebook.notes.indices) {
                             val noteButton = Button(currentNotebook.notes[i].title)
                             noteButton.id = "sideNotebookPane-note-button-$i"
-                            noteButton.setPrefSize(110.0, 16.0)
+                            noteButton.setPrefSize(135.0, 16.0)
                             noteButton.setOnAction {
                                 // Open the clicked note
                                 model.openNote(currentNotebook.notes[i])
                             }
-                            gridPane.add(noteButton, 0, i + 1)
+                            vBox.children.add(noteButton)
                         }
                     }
 
@@ -110,6 +111,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
                     val addNoteButton = Button("ADD NOTE", plusImageView)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
+                    addNoteButton.prefWidth = 135.0
 
                     addNoteButton.setOnAction {
                         // create the note in the current open notebook
@@ -125,9 +127,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
             }
         }
 
-        gridPane.vgap = 4.0
+        vBox.spacing = 1.0
 
-        this.top = gridPane;
+        this.top = vBox
     }
 
     fun showNotebooks() {
