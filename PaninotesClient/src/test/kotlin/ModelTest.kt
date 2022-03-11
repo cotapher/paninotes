@@ -64,7 +64,7 @@ internal class ModelTest {
         val notebookTitle = "notebookModelTest"
 
         // Add a fake notebook into the model
-        model.notebooks.add(Notebook(1, notebookTitle))
+        model.notebooks.add(Notebook(notebookTitle))
 
         // See if model.getNotebookByTitle gets the correct notebook
         val notebook: Notebook? = model.getNotebookByTitle(notebookTitle)
