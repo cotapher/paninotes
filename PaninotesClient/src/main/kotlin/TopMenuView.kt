@@ -137,7 +137,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                     dialog.headerText = "No Input"
                 } else {
                     val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-                    var inputtedText = htmlEditor.htmlText
                     println(htmlEditor.htmlText)
                     println(noHtmlTags)
 
@@ -172,7 +171,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         optionUsage.setOnAction {
-            val usageInfo = Alert(Alert.AlertType.CONFIRMATION)
+            val usageInfo = FlatAlert(Alert.AlertType.CONFIRMATION)
+            usageInfo.initOwner(stage)
             usageInfo.headerText = "Statistics:"
             usageInfo.title = "Usage Statistics"
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
