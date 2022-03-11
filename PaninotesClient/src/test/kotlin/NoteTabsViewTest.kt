@@ -16,9 +16,13 @@ import org.testfx.matcher.base.NodeMatchers.isVisible
 import org.testfx.matcher.control.LabeledMatchers
 import java.io.File
 import java.nio.file.Paths
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 @ExtendWith(ApplicationExtension::class)
 class NoteTabsViewTest {
+    private val delay: CountDownLatch = CountDownLatch(1)
+
     private val testNotebookDir = File(Paths.get("src/main/resources/UnitTestNotebooks").toUri())
     private val model = Model()
     private lateinit var noteTabsView: NoteTabsView
@@ -49,7 +53,7 @@ class NoteTabsViewTest {
     }
 
     @Test
-    fun getNoteFromNotebookAndNoteName(robot: FxRobot) {
+    fun getNoteFromNotebookAndNoteName() {
         // When we pass in "notebook1/note13", we should get note "note13" from notebook "notebook1"
         val notebookAndNoteName = "notebook1/note13"
         val note: Note? = noteTabsView.getNoteFromNotebookAndNoteName(notebookAndNoteName)
@@ -62,8 +66,8 @@ class NoteTabsViewTest {
         // We're going to click on notebook1, and then click on 3 of the notes
         // 2 tabs should open up for the 2 notes
 
-        // We need to click the notebook button in the side icon pane for the notebook pane to pop up
         robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(1, TimeUnit.SECONDS) // wait for the animation to finish
 
         // Click on the first notebook button
         robot.clickOn("#sideNotebookPane-notebook-button-0")
@@ -78,5 +82,31 @@ class NoteTabsViewTest {
 
         // Close the notebook pane again
         robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(1, TimeUnit.SECONDS) // wait for the animation to finish
+    }
+
+    @Test
+    fun selectingNotesChangesSelectedTab(robot: FxRobot) {
+        // We're going to open up some tabs, and then click the note buttons corresponding to those tabs
+        // The selected tab should switch to the corresponding note button
+
+        robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(1, TimeUnit.SECONDS) // wait for the animation to finish
+
+        // Click on the first notebook button
+        robot.clickOn("#sideNotebookPane-notebook-button-0")
+
+        // Click on the 2 note buttons to open up the 2 tabs
+        robot.clickOn("#sideNotebookPane-note-button-0")
+        robot.clickOn("#sideNotebookPane-note-button-1")
+
+        // Click the first note button again, and the first tab should be selected
+        robot.clickOn("#sideNotebookPane-note-button-0")
+        delay.await(300, TimeUnit.MILLISECONDS)
+        Assertions.assertTrue(noteTabsView.selectionModel.selectedIndex == 0)
+
+        // Close the notebook pane again
+        robot.clickOn("#sideIconPane-notebook-button")
+        delay.await(1, TimeUnit.SECONDS) // wait for the animation to finish
     }
 }
