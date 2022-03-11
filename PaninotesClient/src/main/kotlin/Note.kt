@@ -15,7 +15,13 @@ class Note(var filePath: File? =null ) {
 
     init {
         this.title = resolveNameFromPath()
-        this.filePath?.createNewFile()
+        if (!this.filePath!!.parentFile.exists()){
+            this.filePath?.parentFile?.mkdirs();
+        }
+        if (!this.filePath!!.exists()){
+            this.filePath?.createNewFile()
+        }
+
     }
 
     fun resolveNameFromPath(): String? {

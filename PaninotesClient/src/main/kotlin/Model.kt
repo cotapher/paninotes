@@ -5,6 +5,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Label
 import javafx.scene.control.TextInputDialog
 import java.io.File
+import java.net.ConnectException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -203,23 +204,27 @@ class Model {
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        if (response.statusCode() == 200) {
-            println("Success ${response.statusCode()}")
-            print(response.body().toString())
-            //TODO need integrate with view
-//            now we want to add ids to note objects
-            val notebookWithID: Notebook = mapper.readValue(response.body().toString())
-            //map notes back to notebook
-            notebookWithID.notes.forEach { it.notebook = notebookWithID }
-            notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
-            val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
-            notebooks[idx] = notebookWithID
-            currentOpenNotebook = notebookWithID
-            notifyViews()
-        } else {
-            print("ERROR ${response.statusCode()}")
-            print(response.body().toString())
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+                //TODO need integrate with view
+    //            now we want to add ids to note objects
+                val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+                //map notes back to notebook
+                notebookWithID.notes.forEach { it.notebook = notebookWithID }
+                notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
+                val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
+                notebooks[idx] = notebookWithID
+                currentOpenNotebook = notebookWithID
+                notifyViews()
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
         }
     }
 
@@ -236,16 +241,20 @@ class Model {
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(requestBody))
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        if(response.statusCode() == 200){
-            println("Success ${response.statusCode()}")
-            print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
-        } else {
-            print("ERROR ${response.statusCode()}")
-            print(response.body().toString())
+        try{
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+    //                val noteList: List<Note> = mapper.readValue(response.body().toString())
+    //                print(noteList.size)
+    //                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
         }
     }
 
@@ -257,32 +266,35 @@ class Model {
             .uri(URI.create("http://localhost:8080/notebooks"))
             .GET()
             .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        if(response.statusCode() == 200){
-            println("Success ${response.statusCode()}")
-            print(response.body().toString())
-                val notebookList: List<Notebook> = mapper.readValue(response.body().toString())
-                print(notebookList.size)
-                print(notebookList.toString())
 
-                notebookList.forEach { notebook ->
-                    val newNotebook = createNotebook(notebook.title)
-                    newNotebook.filePath = notebook.filePath
-                    addNotebook(newNotebook)
+        try{
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+                    val notebookList: List<Notebook> = mapper.readValue(response.body().toString())
+                    print(notebookList.size)
+                    print(notebookList.toString())
 
-                    // For each notebook, also initialize all the notes in the notebook
-                    notebook.notes.forEach { note ->
-                        val newNote = Note(note.filePath)
-                        newNote.notebook = newNotebook
-                        newNote.setContents()
-                        newNotebook.addNote(newNote)
+                    notebookList.forEach { notebook ->
+                        // For each notebook, also initialize all the notes in the notebook
+                        notebook.notes.forEach { note ->
+                            note.notebook = notebook
+                            note.htmlText?.let { note.saveNote(it) }
+                        }
+                        //remove previous notebooks if any
+                        notebooks.removeAll{ it.title == notebook.title}
+                        //add the backed up notebook
+                        addNotebook(notebook)
                     }
-                }
 
-            notifyViews()
-        } else {
-            print("ERROR ${response.statusCode()}")
-            print(response.body().toString())
+                notifyViews()
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
         }
     }
 }

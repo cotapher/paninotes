@@ -28,9 +28,10 @@ class Controller {
 
     @GetMapping("/notebooks")
     @ResponseBody
-    fun getAllNotebooks(): MutableList<Notebook> {
-        // return NotebookListResponse(notebookList)
-        return notebookRepository?.findAll()!!.toMutableList<Notebook>()
+    fun getAllNotebooks(): NotebookListResponse {
+
+//        return NotebookListResponse(notebookList)
+        return NotebookListResponse(notebookRepository?.findAll()!!.toMutableList())
     }
 
     @PostMapping("/backupNotebook")
