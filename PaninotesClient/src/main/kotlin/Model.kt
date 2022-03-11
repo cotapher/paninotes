@@ -260,9 +260,10 @@ class Model (val stage: Stage? = null) {
             if(response.statusCode() == 200){
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
-                    val notebookList: List<Notebook> = mapper.readValue(response.body().toString())
+                val result: NotebookListResponse = mapper.readValue(response.body().toString())
+                val notebookList: MutableList<Notebook> = (result.response as MutableList<Notebook>?)!!
                     print(notebookList.size)
-                    print(notebookList.toString())
+//                    print(notebookList.toString())
 
                     notebookList.forEach { notebook ->
                         // For each notebook, also initialize all the notes in the notebook
