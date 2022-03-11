@@ -18,7 +18,7 @@ import java.net.http.HttpResponse
 import java.nio.file.Paths.get
 import java.util.*
 import kotlin.system.exitProcess
-
+import javafx.stage.Popup
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
@@ -52,6 +52,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
         val optionBackupCurrentNotebook = createAddToMenu(optionMenu,"Backup Current Notebook")
         val optionDeleteAllData = createAddToMenu(optionMenu,"Delete Backup Data")
+        val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -115,6 +116,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         //need new directory, open directory
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
+        optionSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
 
 
         optionSearch.setOnAction{
@@ -135,13 +137,13 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                     dialog.headerText = "No Input"
                 } else {
                     val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-                    var inputtedText = htmlEditor.htmlText
                     println(htmlEditor.htmlText)
                     println(noHtmlTags)
 
                     val delim = " "
                     val list = noHtmlTags.split(delim)
                     var wordIndexes = ArrayList<Int>()
+
                     var outputString = ""
                     for ((i, item) in list.withIndex()) {
                         if (i != 0) {
@@ -154,6 +156,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                             outputString += item
                         }
                     }
+
                     println(outputString)
                     val oldText = htmlEditor.htmlText
                     htmlEditor.htmlText = outputString
@@ -165,6 +168,22 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                     htmlEditor.htmlText = oldText
                 }
             }
+        }
+
+        optionUsage.setOnAction {
+            val usageInfo = FlatAlert(Alert.AlertType.CONFIRMATION)
+            usageInfo.initOwner(stage)
+            usageInfo.headerText = "Statistics:"
+            usageInfo.title = "Usage Statistics"
+            val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+            val delim = " "
+            val list = noHtmlTags.split(delim)
+            usageInfo.contentText = "Number of Words: ${list.size-1}\n" +
+                    "Number of Whitespace: ${list.size-2}\n"
+
+            //show the popup
+            usageInfo.showAndWait()
+
         }
 
         optionTheme.setOnAction {

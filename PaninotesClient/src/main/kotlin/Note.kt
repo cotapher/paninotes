@@ -3,6 +3,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
+import java.sql.Date
+import java.time.Instant
+import java.time.LocalDateTime
 
 class Note(var filePath: File? =null ) {
     var id: Int? = null
@@ -12,6 +15,7 @@ class Note(var filePath: File? =null ) {
     var notebookId: Int? =null
     @JsonIgnore
     var notebook: Notebook? = null
+    var lastSynced: LocalDateTime? = null
 
     init {
         this.title = resolveNameFromPath()
