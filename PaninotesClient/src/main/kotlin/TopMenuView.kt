@@ -158,8 +158,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                         }
                     }
 
-
-
                     println(outputString)
                     val oldText = htmlEditor.htmlText
                     htmlEditor.htmlText = outputString
@@ -175,18 +173,16 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
         optionUsage.setOnAction {
             val usageInfo = Alert(Alert.AlertType.CONFIRMATION)
-            usageInfo.headerText = "hello"
+            usageInfo.headerText = "Statistics:"
             usageInfo.title = "Usage Statistics"
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
             val delim = " "
             val list = noHtmlTags.split(delim)
-            usageInfo.contentText = "Number of Words: " + (list.size-1) + "\n" + "Number of Whitespace: " + (list.size-2) + "\n" + "Last Edited: " + "1:0000000"
-            usageInfo.buttonTypes.clear()
-//            val nextButton = ButtonType("Next")
-//            val cancelButton = ButtonType("Cancel")
-//            usageInfo.buttonTypes.addAll(nextButton, cancelButton)
+            usageInfo.contentText = "Number of Words: ${list.size-1}\n" +
+                    "Number of Whitespace: ${list.size-2}\n"
+
             //show the popup
-            val result = usageInfo.showAndWait()
+            usageInfo.showAndWait()
 
         }
 
