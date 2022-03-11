@@ -11,7 +11,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         this.managedProperty().bind(this.visibleProperty())
     }
 
-    private fun getNoteFromNotebookAndNoteName(notebookAndNoteName: String): Note? {
+    fun getNoteFromNotebookAndNoteName(notebookAndNoteName: String): Note? {
         val notebookAndNoteSplit: List<String> = notebookAndNoteName.split("/")
         val notebookTitle: String = notebookAndNoteSplit[0]
         val noteTitle: String = notebookAndNoteSplit[1]
@@ -28,13 +28,14 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         // If there are no open notes, then hide the TabPane
         this.isVisible = model.openNotes.size > 0
 
-        model.openNotes.forEach { note ->
+        model.openNotes.forEachIndexed { index, note ->
             // Check if we already have a tab for this open note
             // This string will be unique for each tab, since every notebook must have a different name
             val notebookAndNoteName: String = note.notebook!!.title + "/" + note.title!!
 
             if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
                 val tab = Tab(notebookAndNoteName)
+                tab.id = "noteTabs-tab-$index"
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
