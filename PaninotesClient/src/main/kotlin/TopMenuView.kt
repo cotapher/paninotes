@@ -8,8 +8,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
-import jfxtras.styles.jmetro.JMetro
-import jfxtras.styles.jmetro.Style
+import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
 import java.io.File
 import java.net.URI
@@ -71,16 +70,16 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
                 // If there is no notebooks, show an error popup telling the user to create a notebook first
                 if (notebookNames.isEmpty()) {
-                    val warningPopup = Alert(AlertType.WARNING)
-                    warningPopup.title = "Paninotes"
+                    val warningPopup = FlatAlert(AlertType.WARNING)
+                    warningPopup.initOwner(stage)
                     warningPopup.headerText = "No Notebooks!"
                     warningPopup.contentText = "You have no notebooks! You can only create a note in a notebook"
 
                     warningPopup.showAndWait()
                 } else {
                     // Open a choice dialog to prompt the user what notebook they want to create the note in
-                    val chooseNotebookDialog: ChoiceDialog<String> = ChoiceDialog(notebookNames[0], notebookNames)
-                    chooseNotebookDialog.title = "Paninotes"
+                    val chooseNotebookDialog: FlatChoiceDialog<String> = FlatChoiceDialog(notebookNames[0], notebookNames)
+                    chooseNotebookDialog.initOwner(stage)
                     chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
 
                     val result: Optional<String> = chooseNotebookDialog.showAndWait()
@@ -119,7 +118,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
 
         optionSearch.setOnAction{
-            val dialog = TextInputDialog("")
+            val dialog = FlatTextInputDialog("")
+            dialog.initOwner(stage)
             dialog.title = "Search"
             dialog.headerText = "Find Word"
 
@@ -219,8 +219,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
         stage.setOnCloseRequest {
             if(model.currentNote != null) {
-                val confirmationAlert = Alert(Alert.AlertType.CONFIRMATION)
-                confirmationAlert.title = "Paninotes"
+                val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+                confirmationAlert.initOwner(stage)
                 confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
                 confirmationAlert.buttonTypes.clear()
                 val discardButton = ButtonType("Discard")
