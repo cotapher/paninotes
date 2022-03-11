@@ -4,21 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class NoteService {
-    @Autowired
-    private val noteRepository: NoteRepository? = null
-    @Autowired
-    private val notebookRepository: NotebookRepository? = null
+class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
+    @Autowired val notebookRepository: NotebookRepository? = null){
+
     fun getAllNotes(): NoteListResponse {
         val noteList = noteRepository?.findAll()?.toMutableList()
-        val response = NoteListResponse(noteList)
-        return response
+        return NoteListResponse(noteList)
     }
 
     fun getAllNotebooks(): NotebookListResponse {
 
-//        return NotebookListResponse(notebookList)
-        return NotebookListResponse(notebookRepository?.findAll()!!.toMutableList())
+        val notebooklist =notebookRepository?.findAll()!!.toMutableList()
+        return NotebookListResponse(notebooklist)
     }
 
     fun backupNotebook(newNotebook: Notebook): Notebook? {
