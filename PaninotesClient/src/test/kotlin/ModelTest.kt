@@ -129,4 +129,13 @@ internal class ModelTest {
         // Now clear the test notebook directory
         clearTestNotebookDirectory()
     }
+
+    @Test
+    fun createNotebook(robot: FxRobot) {
+        // Create a notebook with a mock name
+        val testName = "testNotebook"
+        val newNotebook = model.createNotebook(testName)
+
+        assertTrue(newNotebook != null && newNotebook.title == testName)
+    }
 }
