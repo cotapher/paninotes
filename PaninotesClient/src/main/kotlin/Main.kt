@@ -1,4 +1,5 @@
 
+import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
 import javafx.scene.Scene
@@ -7,6 +8,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import jfxtras.styles.jmetro.JMetro
 import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.Style
@@ -23,13 +25,18 @@ class Main : Application() {
 
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
+        val layout = BorderPane()
+
+        // create borderless scene
+        val scene = BorderlessScene(stage, StageStyle.UNDECORATED, layout)
+        scene.removeDefaultCSS()
+
+        // Initialize all widgets--------------------------------------------------------------------------------------------
         val model = Model(stage)
         model.initializeNotebooks()
 
-        // Initialize all widgets--------------------------------------------------------------------------------------------
-        val layout = BorderPane()
-
         val htmlEditor = HTMLEditor()
+        val titleBarView = TitleBarView(scene, stage)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model, stage)
         val sideNotebookPane = SideNotebookPaneView(model, stage)
@@ -49,14 +56,11 @@ class Main : Application() {
         sidePane.children.addAll(sideIconPane, sideNotebookPane)
 
         val topPane = VBox()
-        topPane.children.addAll(topMenuView, noteTabsView)
+        topPane.children.addAll(titleBarView, topMenuView, noteTabsView)
 
         layout.top = topPane
         layout.center = htmlEditor
         layout.left = sidePane
-
-        // create and show the scene
-        val scene = Scene(layout)
 
         // apply jmetro
         jMetro.scene = scene

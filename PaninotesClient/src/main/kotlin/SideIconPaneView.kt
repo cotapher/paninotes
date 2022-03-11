@@ -26,9 +26,9 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         sideNotebookPaneView.isVisible = false
 
         this.styleClass.add("front-pane")
-        notebookButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
-        searchButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
-        infoButton.styleClass.add(JMetroStyleClass.LIGHT_BUTTONS)
+        notebookButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
+        searchButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
+        infoButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
     }
 
     private fun layoutView() {

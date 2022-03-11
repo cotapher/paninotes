@@ -1,7 +1,7 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
 * {
     -fx-my-menu-color: #424242;                  /* Change according to your needs */
-    -fx-my-menu-color-highlighted: #131313;      /* Change according to your needs */
+    -fx-my-menu-color-highlighted: #333333;      /* Change according to your needs */
 }
 
 /* MENU BAR + Top-level MENU BUTTONS */
@@ -33,5 +33,9 @@
 .middle-pane {
     -fx-background-color: #333333;
     -fx-view-order: 2.0;
+}
+
+.icon-button:hover {
+    -fx-background-color: -fx-my-menu-color-highlighted !important;
 }
 
