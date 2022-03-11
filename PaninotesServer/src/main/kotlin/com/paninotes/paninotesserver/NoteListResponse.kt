@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 @JsonSerialize
 @JsonDeserialize
-class NoteListResponse(val response: MutableIterable<Note>?): java.io.Serializable {
+class NoteListResponse(val response: MutableList<Note>?): java.io.Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
