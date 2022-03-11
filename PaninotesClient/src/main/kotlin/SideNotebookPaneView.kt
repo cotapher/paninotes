@@ -6,7 +6,9 @@ import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatTextInputDialog
-import jfxtras.styles.jmetro.MDL2IconFont
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignA
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -49,7 +51,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 }
 
                 // At the bottom, we want to add a button to add a notebook
-                val plusIcon = MDL2IconFont("\uE710")
+                val plusIcon = FontIcon(MaterialDesignP.PLUS)
+                plusIcon.iconSize = 16
 
                 val addNotebookButton = Button("ADD NOTEBOOK", plusIcon)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
@@ -67,7 +70,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 if (model.currentOpenNotebook != null) {
 
                     // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
-                    val backArrowIcon = MDL2IconFont("\uE72B")
+                    val backArrowIcon = FontIcon(MaterialDesignA.ARROW_LEFT)
+                    backArrowIcon.iconSize = 16
 
                     val currentNotebookButton = Button(model.currentOpenNotebook!!.title, backArrowIcon)
                     currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
@@ -79,7 +83,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         showNotebooks()
 
                         // In the Model, set the currentOpenNotebook back to null
-                        model.currentOpenNotebook = null;
+                        model.currentOpenNotebook = null
                     }
 
                     for (i in model.currentOpenNotebook!!.notes.indices) {
@@ -94,7 +98,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     }
 
                     // At the bottom, we want to add a button to add a note into this notebook
-                    val plusIcon = MDL2IconFont("\uE710")
+                    val plusIcon = FontIcon(MaterialDesignP.PLUS)
+                    plusIcon.iconSize = 16
 
                     val addNoteButton = Button("ADD NOTE", plusIcon)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
