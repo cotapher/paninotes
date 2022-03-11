@@ -16,7 +16,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
     }
 
     private var currentView: PaneView = PaneView.NOTEBOOKS
-    private var currentNotebookId: Int = -1
 
     init {
         this.layoutView()
@@ -42,8 +41,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.setPrefSize(135.0, 16.0)
 
                     notebookButton.setOnAction {
-                        showNotesForNotebook(notebooks[i].notebookId)
                         model.currentOpenNotebook = notebooks[i]
+                        showNotes()
                     }
 
                     vBox.children.add(notebookButton)
@@ -68,39 +67,35 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
             }
 
             PaneView.NOTES -> {
-                if (currentNotebookId >= 0) {
-                    val currentNotebook = model.getNotebookById(currentNotebookId)
+                if (model.currentOpenNotebook != null) {
+                    // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
+                    val backArrowImage = Image("baseline_arrow_back_black_24dp.png")
+                    val backArrowImageView = ImageView(backArrowImage)
+                    backArrowImageView.isPreserveRatio = true
+                    backArrowImageView.fitHeight = 17.0
 
-                    if (currentNotebook != null) {
-                        // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
-                        val backArrowImage = Image("baseline_arrow_back_black_24dp.png")
-                        val backArrowImageView = ImageView(backArrowImage)
-                        backArrowImageView.isPreserveRatio = true
-                        backArrowImageView.fitHeight = 17.0
+                    val currentNotebookButton = Button(model.currentOpenNotebook!!.title, backArrowImageView)
+                    currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
+                    currentNotebookButton.setPrefSize(135.0, 16.0)
+                    vBox.children.add(0, currentNotebookButton)
 
-                        val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
-                        currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
-                        currentNotebookButton.setPrefSize(135.0, 16.0)
-                        vBox.children.add(0, currentNotebookButton)
+                    currentNotebookButton.setOnAction {
+                        // Go back to the list of notebooks
+                        showNotebooks()
 
-                        currentNotebookButton.setOnAction {
-                            // Go back to the list of notebooks
-                            showNotebooks()
+                        // In the Model, set the currentOpenNotebook back to null
+                        model.currentOpenNotebook = null;
+                    }
 
-                            // In the Model, set the currentOpenNotebook back to null
-                            model.currentOpenNotebook = null;
+                    for (i in model.currentOpenNotebook!!.notes.indices) {
+                        val noteButton = Button(model.currentOpenNotebook!!.notes[i].title)
+                        noteButton.id = "sideNotebookPane-note-button-$i"
+                        noteButton.setPrefSize(135.0, 16.0)
+                        noteButton.setOnAction {
+                            // Open the clicked note
+                            model.openNote(model.currentOpenNotebook!!.notes[i])
                         }
-
-                        for (i in currentNotebook.notes.indices) {
-                            val noteButton = Button(currentNotebook.notes[i].title)
-                            noteButton.id = "sideNotebookPane-note-button-$i"
-                            noteButton.setPrefSize(135.0, 16.0)
-                            noteButton.setOnAction {
-                                // Open the clicked note
-                                model.openNote(currentNotebook.notes[i])
-                            }
-                            vBox.children.add(noteButton)
-                        }
+                        vBox.children.add(noteButton)
                     }
 
                     // At the bottom, we want to add a button to add a note into this notebook
@@ -138,9 +133,8 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         this.layoutView()
     }
 
-    fun showNotesForNotebook(notebookId: Int) {
+    fun showNotes() {
         currentView = PaneView.NOTES
-        currentNotebookId = notebookId
 
         this.layoutView()
     }
