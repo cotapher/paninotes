@@ -1,10 +1,7 @@
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
-import jfxtras.styles.jmetro.JMetro
-import jfxtras.styles.jmetro.Style
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -13,7 +10,6 @@ import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
 import org.testfx.matcher.base.NodeMatchers.isVisible
-import org.testfx.matcher.control.LabeledMatchers
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.CountDownLatch
