@@ -28,15 +28,46 @@ class Controller {
 
     @GetMapping("/notebooks")
     @ResponseBody
-    fun getAllNotebooks(): MutableList<Notebook>? {
-        return notebookRepository?.findAll()?.toMutableList()
+    fun getAllNotebooks(): NotebookListResponse {
+
+//        return NotebookListResponse(notebookList)
+        return NotebookListResponse(notebookRepository?.findAll()!!.toMutableList())
     }
 
     @PostMapping("/backupNotebook")
     @ResponseBody
-    fun backupNotebook(@RequestBody newNotebook:Notebook): String{
-        notebookRepository?.save(newNotebook)
-        return "Notebook Saved"
+    fun backupNotebook(@RequestBody newNotebook:Notebook): Notebook? {
+        val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
+        if(matchingNotebooks?.size == 0) {
+            println("Notebook not found by title, inserting into db")
+            //associate notes with notebooks
+//            newNotebook.notes?.forEach { it.notebook = newNotebook }
+            //return the notes with ids
+            return notebookRepository?.save(newNotebook)
+
+        } else {
+            //there should only be one make
+            println("Notebook exist")
+
+            val matchingNotebook = matchingNotebooks!!.first()
+            val matchingNotebookNotes = matchingNotebook.notes!!
+            // Delete the old notes in that notebook in the database
+            matchingNotebookNotes.forEach {
+                noteRepository?.deleteById(it.id!!)
+            }
+            /*
+            //compare which note objects have changed
+            val newNotes = newNotebook.notes!!
+            val merged = (matchingNotebookNotes union newNotes.toSet())
+            val newNoteList = merged.toMutableList()
+             */
+
+            matchingNotebookNotes.clear()
+            matchingNotebookNotes.addAll(newNotebook.notes!!)
+
+            return notebookRepository?.save(matchingNotebook)
+        }
+
     }
 
     @GetMapping("/deleteAll")

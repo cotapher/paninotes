@@ -25,7 +25,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
     private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
 
-    val mapper = jacksonObjectMapper()
 
     init {
         this.layoutView()
@@ -185,71 +184,15 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         optionRestoreBackup.setOnAction {
-            //TODO Create a dialog box that confirms overwrite
-
-            val client = HttpClient.newBuilder().build()
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080"))
-                .GET()
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-            }
+            model.restoreBackup()
         }
 
         optionTestSend.setOnAction {
-            val client = HttpClient.newBuilder().build()
-            val path = get(System.getProperty("user.dir")).resolve("src/main/resources/testNotebook1/fancynotes.html")
-            val testFile = File(path.toUri())
-            val testNote: Note = Note(testFile)
-            testNote.setContents()
-            testNote.setMetaData()
-            val requestBody = mapper.writeValueAsString(testNote)
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/new"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-            }
+            model.testSendNote()
         }
 
         optionBackupCurrentNotebook.setOnAction {
-            val client = HttpClient.newBuilder().build()
-            val requestBody = mapper.writeValueAsString(model.currentOpenNotebook)
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/backupNotebook"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-            }
+            model.makeBackup()
         }
 
         optionDeleteAllData.setOnAction {
@@ -302,6 +245,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             }
         }
     }
+
+
 
     private fun createAddToMenu(menu: Menu, menuItemName:String): MenuItem {
         val menuItem = MenuItem(menuItemName)
