@@ -178,8 +178,26 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
             val delim = " "
             val list = noHtmlTags.split(delim)
-            usageInfo.contentText = "Number of Words: ${list.size-1}\n" +
-                    "Number of Whitespace: ${list.size-2}\n"
+            val htmlTags = htmlEditor.htmlText
+            print(htmlTags)
+            var spaces = 0;
+            var characters = 0;
+
+            // get number of spaces
+            var open = false
+            for (i in 0..htmlTags.length-1) {
+                if (htmlTags[i]=='<') {
+                    open = true
+                } else if (htmlTags[i] == '>') {
+                    open = false
+                } else if (htmlTags[i] == ' ' && !open) {
+                    spaces++;
+                }
+            }
+
+
+            usageInfo.contentText = "Number of Words: ${list.size}\n" +
+                    "Number of Space: ${count}\n"
 
             //show the popup
             usageInfo.showAndWait()
