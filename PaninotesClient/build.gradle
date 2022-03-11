@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'application'
     id 'java-library'
@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.6.10'
     implementation "org.jsoup:jsoup:1.14.3"
     implementation 'org.jfxtras:jmetro:11.6.15'
     implementation 'org.controlsfx:controlsfx:11.1.1'
@@ -23,6 +23,8 @@ dependencies {
     implementation 'io.github.typhon0:AnimateFX:1.2.2'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1'
     implementation 'com.github.goxr3plus:FX-BorderlessScene:4.4.0'
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.0'
+    implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
 }

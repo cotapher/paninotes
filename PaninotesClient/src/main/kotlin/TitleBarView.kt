@@ -5,7 +5,8 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetroStyleClass
-import jfxtras.styles.jmetro.MDL2IconFont
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignW
 
 class TitleBarView(val scene: BorderlessScene, val stage: Stage): BorderPane() {
 
@@ -17,11 +18,17 @@ class TitleBarView(val scene: BorderlessScene, val stage: Stage): BorderPane() {
 
     init {
         scene.setMoveControl(this)
+        titleLabel.styleClass.add("title-label")
 
-        val minimizeIcon = MDL2IconFont("\uE921")
-        val maximizeIcon = MDL2IconFont("\uE922")
-        val restoreIcon = MDL2IconFont("\uE923")
-        val closeIcon = MDL2IconFont("\uE8BB")
+        val minimizeIcon = FontIcon(MaterialDesignW.WINDOW_MINIMIZE)
+        val maximizeIcon = FontIcon(MaterialDesignW.WINDOW_MAXIMIZE)
+        val restoreIcon = FontIcon(MaterialDesignW.WINDOW_RESTORE)
+        val closeIcon = FontIcon(MaterialDesignW.WINDOW_CLOSE)
+
+        minimizeIcon.iconSize = 14
+        maximizeIcon.iconSize = 14
+        restoreIcon.iconSize = 14
+        closeIcon.iconSize = 14
 
         minimizeButton.graphic = minimizeIcon
         maximizeButton.graphic = maximizeIcon
@@ -29,7 +36,7 @@ class TitleBarView(val scene: BorderlessScene, val stage: Stage): BorderPane() {
 
         minimizeButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
         maximizeButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
-        closeButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "icon-button")
+        closeButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "close-button")
 
         minimizeButton.setOnAction { scene.minimizeStage() }
         maximizeButton.setOnAction {

@@ -1,6 +1,5 @@
 import animatefx.animation.SlideInLeft
 import animatefx.animation.SlideOutLeft
-import javafx.geometry.Insets
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -8,7 +7,10 @@ import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.JMetroStyleClass
-import jfxtras.styles.jmetro.MDL2IconFont
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignI
+import org.kordamp.ikonli.materialdesign2.MaterialDesignM
+import org.kordamp.ikonli.materialdesign2.MaterialDesignN
 
 class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView, val stage: Stage): GridPane(), IView {
 
@@ -37,21 +39,22 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         infoButton.id = "sideIconPane-info-button"
 
         // Set up the images and buttons for the sidebar
-        notebookButton.setPrefSize(20.0, 20.0)
-        searchButton.setPrefSize(20.0, 20.0)
-        infoButton.setPrefSize(20.0, 20.0)
+        notebookButton.setPrefSize(30.0, 40.0)
+        searchButton.setPrefSize(30.0, 40.0)
+        infoButton.setPrefSize(30.0, 40.0)
 
         // JMetro MDL2 icons
-        val notebookIcon = MDL2IconFont("\uE700")
-        val searchIcon = MDL2IconFont("\uE721")
-        val infoIcon = MDL2IconFont("\uE946")
+        val notebookIcon = FontIcon(MaterialDesignN.NOTEBOOK_OUTLINE)
+        val searchIcon = FontIcon(MaterialDesignM.MAGNIFY)
+        val infoIcon = FontIcon(MaterialDesignI.INFORMATION_OUTLINE)
+
+        notebookIcon.iconSize = 24
+        searchIcon.iconSize = 24
+        infoIcon.iconSize = 24
 
         notebookButton.graphic = notebookIcon
         searchButton.graphic = searchIcon
         infoButton.graphic = infoIcon
-
-        this.vgap = 3.0
-        this.padding = Insets(5.0)
 
         // Button Actions
         notebookButton.setOnAction {

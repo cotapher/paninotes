@@ -1,6 +1,6 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
 * {
-    -fx-my-menu-color: #424242;                  /* Change according to your needs */
+    -fx-my-menu-color: #3C3F41;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #333333;      /* Change according to your needs */
 }
 
@@ -25,6 +25,7 @@
     -fx-background-color: -fx-my-menu-color-highlighted;
 }
 
+
 .front-pane {
     -fx-background-color: -fx-my-menu-color;
     -fx-view-order: 1.0;
@@ -35,7 +36,19 @@
     -fx-view-order: 2.0;
 }
 
+.title-label {
+    -fx-text-fill: #737373;
+}
+
+.ikonli-font-icon {
+    -fx-icon-color: white;
+}
+
 .icon-button:hover {
     -fx-background-color: -fx-my-menu-color-highlighted !important;
+}
+
+.close-button:hover {
+    -fx-background-color: red !important;
 }
 

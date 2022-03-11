@@ -2,7 +2,6 @@
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
-import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
