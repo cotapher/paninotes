@@ -1,3 +1,5 @@
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -7,6 +9,10 @@ import javafx.scene.control.Tooltip
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
 import jfxtras.styles.jmetro.MDL2IconFont
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
@@ -55,6 +61,32 @@ class CustomHTMLEditor: HTMLEditor() {
     }
 
     private fun onCodeBlockAction() {
-        println("code block action")
+        // Send the highlighted text to hilite.me, a text -> html syntax highlighter
+        // http://hilite.me/
+
+        val mockText = "fun testFunction(str: String) {/n/n}"
+        val requestBodyMap = mapOf("code" to mockText, "lexer" to "kotlin")
+
+        val objectMapper = jacksonObjectMapper()
+        val requestBody: String = objectMapper
+            .writeValueAsString(requestBodyMap)
+
+        val client = HttpClient.newBuilder().build()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://hilite.me/api"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        if(response.statusCode() == 200){
+            println("Success ${response.statusCode()}")
+            print(response.body().toString())
+//                val noteList: List<Note> = mapper.readValue(response.body().toString())
+//                print(noteList.size)
+//                print(noteList.toString())
+        } else {
+            print("ERROR ${response.statusCode()}")
+            print(response.body().toString())
+        }
     }
 }
