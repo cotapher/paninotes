@@ -40,6 +40,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         infoButton.setPrefSize(20.0, 20.0)
 
         // JMetro MDL2 icons
+        // https://docs.microsoft.com/en-us/windows/apps/design/style/segoe-ui-symbol-font
         val notebookIcon = MDL2IconFont("\uE700")
         val searchIcon = MDL2IconFont("\uE721")
         val infoIcon = MDL2IconFont("\uE946")
