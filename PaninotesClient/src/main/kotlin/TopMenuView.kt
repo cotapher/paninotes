@@ -1,5 +1,3 @@
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.input.KeyCode
@@ -10,15 +8,11 @@ import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
-import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.file.Paths.get
 import java.util.*
-import kotlin.system.exitProcess
-import javafx.stage.Popup
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
@@ -108,7 +102,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
 
         fileQuit.setOnAction {
-            exitProcess(0)
+            StageUtils.saveOnClose(model, stage, htmlEditor)
         }
 
         // Add a shortcut CTRL+Q for file->quit
@@ -233,39 +227,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             }
         }
         this.children.add(menuBar)
-
-
-
-        stage.setOnCloseRequest {
-            if(model.currentNote != null) {
-                val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
-                confirmationAlert.initOwner(stage)
-                confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
-                confirmationAlert.buttonTypes.clear()
-                val discardButton = ButtonType("Discard")
-                val saveButton = ButtonType("Save")
-                val cancelButton = ButtonType("Cancel")
-                confirmationAlert.buttonTypes.addAll(discardButton, saveButton, cancelButton)
-                //show the popup
-                val result = confirmationAlert.showAndWait()
-
-                if (result.isPresent) {
-                    println(result)
-                    println(result.get())
-                    if (result.get() == saveButton) {
-                        print(htmlEditor.htmlText)
-                        model.currentNote?.saveNote(htmlEditor.htmlText)
-                        Platform.exit()
-                        exitProcess(0)
-                    } else if (result.get() == cancelButton) {
-                        it.consume()
-                    }
-                }
-            }
-        }
     }
-
-
 
     private fun createAddToMenu(menu: Menu, menuItemName:String): MenuItem {
         val menuItem = MenuItem(menuItemName)

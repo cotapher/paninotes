@@ -3,12 +3,13 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
+import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetroStyleClass
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignW
 
-class TitleBarView(val scene: BorderlessScene, val stage: Stage): BorderPane() {
+class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor: HTMLEditor, val model: Model): BorderPane() {
 
     private val titleLabel = Label("Paninotes")
 
@@ -44,7 +45,7 @@ class TitleBarView(val scene: BorderlessScene, val stage: Stage): BorderPane() {
             if (scene.isMaximized) maximizeButton.graphic = restoreIcon
             else maximizeButton.graphic = maximizeIcon
         }
-        closeButton.setOnAction { stage.close() }
+        closeButton.setOnAction { StageUtils.saveOnClose(model, stage, htmlEditor) }
 
         val buttons = HBox(minimizeButton, maximizeButton, closeButton)
 
