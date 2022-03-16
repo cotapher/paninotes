@@ -29,6 +29,7 @@ class Main : Application() {
         // create borderless scene
         val scene = BorderlessScene(stage, StageStyle.UNDECORATED, layout)
         scene.removeDefaultCSS()
+        if (!System.getProperty("os.name").contains("Windows")) scene.isSnapEnabled = false
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val model = Model(stage)
