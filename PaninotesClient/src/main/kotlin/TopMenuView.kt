@@ -1,3 +1,4 @@
+import com.itextpdf.html2pdf.HtmlConverter
 import javafx.scene.control.*
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.input.KeyCode
@@ -5,14 +6,19 @@ import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
+import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.*
+
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
@@ -24,7 +30,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         this.layoutView()
     }
 
-    // TODO - add the actual menu items into here
     private fun layoutView() {
         val menuBar = MenuBar()
 
@@ -47,6 +52,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionBackupCurrentNotebook = createAddToMenu(optionMenu,"Backup Current Notebook")
         val optionDeleteAllData = createAddToMenu(optionMenu,"Delete Backup Data")
         val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
+        val optionExport = createAddToMenu(optionMenu, "Export To PDF")
         menuBar.menus.add(optionMenu)
 
         fileMenu.id = "menu-fileMenu"
@@ -226,6 +232,48 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 print(response.body().toString())
             }
         }
+
+        optionExport.setOnAction {
+
+            //get current note
+            if(model.currentNote != null){
+                val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+                confirmationAlert.initOwner(stage)
+                confirmationAlert.contentText = "Export ${model.currentNote?.title} to PDF?"
+                //show the popup
+                val result = confirmationAlert.showAndWait()
+
+                if (result.isPresent) {
+                    println(result)
+                    println(result.get())
+                    if (result.get() == ButtonType.OK) {
+                        println("Exporting note")
+                        val htmlSource = model.currentNote!!.filePath!!
+                        val directoryChooser = DirectoryChooser()
+                        directoryChooser.initialDirectory = File(System.getProperty("user.dir"))
+                        directoryChooser.title = "Choose where to export file on disk"
+
+                        val exportDirectory = directoryChooser.showDialog(stage)
+                        if(exportDirectory != null){
+                            val pdfDest = exportDirectory.resolve("${model.currentNote!!.title}.pdf")
+                            HtmlConverter.convertToPdf(FileInputStream(htmlSource), FileOutputStream(pdfDest))
+                        } else {
+                            val alert = FlatAlert(AlertType.WARNING)
+                            alert.headerText = "No folder selected"
+                            alert.show()
+                        }
+                    }
+                }
+            } else {
+                //TODO add status bar text
+                val alert = FlatAlert(AlertType.WARNING)
+                alert.headerText = "Please open a note first"
+                alert.show()
+            }
+
+
+        }
+
         this.children.add(menuBar)
     }
 
