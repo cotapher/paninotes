@@ -67,8 +67,23 @@ class Main : Application() {
         jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
         layout.styleClass.add(JMetroStyleClass.BACKGROUND)
 
-        stage.width = 800.0
-        stage.height = 500.0
+        // apply config
+        stage.width = Config.width
+        stage.height = Config.height
+        stage.x = Config.x
+        stage.y = Config.y
+        if (Config.isMaximized) scene.maximizeStage()
+
+        // set listeners for config
+        stage.widthProperty().addListener { _, _, newVal -> Config.width = newVal as Double }
+        stage.heightProperty().addListener { _, _, newVal -> Config.height = newVal as Double }
+        stage.xProperty().addListener { _, _, newVal -> Config.x = newVal as Double }
+        stage.yProperty().addListener { _, _, newVal -> Config.y = newVal as Double }
+        scene.maximizedProperty().addListener { _, _, newVal -> Config.isMaximized = newVal }
+
+        // save config on close
+        stage.setOnHiding { Config.saveConfig() }
+
         stage.scene = scene
         stage.isResizable = true
         stage.title = "Paninotes"

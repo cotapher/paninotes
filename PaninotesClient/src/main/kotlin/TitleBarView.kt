@@ -40,12 +40,13 @@ class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor:
         closeButton.styleClass.addAll(JMetroStyleClass.LIGHT_BUTTONS, "close-button")
 
         minimizeButton.setOnAction { scene.minimizeStage() }
-        maximizeButton.setOnAction {
-            scene.maximizeStage()
-            if (scene.isMaximized) maximizeButton.graphic = restoreIcon
+        maximizeButton.setOnAction { scene.maximizeStage() }
+        closeButton.setOnAction { StageUtils.saveOnClose(model, stage, htmlEditor) }
+
+        scene.maximizedProperty().addListener { _, _, newVal ->
+            if (newVal) maximizeButton.graphic = restoreIcon
             else maximizeButton.graphic = maximizeIcon
         }
-        closeButton.setOnAction { StageUtils.saveOnClose(model, stage, htmlEditor) }
 
         val buttons = HBox(minimizeButton, maximizeButton, closeButton)
 
