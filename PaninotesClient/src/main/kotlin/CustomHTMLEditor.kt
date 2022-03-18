@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.geometry.Orientation
 import javafx.scene.Node
@@ -10,10 +9,11 @@ import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
 import jfxtras.styles.jmetro.MDL2IconFont
 import java.net.URI
+import java.net.URLEncoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-
+import javax.ws.rs.core.UriBuilder
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
 class CustomHTMLEditor: HTMLEditor() {
@@ -64,29 +64,35 @@ class CustomHTMLEditor: HTMLEditor() {
         // Send the highlighted text to hilite.me, a text -> html syntax highlighter
         // http://hilite.me/
 
-        val mockText = "fun testFunction(str: String) {/n/n}"
-        val requestBodyMap = mapOf("code" to mockText, "lexer" to "kotlin")
+        val mockTextKotlin = "fun testFunction(str: String) {  int a }"
+        val mockTextJava = "public void testFunction(String str) {/n/tint num = 5;/n}"
+        val mockTextCplusplus = "cout << \"Hello world\""
+
+       /* val highlighter = TextHighlighter()
+        highlighter.setLanguage(LibraryConstant.LanguageConstant.CPP)
+        val styledText = highlighter.getHighlightedText(mockTextCplusplus)*/
 
         val objectMapper = jacksonObjectMapper()
-        val requestBody: String = objectMapper
-            .writeValueAsString(requestBodyMap)
+
+        val uriBuilder = UriBuilder.fromUri("http://hilite.me/api")
+        uriBuilder.queryParam("code", URLEncoder.encode(mockTextKotlin, "UTF-8").replace("+", "%20"))
+        uriBuilder.queryParam("lexer", "kotlin")
+        val uri: URI = uriBuilder.build()
 
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://hilite.me/api"))
+            .uri(uri)
             .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .GET()
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         if(response.statusCode() == 200){
-            println("Success ${response.statusCode()}")
-            print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
+            this.htmlText = response.body().toString()
         } else {
             print("ERROR ${response.statusCode()}")
             print(response.body().toString())
         }
+
+        //this.htmlText = styledText
     }
 }
