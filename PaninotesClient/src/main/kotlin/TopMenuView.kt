@@ -10,6 +10,8 @@ import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.io.File
 import java.net.URI
 import java.net.http.HttpClient
@@ -18,7 +20,7 @@ import java.net.http.HttpResponse
 import java.nio.file.Paths.get
 import java.util.*
 import kotlin.system.exitProcess
-import javafx.stage.Popup
+
 
 class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
@@ -178,26 +180,24 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
             val delim = " "
             val list = noHtmlTags.split(delim)
-            val htmlTags = htmlEditor.htmlText
-            print(htmlTags)
-            var spaces = 0;
+            val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
+            val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
+            val paragraphs = textInParagraphs.size
             var characters = 0;
+            println(textInParagraphs)
 
-            // get number of spaces
-            var open = false
-            for (i in 0..htmlTags.length-1) {
-                if (htmlTags[i]=='<') {
-                    open = true
-                } else if (htmlTags[i] == '>') {
-                    open = false
-                } else if (htmlTags[i] == ' ' && !open) {
-                    spaces++;
+            for (i in 0..list.size-1) {
+                for (j in 0..list[i].length-1) {
+                    characters++
                 }
             }
 
+            println(emptyParagraphs.size)
 
-            usageInfo.contentText = "Number of Words: ${list.size}\n" +
-                    "Number of Space: ${count}\n"
+            usageInfo.contentText = "Words: ${list.size}\n" +
+                    "Characters (no spaces): ${characters}\n" +
+                    "Charaters (with spaces) ${characters + (noHtmlTags.length- characters -paragraphs)}\n" +
+                    "Paragraphs: ${paragraphs}\n"
 
             //show the popup
             usageInfo.showAndWait()
