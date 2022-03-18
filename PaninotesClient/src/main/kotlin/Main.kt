@@ -29,13 +29,14 @@ class Main : Application() {
         // create borderless scene
         val scene = BorderlessScene(stage, StageStyle.UNDECORATED, layout)
         scene.removeDefaultCSS()
+        if (!System.getProperty("os.name").contains("Windows")) scene.isSnapEnabled = false
 
         // Initialize all widgets--------------------------------------------------------------------------------------------
         val model = Model(stage)
         model.initializeNotebooks()
 
         val htmlEditor = HTMLEditor()
-        val titleBarView = TitleBarView(scene, stage)
+        val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model, stage)
         val sideNotebookPane = SideNotebookPaneView(model, stage)
