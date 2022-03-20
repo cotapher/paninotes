@@ -16,19 +16,19 @@ import java.nio.file.Paths
 
 @ExtendWith(ApplicationExtension::class)
 class SideNotebookPaneViewTest {
-    val testNotebookDir = File(Paths.get("src/main/resources/SideNotebookPaneViewTestNotebooks").toUri())
+    private val testNotebookDir = File(Paths.get("src/main/resources/UnitTestNotebooks").toUri())
 
     @Start
     private fun start(stage: Stage) {
 
-        val model = Model()
+        val model = Model(stage)
         // Set the model's notebook directory to our test directory
         // The test directory will have some fake notebooks and notes in there
         model.NOTEBOOK_DIR = testNotebookDir
         model.initializeNotebooks()
 
         val sideNotebookPane = SideNotebookPaneView(model, stage)
-        val sideIconPane = SideIconPaneView(model, sideNotebookPane)
+        val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)

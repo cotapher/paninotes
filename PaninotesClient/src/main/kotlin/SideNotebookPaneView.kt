@@ -3,10 +3,12 @@ import animatefx.animation.SlideOutLeft
 import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.FlatTextInputDialog
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignA
+import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
@@ -16,7 +18,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
     }
 
     private var currentView: PaneView = PaneView.NOTEBOOKS
-    private var currentNotebookId: Int = -1
 
     init {
         this.layoutView()
@@ -42,74 +43,65 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.setPrefSize(135.0, 16.0)
 
                     notebookButton.setOnAction {
-                        showNotesForNotebook(notebooks[i].notebookId)
                         model.currentOpenNotebook = notebooks[i]
+                        showNotes()
                     }
 
                     vBox.children.add(notebookButton)
                 }
 
                 // At the bottom, we want to add a button to add a notebook
-                val plusImage = Image("plus_icon.png")
-                val plusImageView = ImageView(plusImage)
-                plusImageView.isPreserveRatio = true
-                plusImageView.fitHeight = 17.0
+                val plusIcon = FontIcon(MaterialDesignP.PLUS)
+                plusIcon.iconSize = 16
 
-                val addNotebookButton = Button("ADD NOTEBOOK", plusImageView)
+                val addNotebookButton = Button("ADD NOTEBOOK", plusIcon)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
                 addNotebookButton.prefWidth = 135.0
 
                 addNotebookButton.setOnAction {
                     // Open the dialog to create the notebook
-                    model.createNotebookPopup()
+                    createNotebookPopup()
                 }
 
                 this.bottom = addNotebookButton
             }
 
             PaneView.NOTES -> {
-                if (currentNotebookId >= 0) {
-                    val currentNotebook = model.getNotebookById(currentNotebookId)
+                if (model.currentOpenNotebook != null) {
 
-                    if (currentNotebook != null) {
-                        // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
-                        val backArrowImage = Image("baseline_arrow_back_black_24dp.png")
-                        val backArrowImageView = ImageView(backArrowImage)
-                        backArrowImageView.isPreserveRatio = true
-                        backArrowImageView.fitHeight = 17.0
+                    // Put a button with the notebook name at the top, so the user can go back to the list of notebooks
+                    val backArrowIcon = FontIcon(MaterialDesignA.ARROW_LEFT)
+                    backArrowIcon.iconSize = 16
 
-                        val currentNotebookButton = Button(currentNotebook.title, backArrowImageView)
-                        currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
-                        currentNotebookButton.setPrefSize(135.0, 16.0)
-                        vBox.children.add(0, currentNotebookButton)
+                    val currentNotebookButton = Button(model.currentOpenNotebook!!.title, backArrowIcon)
+                    currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
+                    currentNotebookButton.setPrefSize(135.0, 16.0)
+                    vBox.children.add(0, currentNotebookButton)
 
-                        currentNotebookButton.setOnAction {
-                            // Go back to the list of notebooks
-                            showNotebooks()
+                    currentNotebookButton.setOnAction {
+                        // Go back to the list of notebooks
+                        showNotebooks()
 
-                            // In the Model, set the currentOpenNotebook back to null
-                            model.currentOpenNotebook = null;
+                        // In the Model, set the currentOpenNotebook back to null
+                        model.currentOpenNotebook = null
+                    }
+
+                    for (i in model.currentOpenNotebook!!.notes.indices) {
+                        val noteButton = Button(model.currentOpenNotebook!!.notes[i].title)
+                        noteButton.id = "sideNotebookPane-note-button-$i"
+                        noteButton.setPrefSize(135.0, 16.0)
+                        noteButton.setOnAction {
+                            // Open the clicked note
+                            model.openNote(model.currentOpenNotebook!!.notes[i])
                         }
-
-                        for (i in currentNotebook.notes.indices) {
-                            val noteButton = Button(currentNotebook.notes[i].title)
-                            noteButton.id = "sideNotebookPane-note-button-$i"
-                            noteButton.setPrefSize(135.0, 16.0)
-                            noteButton.setOnAction {
-                                // Open the clicked note
-                                model.openNote(currentNotebook.notes[i])
-                            }
-                            vBox.children.add(noteButton)
-                        }
+                        vBox.children.add(noteButton)
                     }
 
                     // At the bottom, we want to add a button to add a note into this notebook
-                    val plusImage = Image("plus_icon.png")
-                    val plusImageView = ImageView(plusImage)
-                    plusImageView.isPreserveRatio = true
-                    plusImageView.fitHeight = 17.0
+                    val plusIcon = FontIcon(MaterialDesignP.PLUS)
+                    plusIcon.iconSize = 16
 
-                    val addNoteButton = Button("ADD NOTE", plusImageView)
+                    val addNoteButton = Button("ADD NOTE", plusIcon)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
                     addNoteButton.prefWidth = 135.0
 
@@ -138,11 +130,25 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         this.layoutView()
     }
 
-    fun showNotesForNotebook(notebookId: Int) {
+    fun showNotes() {
         currentView = PaneView.NOTES
-        currentNotebookId = notebookId
 
         this.layoutView()
+    }
+
+    fun createNotebookPopup() {
+        val popup = FlatTextInputDialog()
+        popup.initOwner(stage)
+
+        popup.headerText = "Create Notebook"
+        popup.contentText = "Enter name for new notebook:"
+
+        //show the popup
+        val result = popup.showAndWait()
+        if (result.isPresent) {
+            val notebookNameResult = result.get()
+            model.createNotebookWithName(notebookNameResult)
+        }
     }
 
     override fun update() {

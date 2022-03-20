@@ -1,6 +1,6 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
 * {
-    -fx-my-menu-color: #ececec;                  /* Change according to your needs */
+    -fx-my-menu-color: #e8e8e8;                  /* Change according to your needs */
     -fx-my-menu-color-highlighted: #CCCCCC;      /* Change according to your needs */
 }
 
@@ -10,7 +10,7 @@
     -fx-background-color: -fx-my-menu-color;
 
     /* this is lying its not an error */
-    -fx-effect: innershadow(gaussian, derive(grey, 60%), 1, 0, 0, -1);
+    -fx-effect: innershadow(gaussian, derive(grey, 70%), 1, 0, 0, -1);
 }
 
 /*** Top-level menu itself (not selected / hovered) ***/
@@ -35,3 +35,10 @@
     -fx-view-order: 2.0;
 }
 
+.title-label {
+    -fx-text-fill: #737373;
+}
+
+.close-button:hover {
+    -fx-background-color: red !important;
+}
