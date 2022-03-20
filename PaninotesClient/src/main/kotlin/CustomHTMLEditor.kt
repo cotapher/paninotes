@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control.Button
@@ -25,6 +24,36 @@ class CustomHTMLEditor: HTMLEditor() {
     private var topToolBar: ToolBar? = null
     private var bottomToolBar: ToolBar? = null
     private var codeBlockButton: Button = Button()
+
+    // https://stackoverflow.com/questions/12786004/how-to-getselectedtext-from-webview-in-javafx
+    //https://developer.mozilla.org/en-US/docs/Web/API/Selection/deleteFromDocument
+    //https://stackoverflow.com/questions/16606054/find-htmleditor-cursor-pointer-for-inserting-image
+    val SELECT_HTML = """(getSelectionHTML = function () {
+      var userSelection;
+      if (window.getSelection) {
+        // W3C Ranges
+        userSelection = window.getSelection ();
+        // Get the range:
+        if (userSelection.getRangeAt)
+          var range = userSelection.getRangeAt (0);
+        else {
+          var range = document.createRange ();
+          range.setStart (userSelection.anchorNode, userSelection.anchorOffset);
+          range.setEnd (userSelection.focusNode, userSelection.focusOffset);
+        }
+        // And the HTML:
+        var clonedSelection = range.cloneContents ();
+        var div = document.createElement ('div');
+        div.appendChild (clonedSelection);
+        return div.innerHTML;
+      } else if (document.selection) {
+        // Explorer selection, return the HTML
+        userSelection = document.selection.createRange ();
+        return userSelection.htmlText;
+      } else {
+        return '';
+      }
+    })()"""
 
     init {
         identifyControls()
@@ -68,11 +97,18 @@ class CustomHTMLEditor: HTMLEditor() {
         val mockTextJava = "public void testFunction(String str) {/n/tint num = 5;/n}"
         val mockTextCplusplus = "cout << \"Hello world\""
 
+        // Get the text that the user is highlighting
+        val webView = this.lookup("WebView") as WebView
+        //val selection = webView.engine.executeScript("window.getSelection().toString()")
+        val selection = webView.engine.executeScript(SELECT_HTML)
+
+        if (selection is String) {
+
+        }
+
        /* val highlighter = TextHighlighter()
         highlighter.setLanguage(LibraryConstant.LanguageConstant.CPP)
         val styledText = highlighter.getHighlightedText(mockTextCplusplus)*/
-
-        val objectMapper = jacksonObjectMapper()
 
         val uriBuilder = UriBuilder.fromUri("http://hilite.me/api")
         uriBuilder.queryParam("code", URLEncoder.encode(mockTextKotlin, "UTF-8").replace("+", "%20"))
