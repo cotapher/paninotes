@@ -16,9 +16,9 @@ class TopMenuViewTest {
 
     @Start
     private fun start(stage: Stage) {
-        val model = Model()
+        val model = Model(stage)
         model.initializeNotebooks()
-        val htmlEditor = HTMLEditor()
+        val htmlEditor = CustomHTMLEditor()
         val layout = BorderPane()
         val jMetro = JMetro()
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)

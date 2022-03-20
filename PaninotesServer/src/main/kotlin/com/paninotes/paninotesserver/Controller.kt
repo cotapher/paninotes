@@ -2,49 +2,35 @@ package com.paninotes.paninotesserver
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 
 @RestController
 class Controller {
     @Autowired
-    private val noteRepository: NoteRepository? = null
-    @Autowired
-    private val notebookRepository: NotebookRepository? = null
+    private val noteService: NoteService? = null
     @GetMapping("/")
     @ResponseBody
-    fun getAllNotes(): MutableList<NoteListResponse>? {
-        val noteList = noteRepository?.findAll()?.toMutableList()
-        val response = NoteListResponse(noteList)
-        return Collections.singletonList(response)
-    }
-
-    @PostMapping("/new")
-    @ResponseBody
-    fun backupNote(@RequestBody newNote:Note): String{
-        noteRepository?.save(newNote)
-        return "Note Saved"
+    fun getAllNotes(): NoteListResponse {
+        return noteService!!.getAllNotes()
     }
 
     @GetMapping("/notebooks")
     @ResponseBody
-    fun getAllNotebooks(): MutableList<Notebook>? {
-        return notebookRepository?.findAll()?.toMutableList()
+    fun getAllNotebooks(): NotebookListResponse {
+        return noteService!!.getAllNotebooks()
     }
 
     @PostMapping("/backupNotebook")
     @ResponseBody
-    fun backupNotebook(@RequestBody newNotebook:Notebook): String{
-        notebookRepository?.save(newNotebook)
-        return "Notebook Saved"
+    fun backupNotebook(@RequestBody newNotebook:Notebook): Notebook? {
+        return noteService!!.backupNotebook(newNotebook)
+
     }
 
     @GetMapping("/deleteAll")
     @ResponseBody
     fun deleteAllData(): String {
-        notebookRepository?.deleteAll()
-        noteRepository?.deleteAll()
-        return "ALL DATA DELETED"
+        return noteService!!.deleteAllData()
     }
 
 }

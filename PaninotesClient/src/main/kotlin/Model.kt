@@ -1,12 +1,22 @@
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.scene.control.Alert
 import javafx.scene.control.Label
-import javafx.scene.control.TextInputDialog
+import javafx.stage.Stage
+import jfxtras.styles.jmetro.FlatAlert
+import jfxtras.styles.jmetro.FlatTextInputDialog
 import java.io.File
+import java.net.ConnectException
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Paths
 
-class Model {
+class Model (val stage: Stage? = null) {
+    val mapper = jacksonObjectMapper()
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
@@ -14,7 +24,6 @@ class Model {
     var currentNote: Note? = null
     var openNotes = ArrayList<Note>()
     val notebooks = ArrayList<Notebook>()
-    var currentNotebookIndex: Int = -1 // TODO maybe we save this in a file?
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
@@ -56,22 +65,7 @@ class Model {
         return null
     }
 
-    fun createNotebookPopup() {
-        val popup = TextInputDialog()
-        popup.title = "Paninotes"
-
-        popup.headerText = "Create Notebook"
-        popup.contentText = "Enter name for new notebook:"
-
-        //show the popup
-        val result = popup.showAndWait()
-        if (result.isPresent) {
-            val notebookNameResult = result.get()
-            createNotebookWithName(notebookNameResult)
-        }
-    }
-
-    private fun createNotebookWithName(notebookName: String) {
+    fun createNotebookWithName(notebookName: String) {
         val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
@@ -101,8 +95,8 @@ class Model {
         val directory: File? = notebook.filePath
 
         if (directory != null) {
-            val popup = TextInputDialog()
-            popup.title = "Paninotes"
+            val popup = FlatTextInputDialog()
+            popup.initOwner(stage)
             val currentFileOrDir = directory
             if (currentFileOrDir?.canWrite() == true) {
 
@@ -166,8 +160,7 @@ class Model {
     // NOTEBOOKS --------------------------------------------------------------------------------------------------
 
     fun createNotebook(title: String): Notebook {
-        currentNotebookIndex++
-        return Notebook(currentNotebookIndex, title)
+        return Notebook(title)
     }
 
     fun addNotebook(notebook: Notebook) {
@@ -179,20 +172,118 @@ class Model {
         return notebooks
     }
 
-    fun getNotebookById(id: Int): Notebook? {
-        for (notebook in notebooks) {
-            if (notebook.notebookId == id) return notebook
-        }
-
-        return null
-    }
-
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
-        val fileExistsAlert = Alert(type)
+        val fileExistsAlert = FlatAlert(type)
+        fileExistsAlert.initOwner(stage)
         fileExistsAlert.title = title
         val errorContent = Label(content)
         errorContent.isWrapText = true
         fileExistsAlert.dialogPane.content = errorContent
         fileExistsAlert.showAndWait()
+    }
+
+    // Server
+
+    fun makeBackup() {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/backupNotebook"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+                //TODO need integrate with view
+    //            now we want to add ids to note objects
+                val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+                //map notes back to notebook
+                notebookWithID.notes.forEach { it.notebook = notebookWithID }
+                notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
+                val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
+                notebooks[idx] = notebookWithID
+                currentOpenNotebook = notebookWithID
+                notifyViews()
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
+        }
+    }
+
+    fun testSendNote() {
+        val client = HttpClient.newBuilder().build()
+        val path = Paths.get(System.getProperty("user.dir")).resolve("src/main/resources/testNotebook1/fancynotes.html")
+        val testFile = File(path.toUri())
+        val testNote: Note = Note(testFile)
+        testNote.setContents()
+        testNote.setMetaData()
+        val requestBody = mapper.writeValueAsString(testNote)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/new"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try{
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+    //                val noteList: List<Note> = mapper.readValue(response.body().toString())
+    //                print(noteList.size)
+    //                print(noteList.toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
+        }
+    }
+
+    fun restoreBackup() {
+        //TODO Create a dialog box that confirms overwrite
+
+        val client = HttpClient.newBuilder().build()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/notebooks"))
+            .GET()
+            .build()
+
+        try{
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if(response.statusCode() == 200){
+                println("Success ${response.statusCode()}")
+                print(response.body().toString())
+                val result: NotebookListResponse = mapper.readValue(response.body().toString())
+                val notebookList: MutableList<Notebook> = (result.response as MutableList<Notebook>?)!!
+                    print(notebookList.size)
+//                    print(notebookList.toString())
+
+                    notebookList.forEach { notebook ->
+                        // For each notebook, also initialize all the notes in the notebook
+                        notebook.notes.forEach { note ->
+                            note.notebook = notebook
+                            note.htmlText?.let { note.saveNote(it) }
+                        }
+                        //remove previous notebooks if any
+                        notebooks.removeAll{ it.title == notebook.title}
+                        //add the backed up notebook
+                        addNotebook(notebook)
+                    }
+
+                notifyViews()
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e:ConnectException){
+            println("Server is not running")
+        }
     }
 }

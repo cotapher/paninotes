@@ -1,19 +1,31 @@
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
+import java.sql.Date
+import java.time.Instant
+import java.time.LocalDateTime
 
-class Note(notePath: File) {
-    var filePath: File? = null
+class Note(var filePath: File? =null ) {
+    var id: Int? = null
     var title: String? = null
     var htmlText: String? = ""
     var fileMetadata: MutableMap<String,String>? = null
+    var notebookId: Int? =null
+    @JsonIgnore
     var notebook: Notebook? = null
+    var lastSynced: LocalDateTime? = null
 
     init {
-        this.filePath = notePath
         this.title = resolveNameFromPath()
-        this.filePath?.createNewFile()
+        if (!this.filePath!!.parentFile.exists()){
+            this.filePath?.parentFile?.mkdirs();
+        }
+        if (!this.filePath!!.exists()){
+            this.filePath?.createNewFile()
+        }
+
     }
 
     fun resolveNameFromPath(): String? {
@@ -47,12 +59,12 @@ class Note(notePath: File) {
 
     fun saveNote(HTMLString:String){
         filePath?.writeText(HTMLString)
+        setContents()
     }
 
     override fun equals(other: Any?): Boolean {
         return (other is Note)
             && other.title == title
                 && other.notebook?.title == notebook?.title
-
     }
 }
