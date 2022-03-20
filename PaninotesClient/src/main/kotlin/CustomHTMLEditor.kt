@@ -7,6 +7,9 @@ import javafx.scene.control.Tooltip
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
 import jfxtras.styles.jmetro.MDL2IconFont
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC
+import org.kordamp.ikonli.materialdesign2.MaterialDesignN
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
@@ -78,7 +81,7 @@ class CustomHTMLEditor: HTMLEditor() {
 
     fun addCustomButtons() {
         // add code block/syntax highlighting button
-        val codeBlockIcon = MDL2IconFont("\uE943")
+        val codeBlockIcon = FontIcon(MaterialDesignC.CODE_BRACES)
         codeBlockButton.graphic = codeBlockIcon
 
         codeBlockButton.tooltip = Tooltip("Code Block")
