@@ -1,4 +1,5 @@
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import javafx.scene.control.Alert
@@ -16,7 +17,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class Model (val stage: Stage? = null) {
-    val mapper = jacksonObjectMapper()
+    val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
     private val views = ArrayList<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
@@ -206,6 +207,7 @@ class Model (val stage: Stage? = null) {
                 val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
                 notebooks[idx] = notebookWithID
                 currentOpenNotebook = notebookWithID
+                currentNote = notebookWithID.getNoteByTitle(currentNote?.title!!)
                 notifyViews()
             } else {
                 print("ERROR ${response.statusCode()}")

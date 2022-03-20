@@ -15,8 +15,7 @@ class Note(var filePath: File? =null ) {
     var notebookId: Int? =null
     @JsonIgnore
     var notebook: Notebook? = null
-    var lastSynced: LocalDateTime? = null
-
+    var lastBackupTime: LocalDateTime? = null
     init {
         this.title = resolveNameFromPath()
         if (!this.filePath!!.parentFile.exists()){
