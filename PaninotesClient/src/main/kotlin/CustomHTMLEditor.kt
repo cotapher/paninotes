@@ -106,10 +106,6 @@ class CustomHTMLEditor: HTMLEditor() {
 
         }
 
-       /* val highlighter = TextHighlighter()
-        highlighter.setLanguage(LibraryConstant.LanguageConstant.CPP)
-        val styledText = highlighter.getHighlightedText(mockTextCplusplus)*/
-
         val uriBuilder = UriBuilder.fromUri("http://hilite.me/api")
         uriBuilder.queryParam("code", URLEncoder.encode(mockTextKotlin, "UTF-8").replace("+", "%20"))
         uriBuilder.queryParam("lexer", "kotlin")
