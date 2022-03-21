@@ -35,7 +35,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         when (currentView) {
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
-                val notebooks: ArrayList<Notebook> = model.getAllNotebooks()
+                val notebooks: MutableList<Notebook> = model.notebooks
 
                 for (i in notebooks.indices) {
                     val notebookButton = Button(notebooks[i].title)

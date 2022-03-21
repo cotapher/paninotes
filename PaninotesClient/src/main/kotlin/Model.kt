@@ -19,12 +19,12 @@ import java.nio.file.Paths
 class Model (val stage: Stage? = null) {
     val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    private val views = ArrayList<IView>()
+    private val views = mutableListOf<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
-    var openNotes = ArrayList<Note>()
-    val notebooks = ArrayList<Notebook>()
+    var openNotes = mutableListOf<Note>()
+    val notebooks = mutableListOf<Notebook>()
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
