@@ -1,6 +1,7 @@
 package com.paninotes.paninotesserver
 
 
+import BackupState.BackupState
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
@@ -28,7 +29,10 @@ data class Note(
     @Column(name = "filepath")
     var filePath: File? = null,
     @UpdateTimestamp
-    var lastBackupTime: LocalDateTime? = null
+    var lastBackupTime: LocalDateTime? = null,
+    @Enumerated(EnumType.STRING)
+    var backupState: BackupState = BackupState.NOT_BACKED_UP,
+    var isOpen: Boolean?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
