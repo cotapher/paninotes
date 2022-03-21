@@ -1,4 +1,5 @@
 
+import BackupState.BackupState
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -269,7 +270,7 @@ class Model (val stage: Stage? = null) {
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
                 val result: NotebookListResponse = mapper.readValue(response.body().toString())
-                val notebookList: MutableList<Notebook> = (result.response as MutableList<Notebook>?)!!
+                val notebookList: MutableList<Notebook> = result.response!!
                     print(notebookList.size)
 //                    print(notebookList.toString())
 
@@ -279,13 +280,16 @@ class Model (val stage: Stage? = null) {
                             note.notebook = notebook
                             note.htmlText?.let { note.saveNote(it) }
                             //TODO check open notes and set flag
+                            note.isOpen = false
+                            note.backupState = BackupState.BACKED_UP
                         }
                         //remove previous notebooks if any
                         notebooks.removeAll{ it.title == notebook.title}
                         //add the backed up notebook
                         addNotebook(notebook)
                     }
-
+                openNotes.clear()
+                currentNote = null
                 notifyViews()
             } else {
                 print("ERROR ${response.statusCode()}")
