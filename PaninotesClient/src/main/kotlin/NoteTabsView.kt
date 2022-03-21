@@ -49,8 +49,16 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
-                        val openedNoteTab = model.currentOpenNotebook!!.notes.find { curNotes -> curNotes.title == note.title }
-                        model.openNote(openedNoteTab)
+                        //find the note accross notebooks
+                        val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
+                        //set current notebook
+                        model.currentOpenNotebook = selectedNote?.notebook
+                        model.currentNote = selectedNote
+
+
+//                        val openedNoteTab = model.currentOpenNotebook!!.notes.find { curNotes -> curNotes.title == note.title }
+                        model.openNote(model.currentNote)
+//                        model.openNote(note)
                     }
                 }
 
