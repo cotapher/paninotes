@@ -1,21 +1,11 @@
 import javafx.geometry.Orientation
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.control.Separator
-import javafx.scene.control.ToolBar
-import javafx.scene.control.Tooltip
+import javafx.scene.control.*
+import javafx.scene.layout.Pane
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
-import jfxtras.styles.jmetro.MDL2IconFont
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
-import org.kordamp.ikonli.materialdesign2.MaterialDesignN
-import java.net.URI
-import java.net.URLEncoder
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import javax.ws.rs.core.UriBuilder
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
 class CustomHTMLEditor: HTMLEditor() {
@@ -100,15 +90,16 @@ class CustomHTMLEditor: HTMLEditor() {
         val mockTextJava = "public void testFunction(String str) {/n/tint num = 5;/n}"
         val mockTextCplusplus = "cout << \"Hello world\""
 
-        // Get the text that the user is highlighting
+        // Get the text that the user is highlighting (if they are highlighting any)
         val webView = this.lookup("WebView") as WebView
-        //val selection = webView.engine.executeScript("window.getSelection().toString()")
-        val selection = webView.engine.executeScript(SELECT_HTML)
+        val selection = webView.engine.executeScript("window.getSelection().toString()")
 
+        // If the user is highlighting text, then we want to show the code block pop up with that text prepopulated
         if (selection is String) {
-
+            showCodeBlockPopup(selection)
         }
 
+        /*
         val uriBuilder = UriBuilder.fromUri("http://hilite.me/api")
         uriBuilder.queryParam("code", URLEncoder.encode(mockTextKotlin, "UTF-8").replace("+", "%20"))
         uriBuilder.queryParam("lexer", "kotlin")
@@ -126,8 +117,36 @@ class CustomHTMLEditor: HTMLEditor() {
         } else {
             print("ERROR ${response.statusCode()}")
             print(response.body().toString())
-        }
+        }*/
 
         //this.htmlText = styledText
+    }
+
+    private fun showCodeBlockPopup(startingText: String = "") {
+        // Create a custom popup that has a TextArea in it, so the user can enter the text they want syntax highlighting for
+        val dialog: Dialog<String> = Dialog()
+        dialog.title = "Paninotes"
+
+        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        val pane = Pane()
+        val textArea = TextArea(startingText)
+        pane.children.add(textArea)
+
+        dialog.dialogPane.content = pane
+
+        // Set the result of the dialog to the text that's entered in the text area
+        dialog.setResultConverter {
+            return@setResultConverter textArea.text
+        }
+
+        val result = dialog.showAndWait()
+
+        if (result.isPresent) {
+            val entered = result.get()
+            if (entered.isNotEmpty()) {
+
+            }
+        }
     }
 }
