@@ -1,5 +1,6 @@
 package com.paninotes.paninotesserver
 
+import BackupState.BackupState
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -15,6 +16,11 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
     fun getAllNotebooks(): NotebookListResponse {
 
         val notebooklist =notebookRepository?.findAll()!!.toMutableList()
+        notebooklist.forEach {
+            it.notes?.forEach {
+                    note -> note.backupState = BackupState.BACKED_UP
+            }
+        }
         return NotebookListResponse(notebooklist)
     }
 
@@ -25,7 +31,11 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             //associate notes with notebooks
 //            newNotebook.notes?.forEach { it.notebook = newNotebook }
             //return the notes with ids
-            return notebookRepository?.save(newNotebook)
+            val backedupNotebook = notebookRepository?.save(newNotebook)
+            backedupNotebook!!.notes!!.forEach {
+                it.backupState = BackupState.BACKED_UP
+            }
+            return backedupNotebook
 
         } else {
             //there should only be one make
@@ -46,8 +56,11 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
 
             matchingNotebookNotes.clear()
             matchingNotebookNotes.addAll(newNotebook.notes!!)
-
-            return notebookRepository?.save(matchingNotebook)
+            val backedupNotebook = notebookRepository?.save(matchingNotebook)
+            backedupNotebook!!.notes!!.forEach {
+                it.backupState = BackupState.BACKED_UP
+            }
+            return backedupNotebook
         }
     }
     fun deleteAllData(): String {

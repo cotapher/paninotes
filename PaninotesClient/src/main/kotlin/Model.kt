@@ -137,7 +137,8 @@ class Model (val stage: Stage? = null) {
         currentNote = note
         currentNote?.setContents()
         currentNote?.setMetaData()
-
+        //set note to open
+        currentNote?.isOpen = true
         if (note != null) {
             if (!openNotes.contains(note)) {
                 openNotes.add(note)
@@ -154,6 +155,7 @@ class Model (val stage: Stage? = null) {
     }
 
     fun closeNote(closedNote: Note?) {
+        closedNote?.isOpen = false
         openNotes.remove(closedNote)
 
         // if there are 0 openNotes, then the currentNote is null
@@ -173,10 +175,6 @@ class Model (val stage: Stage? = null) {
     fun addNotebook(notebook: Notebook) {
         notebooks.add(notebook)
         notifyViews()
-    }
-
-    fun getAllNotebooks(): ArrayList<Notebook> {
-        return notebooks
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
@@ -213,7 +211,9 @@ class Model (val stage: Stage? = null) {
                 val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
                 notebooks[idx] = notebookWithID
                 currentOpenNotebook = notebookWithID
-                currentNote = notebookWithID.getNoteByTitle(currentNote?.title!!)
+                currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                //refresh open notes
+                openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
                 notifyViews()
             } else {
                 print("ERROR ${response.statusCode()}")
@@ -278,6 +278,7 @@ class Model (val stage: Stage? = null) {
                         notebook.notes.forEach { note ->
                             note.notebook = notebook
                             note.htmlText?.let { note.saveNote(it) }
+                            //TODO check open notes and set flag
                         }
                         //remove previous notebooks if any
                         notebooks.removeAll{ it.title == notebook.title}
