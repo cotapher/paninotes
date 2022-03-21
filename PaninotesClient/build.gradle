@@ -24,6 +24,8 @@ dependencies {
     implementation 'com.github.iAmGio:animated:0.4.1'
     implementation 'io.github.typhon0:AnimateFX:1.2.2'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1'
+    implementation 'org.glassfish.jersey.core:jersey-common:2.22.2'
+    implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0'
     implementation 'com.github.goxr3plus:FX-BorderlessScene:4.4.0'
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.0'
     implementation 'org.kordamp.ikonli:ikonli-materialdesign2-pack:12.3.0'

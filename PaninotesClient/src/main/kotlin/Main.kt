@@ -35,7 +35,7 @@ class Main : Application() {
         val model = Model(stage)
         model.initializeNotebooks()
 
-        val htmlEditor = HTMLEditor()
+        val htmlEditor = CustomHTMLEditor()
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model, stage)
@@ -89,5 +89,10 @@ class Main : Application() {
         stage.title = "Paninotes"
 
         stage.show()
+
+        // add the custom buttons to the HTML editor
+        // the HTML editor toolbar buttons aren't initialized on construction, only after a call to layoutChildren
+        // so, after stage.show(), by now, the editor toolbar should be populated, so we can add our custom buttons whereever we want
+        htmlEditor.addCustomButtons()
     }
 }
