@@ -147,6 +147,12 @@ class Model (val stage: Stage? = null) {
         notifyViews()
     }
 
+    fun saveNote(htmlText:String) {
+        print(htmlText)
+        currentNote?.saveNote(htmlText)
+        notifyViews()
+    }
+
     fun closeNote(closedNote: Note?) {
         openNotes.remove(closedNote)
 
