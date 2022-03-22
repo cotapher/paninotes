@@ -49,7 +49,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
-                        model.notifyViews()
+//                        model.notifyViews()
                         //save the current note
                         StageUtils.confirmClose(model,stage,htmlEditor)
                         print("from tabs: ${htmlEditor.htmlText}")
