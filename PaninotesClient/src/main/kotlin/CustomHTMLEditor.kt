@@ -102,7 +102,7 @@ class CustomHTMLEditor: HTMLEditor() {
 
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        val vboxPane = VBox()
+        val vboxPane = VBox(5.0)
         val headerText = Text("Enter your code:")
         val textArea = TextArea(startingText)
 
@@ -186,7 +186,6 @@ class CustomHTMLEditor: HTMLEditor() {
                             "            }"
 
                     engine.executeScript(insertAtCursorScript)
-
                 }
             }
         }
