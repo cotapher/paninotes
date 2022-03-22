@@ -28,14 +28,10 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if(matchingNotebooks?.size == 0) {
             println("Notebook not found by title, inserting into db")
-            //associate notes with notebooks
-//            newNotebook.notes?.forEach { it.notebook = newNotebook }
-            //return the notes with ids
-            val backedupNotebook = notebookRepository?.save(newNotebook)
-            backedupNotebook!!.notes!!.forEach {
+            newNotebook!!.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
-            return backedupNotebook
+            return notebookRepository?.save(newNotebook)
 
         } else {
             //there should only be one make
@@ -47,20 +43,12 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             matchingNotebookNotes.forEach {
                 noteRepository?.deleteById(it.id!!)
             }
-            /*
-            //compare which note objects have changed
-            val newNotes = newNotebook.notes!!
-            val merged = (matchingNotebookNotes union newNotes.toSet())
-            val newNoteList = merged.toMutableList()
-             */
-
             matchingNotebookNotes.clear()
             matchingNotebookNotes.addAll(newNotebook.notes!!)
-            val backedupNotebook = notebookRepository?.save(matchingNotebook)
-            backedupNotebook!!.notes!!.forEach {
+            matchingNotebook!!.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
-            return backedupNotebook
+            return notebookRepository?.save(matchingNotebook)
         }
     }
     fun deleteAllData(): String {
