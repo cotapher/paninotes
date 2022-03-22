@@ -4,17 +4,31 @@ import java.io.File
 import java.nio.file.Paths
 
 @Serializable
-data class ConfigFile(var width: Double, var height: Double, var x: Double, var y: Double, var isMaximized: Boolean)
+data class ConfigFile(
+    var width: Double,
+    var height: Double,
+    var x: Double,
+    var y: Double,
+    var isMaximized: Boolean,
+    var darkTheme: Boolean
+)
 
 object Config {
 
-    private var configFile = ConfigFile(800.0, 500.0, 0.0, 0.0, false)
+    private var configFile = ConfigFile(800.0, 500.0, 0.0, 0.0, isMaximized = false, darkTheme = false)
     private val CONFIG_PATH = File(Paths.get("src/main/resources/config.json").toUri())
 
     init {
-        // load config from file
         if (CONFIG_PATH.exists()) {
-            configFile = Json.decodeFromString(CONFIG_PATH.readText(Charsets.UTF_8))
+            try {
+                // load config from file
+                configFile = Json.decodeFromString(CONFIG_PATH.readText(Charsets.UTF_8))
+            } catch (e: SerializationException) {
+                // existing config is wrongly formatted; create new config with defaults
+                CONFIG_PATH.delete()
+                CONFIG_PATH.createNewFile()
+                CONFIG_PATH.writeText(Json.encodeToString(configFile))
+            }
         } else {
             // create new config file with defaults if one does not exist
             CONFIG_PATH.createNewFile()
@@ -46,4 +60,8 @@ object Config {
     var isMaximized: Boolean
         get() = configFile.isMaximized
         set(value) { configFile.isMaximized = value }
+
+    var darkTheme: Boolean
+        get() = configFile.darkTheme
+        set(value) { configFile.darkTheme = value }
 }

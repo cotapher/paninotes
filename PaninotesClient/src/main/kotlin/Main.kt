@@ -15,12 +15,13 @@ import jfxtras.styles.jmetro.Style
 class Main : Application() {
 
     private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css")?.toExternalForm()
+    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
 
     override fun start(stage: Stage) {
         // activate css live update
         CSSFX.start()
 
-        val jMetro = JMetro(Style.LIGHT)
+        val jMetro = JMetro()
 
         // create the root of the scene graph
         // BorderPane supports placing children in regions around the screen
@@ -65,7 +66,6 @@ class Main : Application() {
 
         // apply jmetro
         jMetro.scene = scene
-        jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
         layout.styleClass.add(JMetroStyleClass.BACKGROUND)
 
         // apply config
@@ -74,6 +74,13 @@ class Main : Application() {
         stage.x = Config.x
         stage.y = Config.y
         if (Config.isMaximized) scene.maximizeStage()
+        if (Config.darkTheme) {
+            jMetro.style = Style.DARK
+            jMetro.scene.stylesheets.add(DARK_STYLESHEET_URL)
+        } else {
+            jMetro.style = Style.LIGHT
+            jMetro.scene.stylesheets.add(LIGHT_STYLESHEET_URL)
+        }
 
         // set listeners for config
         stage.widthProperty().addListener { _, _, newVal -> Config.width = newVal as Double }
@@ -81,6 +88,7 @@ class Main : Application() {
         stage.xProperty().addListener { _, _, newVal -> Config.x = newVal as Double }
         stage.yProperty().addListener { _, _, newVal -> Config.y = newVal as Double }
         scene.maximizedProperty().addListener { _, _, newVal -> Config.isMaximized = newVal }
+        jMetro.styleProperty().addListener { _, _, newVal -> Config.darkTheme = (newVal == Style.DARK) }
 
         // save config on close
         stage.setOnHiding { Config.saveConfig() }
