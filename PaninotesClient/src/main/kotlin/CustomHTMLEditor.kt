@@ -24,292 +24,6 @@ class CustomHTMLEditor: HTMLEditor() {
     private val BOTTOM_TOOLBAR = ".bottom-toolbar"
     private val WEB_VIEW = ".web-view"
 
-    // Map from the languages to show in the dropdown to the Pygments lexer short name (so the hilite.me API can process it)
-    // https://pygments.org/docs/lexers/
-    private val HILITEME_LANGUAGES_TO_LEXER = mapOf<String, String>(
-        "ABAP" to "abap",
-        "ActionScript" to "actionscript",
-        "ActionScript 3" to "actionscript3",
-        "Ada" to "ada",
-        "ANTLR" to "antlr",
-        "ANTLR With ActionScript Target" to "antlr-actionscript",
-        "ANTLR With C# Target" to "antlr-csharp",
-        "ANTLR With CPP Target" to "antlr-cpp",
-        "ANTLR With Java Target" to "antlr-java",
-        "ANTLR With ObjectiveC Target" to "antlr-objc",
-        "ANTLR With Perl Target" to "antlr-perl",
-        "ANTLR With Python Target" to "antlr-python",
-        "ANTLR With Ruby Target" to "antlr-ruby",
-        "ApacheConf" to "apacheconf",
-        "AppleScript" to "applescript",
-        "AspectJ" to "aspectj",
-        "aspx-cs" to "aspx-cs",
-        "aspx-vb" to "aspx-vb",
-        "Asymptote" to "asymptote",
-        "autohotkey" to "autohotkey",
-        "AutoIt" to "autoit",
-        "Awk" to "awk",
-        "Base Makefile" to "basemake",
-        "Bash" to "bash",
-        "Bash Session" to "shell-session",
-        "Batchfile" to "batch",
-        "BBCode" to "bbcode",
-        "Befunge" to "befunge",
-        "BlitzMax" to "blitzmax",
-        "Boo" to "boo",
-        "Brainfuck" to "brainfuck",
-        "Bro" to "bro",
-        "BUGS" to "bugs",
-        "C" to "c",
-        "C#" to "c#",
-        "C++" to "c++",
-        "C Objdump" to "c-objdump",
-        "ca65" to "ca65",
-        "CBM BASIC V2" to "cbmbas",
-        "Ceylon" to "ceylon",
-        "CFEngine3" to "cfengine3",
-        "Cheetah" to "cheetah",
-        "Clojure" to "clojure",
-        "CMake" to "cmake",
-        "COBOL" to "cobol",
-        "COBOLFree" to "cobolfree",
-        "CoffeeScript" to "coffeescript",
-        "Coldfusion HTML" to "cfm",
-        "Common Lisp" to "common-lisp",
-        "Coq" to "coq",
-        "C++ Objdump" to "cpp-objdump",
-        "Croc" to "croc",
-        "CSS" to "css",
-        "CSS+Django/Jinja" to "css+django",
-        "CSS+Genshi Text" to "css+genshitext",
-        "CSS+Lasso" to "css+lasso",
-        "CSS+Mako" to "css+mako",
-        "CSS+Myghty" to "css+myghty",
-        "CSS+PHP" to "css+php",
-        "CSS+Ruby" to "css+ruby",
-        "CSS+Smarty" to "css+smart",
-        "CUDA" to "cuda",
-        "Cython" to "cython",
-        "D" to "d",
-        "D Objdump" to "d-objdump",
-        "Darcs Patch" to "dpatch",
-        "Dart" to "dart",
-        "Debian Control file" to "debcontrol",
-        "Debian Sourcelist" to "debsources",
-        "Delphi" to "delphi",
-        "Dg" to "dg",
-        "Diff" to "diff",
-        "Django/Jinja" to "django",
-        "DTD" to "dtd",
-        "Duel" to "duel",
-        "Dylan" to "dylan",
-        "Dylan Console" to "dylan-console",
-        "DylanLID" to "dylan-lid",
-        "eC" to "ec",
-        "ECL" to "ecl",
-        "Elixir" to "elixir",
-        "Elixir iex session" to "iex",
-        "Embedded Ragel" to "ragel-em",
-        "ERB" to "erb",
-        "Erlang" to "erlang",
-        "Erlang erl session" to "erl",
-        "Evoque" to "evoque",
-        "Factor" to "factor",
-        "Fancy" to "fancy",
-        "Fantom" to "fantom",
-        "Felix" to "felix",
-        "Fortran" to "fortran",
-        "FoxPro" to "foxpro",
-        "FSharp" to "fsharp",
-        "GAS" to "gas",
-        "Genshi" to "genshi",
-        "Genshi Text" to "genshitext",
-        "Gettext Catalog" to "pot",
-        "Gherkin" to "gherkin",
-        "GLSL" to "glsl",
-        "Gnuplot" to "gnuplot",
-        "Go" to "go",
-        "GoodData-CL" to "gooddata-cl",
-        "Gosu" to "gosu",
-        "Gosu Template" to "gst",
-        "Groff" to "groff",
-        "Groovy" to "groovy",
-        "Haml" to "haml",
-        "Haskell" to "haskell",
-        "haXe" to "haxe",
-        "HTML" to "html",
-        "HTML+Cheetah" to "html+cheetah",
-        "HTML+Django/Jinja" to "html+django",
-        "HTML+Evoque" to "html+evoque",
-        "HTML+Genshi" to "html+genshi",
-        "HTML+Lasso" to "html+lasso",
-        "HTML+Mako" to "html+mako",
-        "HTML+Myghty" to "html+myghty",
-        "HTML+PHP" to "html+php",
-        "HTML+Smarty" to "html+smarty",
-        "HTML+Velocity" to "html+velocity",
-        "HTTP" to "http",
-        "Hxml" to "hxml",
-        "Hybris" to "hybris",
-        "IDL" to "idl",
-        "INI" to "ini",
-        "Io" to "io",
-        "Ioke" to "ioke",
-        "IRC logs" to "irc",
-        "Jade" to "jade",
-        "JAGS" to "jags",
-        "Java" to "java",
-        "Java Server Page" to "jsp",
-        "JavaScript" to "javascript",
-        "JavaScript+Cheetah" to "javascript+cheetah",
-        "JavaScript+Django/Jinja" to "javascript+django",
-        "JavaScript+Genshi Text" to "javascript+genshi",
-        "JavaScript+Lasso" to "javascript+lasso",
-        "JavaScript+Mako" to "javascript+mako",
-        "JavaScript+Myghty" to "javascript+myghty",
-        "JavaScript+PHP" to "javascript+php",
-        "JavaScript+Ruby" to "javascript+ruby",
-        "JavaScript+Smarty" to "javascript+smarty",
-        "JSON" to "json",
-        "Julia" to "julia",
-        "Julia console" to "jlcon",
-        "Kconfig" to "kconfig",
-        "Koka" to "koka",
-        "Kotlin" to "kotlin",
-        "Lasso" to "lasso",
-        "Lighttpd configuration file" to "lighttpd",
-        "Literate Haskell" to "literate-haskell",
-        "LiveScript" to "livescript",
-        "LLVM" to "llvm",
-        "Logos" to "logos",
-        "Logtalk" to "logtalk",
-        "Lua" to "lua",
-        "Makefile" to "makefile",
-        "Mako" to "mako",
-        "MAQL" to "maql",
-        "Mason" to "mason",
-        "Matlab" to "matlab",
-        "Matlab session" to "matlabsession",
-        "MiniD" to "minid",
-        "Modelica" to "modelica",
-        "Modula-2" to "modula2",
-        "MoinMoin/Trac Wiki markup" to "moin",
-        "Monkey" to "monkey",
-        "MOOCode" to "moocode",
-        "MoonScript" to "moonscript",
-        "Mscgen" to "mscgen",
-        "MuPAD" to "mupad",
-        "MXML" to "mxml",
-        "Myghty" to "myghty",
-        "MySQL" to "mysql",
-        "NASM" to "nasm",
-        "Nemerle" to "nemerle",
-        "NewLisp" to "newlisp",
-        "Newspeak" to "newspeak",
-        "Nginx configuration file" to "nginx",
-        "Nimrod" to "nimrod",
-        "NSIS" to "nsis",
-        "NumPy" to "numpy",
-        "Objdump" to "objdump",
-        "Objective-C" to "objectivec",
-        "Objective-C++" to "objectivec++",
-        "Objective-J" to "objectivej",
-        "OCaml" to "ocaml",
-        "Octave" to "octave",
-        "Ooc" to "ooc",
-        "Opa" to "opa",
-        "OpenEdge ABL" to "openedge",
-        "Perl" to "perl",
-        "Perl6" to "perl6",
-        "PHP" to "php",
-        "PL/pgSQL" to "plpgsql",
-        "PostgreSQL console (psql)" to "postgresql-console",
-        "PostgreSQL SQL dialect" to "postgresql",
-        "PostScript" to "postscript",
-        "POVRay" to "pov",
-        "PowerShell" to "powershell",
-        "Prolog" to "prolog",
-        "Properties" to "jproperties",
-        "Protocol Buffer" to "protobuf",
-        "Puppet" to "puppet",
-        "PyPy Log" to "pypylog",
-        "Python" to "python",
-        "Python 3" to "python3",
-        "Python 3.0 Traceback" to "py3tb",
-        "Python console session" to "pycon",
-        "Python2 Traceback" to "py2tb",
-        "QML" to "qml",
-        "Racket" to "racket",
-        "Ragel" to "ragel",
-        "Ragel in C Host" to "ragel-c",
-        "Ragel in CPP Host" to "ragel-cpp",
-        "Ragel in D Host" to "ragel-d",
-        "Ragel in Java Host" to "ragel-java",
-        "Ragel in Objective C Host" to "ragel-c",
-        "Ragel in Ruby Host" to "ragel-ruby",
-        "RConsole" to "rconsole",
-        "Rd" to "rd",
-        "REBOL" to "rebol",
-        "Redcode" to "redcode",
-        "Regedit" to "registry",
-        "reStructuredText" to "restructuredtext",
-        "RHTML" to "rhtml",
-        "RobotFramework" to "robotframework",
-        "RPMSpec" to "spec",
-        "Ruby" to "ruby",
-        "Ruby irb session" to "rbcon",
-        "Rust" to "rust",
-        "S" to "s",
-        "Sass" to "sass",
-        "Scala" to "scala",
-        "Scalate Server Page" to "ssp",
-        "Scaml" to "scaml",
-        "Scheme" to "scheme",
-        "Scilab" to "scilab",
-        "SCSS" to "scss",
-        "Shell Session" to "pwsh-session",
-        "Smali" to "smali",
-        "Smalltalk" to "smalltalk",
-        "Smarty" to "smarty",
-        "Snobol" to "snobol",
-        "SourcePawn" to "sp",
-        "SQL" to "sql",
-        "Sqlite Console" to "sqlite3",
-        "SquidConf" to "squidconf",
-        "Stan" to "stan",
-        "Standard ML" to "sml",
-        "System Verilog" to "systemverilog",
-        "Tcl" to "tcl",
-        "Tcsh" to "tcsh",
-        "Tea" to "tea",
-        "TeX" to "tex",
-        "Treetop" to "treetop",
-        "TypeScript" to "typescript",
-        "UrbiScript" to "urbiscript",
-        "Vala" to "vala",
-        "VB.net" to "vbnet",
-        "Velocity" to "velocity",
-        "Verilog" to "verilog",
-        "VGL" to "vgl",
-        "vhdl" to "vhdl",
-        "VimL" to "vim",
-        "XML" to "xml",
-        "XML+Cheetah" to "xml+cheetah",
-        "XML+Django/Jinja" to "xml+django",
-        "XML+Evoque" to "xml+evoque",
-        "XML+Lasso" to "xml+lasso",
-        "XML+Mako" to "xml+mako",
-        "XML+Myghty" to "xml+myghty",
-        "XML+PHP" to "xml+php",
-        "XML+Ruby" to "xml+ruby",
-        "XML+Smarty" to "xml+smart",
-        "XML+Velocity" to "xml+velocity",
-        "XQuery" to "xquery",
-        "XSLT" to "xslt",
-        "Xtend" to "xtend",
-        "YAML" to "yaml",
-        )
-
     private var webView: WebView? = null
     private var topToolBar: ToolBar? = null
     private var bottomToolBar: ToolBar? = null
@@ -397,7 +111,7 @@ class CustomHTMLEditor: HTMLEditor() {
         val headerText = Text("Enter your code:")
         val textArea = TextArea(startingText)
 
-        val languagesKeys = HILITEME_LANGUAGES_TO_LEXER.keys
+        val languagesKeys = HiliteMeUtils.HILITEME_LANGUAGES_TO_LEXER.keys
         val languagesList = FXCollections.observableArrayList<String>()
         languagesKeys.forEach { key ->
             languagesList.add(key)
@@ -412,7 +126,8 @@ class CustomHTMLEditor: HTMLEditor() {
         // Set the result of the dialog to the text that's entered in the text area
         dialog.setResultConverter {
             // <Button type, Code text, Language>
-            val language = if (HILITEME_LANGUAGES_TO_LEXER[languagePicker.value] != null) HILITEME_LANGUAGES_TO_LEXER[languagePicker.value]!! else ""
+            val language = if (HiliteMeUtils.HILITEME_LANGUAGES_TO_LEXER[languagePicker.value] != null)
+                HiliteMeUtils.HILITEME_LANGUAGES_TO_LEXER[languagePicker.value]!! else ""
             return@setResultConverter Triple<ButtonType, String, String>(it, textArea.text, language)
         }
 
@@ -424,7 +139,7 @@ class CustomHTMLEditor: HTMLEditor() {
             // Make sure the OK button is pressed
             if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
                 val enteredText = buttonTypeAndText.second
-                val syntaxHighlightedTextHtml = getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
+                val syntaxHighlightedTextHtml = HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
 
                 // We will replace the user's highlighted text with the syntax highlighted text
                 if (syntaxHighlightedTextHtml != null) {
@@ -447,32 +162,5 @@ class CustomHTMLEditor: HTMLEditor() {
                 this.htmlText = this.htmlText.replace(selected, html)
             }
         }
-    }
-
-    private fun getSyntaxHighlightedText(text: String, language: String): String? {
-        if (text.isNotEmpty() && text.isNotBlank()) {
-            val uriBuilder = UriBuilder.fromUri("http://hilite.me/api")
-            uriBuilder.queryParam("code", URLEncoder.encode(text, "UTF-8").replace("+", "%20"))
-            uriBuilder.queryParam("lexer", language)
-            val uri: URI = uriBuilder.build()
-
-            val client = HttpClient.newBuilder().build()
-            val request = HttpRequest.newBuilder()
-                .uri(uri)
-                .header("Content-Type", "application/json")
-                .GET()
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-
-            return if(response.statusCode() == 200){
-                response.body().toString()
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-                null
-            }
-        }
-
-        return null
     }
 }
