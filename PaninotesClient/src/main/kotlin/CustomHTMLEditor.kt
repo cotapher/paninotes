@@ -2,10 +2,12 @@ import javafx.collections.FXCollections
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.control.Alert.AlertType
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
+import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.FlatDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
@@ -130,13 +132,21 @@ class CustomHTMLEditor: HTMLEditor() {
             val buttonTypeAndText = result.get()
 
             // Make sure the OK button is pressed
-            if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
+            if (buttonTypeAndText.first == ButtonType.OK && !buttonTypeAndText.second.isNullOrEmpty()) {
                 val enteredText = buttonTypeAndText.second
                 val syntaxHighlightedTextHtml = HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
 
                 // We will replace the user's highlighted text with the syntax highlighted text
                 if (syntaxHighlightedTextHtml != null) {
                     insertHtmlAtCursor(syntaxHighlightedTextHtml)
+                } else {
+                    // There was an error with the hilite.me api so show an error dialog
+                    val alert = FlatAlert(AlertType.ERROR)
+                    alert.title = "Paninotes"
+                    alert.headerText = "Syntax Highlighting Error"
+                    alert.contentText = "Sorry, there was an error with the hilite.me api for syntax highlighting :("
+
+                    alert.showAndWait()
                 }
             }
         }
