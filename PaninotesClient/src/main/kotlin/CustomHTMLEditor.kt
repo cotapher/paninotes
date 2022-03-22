@@ -1,5 +1,4 @@
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -10,12 +9,6 @@ import javafx.scene.web.WebView
 import jfxtras.styles.jmetro.FlatDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
-import java.net.URI
-import java.net.URLEncoder
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
-import javax.ws.rs.core.UriBuilder
 
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
@@ -154,12 +147,37 @@ class CustomHTMLEditor: HTMLEditor() {
             val webView = this.lookup("WebView") as WebView
             val engine = webView.engine
 
-            // Get the selected html
-            val selected = engine.executeScript(GET_SELECTED_HTML)
+            // Get the selected html that the user's highlighting
+            val selectedHtml = engine.executeScript(GET_SELECTED_HTML)
 
-            if (selected is String) {
-                // Replace the selected html with the syntax highlighted html
-                this.htmlText = this.htmlText.replace(selected, html)
+            // Get the selected text that the user's highlighting
+            val selectedText = webView.engine.executeScript("window.getSelection().toString()")
+
+            if (selectedHtml is String && selectedText is String) {
+                // If the user did select some text (we assume they selected code they want highlighted),
+                // then replace that with the syntax highlighted code
+                // Else, then just paste the syntax highlighted code at the cursor's position
+                if (selectedHtml.isNotEmpty() && selectedText.isNotBlank()) {
+                    this.htmlText = this.htmlText.replace(selectedHtml, html)
+                } else {
+                    // Go through the html string, and whenever there is a quotation mark, add a backslash before it,
+                    // so it escapes when we use it in JS
+                    val htmlWithBackslashes = html.replace("\"", "\\\"")
+
+                    // JS script to insert the syntax highlighted html code at the user's cursor position
+                    val insertAtCursorScript = "" +
+                            "var range, node;\n" +
+                            "            if (window.getSelection && window.getSelection().getRangeAt) {\n" +
+                            "                range = window.getSelection().getRangeAt(0);\n" +
+                            "                node = range.createContextualFragment(`" + htmlWithBackslashes + "`);\n" +
+                            "                range.insertNode(node);\n" +
+                            "            } else if (document.selection && document.selection.createRange) {\n" +
+                            "                document.selection.createRange().pasteHTML(`" + htmlWithBackslashes + "`);\n" +
+                            "            }"
+
+                    engine.executeScript(insertAtCursorScript)
+
+                }
             }
         }
     }
