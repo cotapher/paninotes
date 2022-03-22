@@ -191,37 +191,43 @@ class Model (val stage: Stage? = null) {
     // Server
 
     fun makeBackup() {
-        val client = HttpClient.newBuilder().build()
-        val requestBody = mapper.writeValueAsString(currentOpenNotebook)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/backupNotebook"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build()
-        try {
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if (response.statusCode() == 200) {
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-                //TODO need integrate with view
-    //            now we want to add ids to note objects
-                val notebookWithID: Notebook = mapper.readValue(response.body().toString())
-                //map notes back to notebook
-                notebookWithID.notes.forEach { it.notebook = notebookWithID }
-                notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
-                val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
-                notebooks[idx] = notebookWithID
-                currentOpenNotebook = notebookWithID
-                currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
-                //refresh open notes
-                openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
-                notifyViews()
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+        if(currentOpenNotebook != null) {
+            val client = HttpClient.newBuilder().build()
+            val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/backupNotebook"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            try {
+                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+                if (response.statusCode() == 200) {
+                    println("Success ${response.statusCode()}")
+                    print(response.body().toString())
+                    //TODO need integrate with view
+                    //            now we want to add ids to note objects
+                    val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+                    //map notes back to notebook
+                    notebookWithID.notes.forEach { it.notebook = notebookWithID }
+                    notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
+                    val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
+                    notebooks[idx] = notebookWithID
+                    currentOpenNotebook = notebookWithID
+                    currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                    //refresh open notes
+                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
+                        notifyViews()
+                } else {
+                    print("ERROR ${response.statusCode()}")
+                    print(response.body().toString())
+                }
+            } catch (e: ConnectException) {
+                println("Server is not running")
             }
-        } catch (e:ConnectException){
-            println("Server is not running")
+        } else {
+            val alert = FlatAlert(Alert.AlertType.WARNING)
+            alert.headerText = "No notebook selected"
+            alert.show()
         }
     }
 
