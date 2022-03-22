@@ -16,6 +16,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.time.format.DateTimeFormatter
 
 class Model (val stage: Stage? = null) {
     val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
@@ -216,7 +217,7 @@ class Model (val stage: Stage? = null) {
                     currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
                     //refresh open notes
                     openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
-                        notifyViews()
+                    notifyViews()
                 } else {
                     print("ERROR ${response.statusCode()}")
                     print(response.body().toString())
@@ -263,20 +264,20 @@ class Model (val stage: Stage? = null) {
 
     fun restoreBackup() {
         //TODO Create a dialog box that confirms overwrite
+        if(openNotes.size == 0) {
+            val client = HttpClient.newBuilder().build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/notebooks"))
+                .GET()
+                .build()
 
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/notebooks"))
-            .GET()
-            .build()
-
-        try{
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-                val result: NotebookListResponse = mapper.readValue(response.body().toString())
-                val notebookList: MutableList<Notebook> = result.response!!
+            try {
+                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+                if (response.statusCode() == 200) {
+                    println("Success ${response.statusCode()}")
+                    print(response.body().toString())
+                    val result: NotebookListResponse = mapper.readValue(response.body().toString())
+                    val notebookList: MutableList<Notebook> = result.response!!
                     print(notebookList.size)
 //                    print(notebookList.toString())
 
@@ -290,19 +291,34 @@ class Model (val stage: Stage? = null) {
                             note.backupState = BackupState.BACKED_UP
                         }
                         //remove previous notebooks if any
-                        notebooks.removeAll{ it.title == notebook.title}
+                        notebooks.removeAll { it.title == notebook.title }
                         //add the backed up notebook
                         addNotebook(notebook)
                     }
-                openNotes.clear()
-                currentNote = null
-                notifyViews()
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+                    val alert = FlatAlert(Alert.AlertType.INFORMATION)
+                    alert.headerText = "Backup Restored"
+                    val noteCount = notebookList.sumOf{
+                        notebook ->  notebook.notes.size
+                    }
+                    val mostRecent = notebookList.flatMap { it.notes }.maxByOrNull{it.lastBackupTime!!}
+
+                    alert.dialogPane.content = Label("Restored ${notebookList.size} notebooks\n" +
+                            "Restored a total of ${noteCount} notes\n" +
+                            "Most recent rdit was on ${mostRecent!!.lastBackupTime!!.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))} to Note: \"${mostRecent.title}|\""
+                    )
+                    alert.show()
+                    notifyViews()
+                } else {
+                    print("ERROR ${response.statusCode()}")
+                    print(response.body().toString())
+                }
+            } catch (e: ConnectException) {
+                println("Server is not running")
             }
-        } catch (e:ConnectException){
-            println("Server is not running")
+        } else {
+            val alert = FlatAlert(Alert.AlertType.WARNING)
+            alert.headerText = "Please close all open notes to restore"
+            alert.show()
         }
     }
 }
