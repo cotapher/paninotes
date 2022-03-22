@@ -36,6 +36,7 @@ class Main : Application() {
         model.initializeNotebooks()
 
         val htmlEditor = CustomHTMLEditor()
+        htmlEditor.stage = stage
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model, stage)

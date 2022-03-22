@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
+import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.FlatDialog
 import org.kordamp.ikonli.javafx.FontIcon
@@ -15,6 +16,8 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
 class CustomHTMLEditor: HTMLEditor() {
+    var stage: Stage? = null
+
     private val TOP_TOOLBAR = ".top-toolbar"
     private val BOTTOM_TOOLBAR = ".bottom-toolbar"
     private val WEB_VIEW = ".web-view"
@@ -98,6 +101,8 @@ class CustomHTMLEditor: HTMLEditor() {
     private fun showCodeBlockPopup(startingText: String = "") {
         // Create a custom popup that has a TextArea in it, so the user can enter the text they want syntax highlighting for
         val dialog: FlatDialog<Triple<ButtonType, String, String>> = FlatDialog()
+        dialog.initOwner(stage)
+
         dialog.title = "Paninotes"
 
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -142,6 +147,7 @@ class CustomHTMLEditor: HTMLEditor() {
                 } else {
                     // There was an error with the hilite.me api so show an error dialog
                     val alert = FlatAlert(AlertType.ERROR)
+                    alert.initOwner(stage)
                     alert.title = "Paninotes"
                     alert.headerText = "Syntax Highlighting Error"
                     alert.contentText = "Sorry, there was an error with the hilite.me api for syntax highlighting :("
