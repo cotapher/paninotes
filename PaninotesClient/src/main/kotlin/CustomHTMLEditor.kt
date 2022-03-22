@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
+import jfxtras.styles.jmetro.FlatDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import java.net.URI
@@ -31,21 +32,7 @@ class CustomHTMLEditor: HTMLEditor() {
     //https://developer.mozilla.org/en-US/docs/Web/API/Selection/deleteFromDocument
     //https://stackoverflow.com/questions/16606054/find-htmleditor-cursor-pointer-for-inserting-image
 
-    // https://stackoverflow.com/questions/2213376/how-to-find-cursor-position-in-a-contenteditable-div
-    val INSERT_HTML_AT_CURSOR = """
-        (insertHtmlAtCursor = function (html) {
-            var range, node;
-            if (window.getSelection && window.getSelection().getRangeAt) {
-                range = window.getSelection().getRangeAt(0);
-                node = range.createContextualFragment(html);
-                range.insertNode(node);
-            } else if (document.selection && document.selection.createRange) {
-                document.selection.createRange().pasteHTML(html);
-            }
-        }
-    """
-
-    val SELECT_HTML = """
+    private val SELECT_HTML = """
         (getSelectionHtml = function () {
             var html = "";
             if (typeof window.getSelection != "undefined") {
@@ -100,13 +87,10 @@ class CustomHTMLEditor: HTMLEditor() {
         topToolBar!!.items.add(Separator(Orientation.VERTICAL))
     }
 
+    // SYNTAX HIGHLIGHTING --------------------------------------------------------------------------------------------------
+
     private fun onCodeBlockAction() {
         // Send the highlighted text to hilite.me, a text -> html syntax highlighter
-        // http://hilite.me/
-
-        val mockTextKotlin = "fun testFunction(str: String) {  int a }"
-        val mockTextJava = "public void testFunction(String str) {/n/tint num = 5;/n}"
-        val mockTextCplusplus = "cout << \"Hello world\""
 
         // Get the text that the user is highlighting (if they are highlighting any)
         val webView = this.lookup("WebView") as WebView
@@ -116,19 +100,17 @@ class CustomHTMLEditor: HTMLEditor() {
         if (selection is String) {
             showCodeBlockPopup(selection)
         }
-
-        //this.htmlText = styledText
     }
 
     private fun showCodeBlockPopup(startingText: String = "") {
         // Create a custom popup that has a TextArea in it, so the user can enter the text they want syntax highlighting for
-        val dialog: Dialog<Pair<ButtonType, String>> = Dialog()
+        val dialog: FlatDialog<Pair<ButtonType, String>> = FlatDialog()
         dialog.title = "Paninotes"
 
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
 
         val vboxPane = VBox()
-        val headerText = Text("Code:")
+        val headerText = Text("Enter your code:")
         val textArea = TextArea(startingText)
         vboxPane.children.addAll(headerText, textArea)
 
@@ -143,12 +125,13 @@ class CustomHTMLEditor: HTMLEditor() {
 
         if (result.isPresent) {
             val buttonTypeAndText = result.get()
+
+            // Make sure the OK button is pressed
             if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
                 val enteredText = buttonTypeAndText.second
-
-                // Call the hilite.me api with the user's entered text, to get the html for the syntax highlighted text
                 val syntaxHighlightedTextHtml = getSyntaxHighlightedText(enteredText)
 
+                // We will replace the user's highlighted text with the syntax highlighted text
                 if (syntaxHighlightedTextHtml != null) {
                     insertHtmlAtCursor(syntaxHighlightedTextHtml)
                 }
@@ -168,25 +151,6 @@ class CustomHTMLEditor: HTMLEditor() {
                 // Replace the selected html with the syntax highlighted html
                 this.htmlText = this.htmlText.replace(selected, html)
             }
-
-            /*
-
-            // Go through the html string, and whenever there is a quotation mark, add a backslash before it,
-            // so it escapes when we use it in JS
-            val htmlWithBackslashes = html.replace("\"", "\\\"")
-
-            val str = "" +
-                    "var range, node;\n" +
-                    "            if (window.getSelection && window.getSelection().getRangeAt) {\n" +
-                    "                range = window.getSelection().getRangeAt(0);\n" +
-                    "                node = range.createContextualFragment(`" + htmlWithBackslashes + "`);\n" +
-                    "                range.insertNode(node);\n" +
-                    "            } else if (document.selection && document.selection.createRange) {\n" +
-                    "                document.selection.createRange().pasteHTML(`" + htmlWithBackslashes + "`);\n" +
-                    "            }"
-            println("HTML ")
-            println(str)
-            engine.executeScript(str)*/
         }
     }
 
@@ -204,13 +168,13 @@ class CustomHTMLEditor: HTMLEditor() {
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                //this.htmlText = response.body().toString()
-                return response.body().toString()
+
+            return if(response.statusCode() == 200){
+                response.body().toString()
             } else {
                 print("ERROR ${response.statusCode()}")
                 print(response.body().toString())
-                return null
+                null
             }
         }
 
