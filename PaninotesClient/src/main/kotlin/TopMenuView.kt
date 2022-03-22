@@ -102,8 +102,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         fileSave.setOnAction {
-            print(htmlEditor.htmlText)
-            model.currentNote?.saveNote(htmlEditor.htmlText)
+            model.saveNote(htmlEditor.htmlText)
         }
 
 

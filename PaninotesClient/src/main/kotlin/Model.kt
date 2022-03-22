@@ -1,4 +1,5 @@
 
+import BackupState.BackupState
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -19,12 +20,12 @@ import java.nio.file.Paths
 class Model (val stage: Stage? = null) {
     val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
 
-    private val views = ArrayList<IView>()
+    private val views = mutableListOf<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
-    var openNotes = ArrayList<Note>()
-    val notebooks = ArrayList<Notebook>()
+    var openNotes = mutableListOf<Note>()
+    val notebooks = mutableListOf<Notebook>()
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
@@ -137,7 +138,8 @@ class Model (val stage: Stage? = null) {
         currentNote = note
         currentNote?.setContents()
         currentNote?.setMetaData()
-
+        //set note to open
+        currentNote?.isOpen = true
         if (note != null) {
             if (!openNotes.contains(note)) {
                 openNotes.add(note)
@@ -147,7 +149,14 @@ class Model (val stage: Stage? = null) {
         notifyViews()
     }
 
+    fun saveNote(htmlText:String) {
+        print(htmlText)
+        currentNote?.saveNote(htmlText)
+        notifyViews()
+    }
+
     fun closeNote(closedNote: Note?) {
+        closedNote?.isOpen = false
         openNotes.remove(closedNote)
 
         // if there are 0 openNotes, then the currentNote is null
@@ -169,10 +178,6 @@ class Model (val stage: Stage? = null) {
         notifyViews()
     }
 
-    fun getAllNotebooks(): ArrayList<Notebook> {
-        return notebooks
-    }
-
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
         val fileExistsAlert = FlatAlert(type)
         fileExistsAlert.initOwner(stage)
@@ -186,35 +191,43 @@ class Model (val stage: Stage? = null) {
     // Server
 
     fun makeBackup() {
-        val client = HttpClient.newBuilder().build()
-        val requestBody = mapper.writeValueAsString(currentOpenNotebook)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/backupNotebook"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build()
-        try {
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if (response.statusCode() == 200) {
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-                //TODO need integrate with view
-    //            now we want to add ids to note objects
-                val notebookWithID: Notebook = mapper.readValue(response.body().toString())
-                //map notes back to notebook
-                notebookWithID.notes.forEach { it.notebook = notebookWithID }
-                notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
-                val idx = notebooks.indexOfFirst{it.title == notebookWithID.title}
-                notebooks[idx] = notebookWithID
-                currentOpenNotebook = notebookWithID
-                currentNote = notebookWithID.getNoteByTitle(currentNote?.title!!)
-                notifyViews()
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+        if(currentOpenNotebook != null) {
+            val client = HttpClient.newBuilder().build()
+            val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/backupNotebook"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+            try {
+                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+                if (response.statusCode() == 200) {
+                    println("Success ${response.statusCode()}")
+                    print(response.body().toString())
+                    //TODO need integrate with view
+                    //            now we want to add ids to note objects
+                    val notebookWithID: Notebook = mapper.readValue(response.body().toString())
+                    //map notes back to notebook
+                    notebookWithID.notes.forEach { it.notebook = notebookWithID }
+                    notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
+                    val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
+                    notebooks[idx] = notebookWithID
+                    currentOpenNotebook = notebookWithID
+                    currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                    //refresh open notes
+                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
+                        notifyViews()
+                } else {
+                    print("ERROR ${response.statusCode()}")
+                    print(response.body().toString())
+                }
+            } catch (e: ConnectException) {
+                println("Server is not running")
             }
-        } catch (e:ConnectException){
-            println("Server is not running")
+        } else {
+            val alert = FlatAlert(Alert.AlertType.WARNING)
+            alert.headerText = "No notebook selected"
+            alert.show()
         }
     }
 
@@ -263,7 +276,7 @@ class Model (val stage: Stage? = null) {
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
                 val result: NotebookListResponse = mapper.readValue(response.body().toString())
-                val notebookList: MutableList<Notebook> = (result.response as MutableList<Notebook>?)!!
+                val notebookList: MutableList<Notebook> = result.response!!
                     print(notebookList.size)
 //                    print(notebookList.toString())
 
@@ -272,13 +285,17 @@ class Model (val stage: Stage? = null) {
                         notebook.notes.forEach { note ->
                             note.notebook = notebook
                             note.htmlText?.let { note.saveNote(it) }
+                            //TODO check open notes and set flag
+                            note.isOpen = false
+                            note.backupState = BackupState.BACKED_UP
                         }
                         //remove previous notebooks if any
                         notebooks.removeAll{ it.title == notebook.title}
                         //add the backed up notebook
                         addNotebook(notebook)
                     }
-
+                openNotes.clear()
+                currentNote = null
                 notifyViews()
             } else {
                 print("ERROR ${response.statusCode()}")
