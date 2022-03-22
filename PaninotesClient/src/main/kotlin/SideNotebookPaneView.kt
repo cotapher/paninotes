@@ -10,9 +10,6 @@ import jfxtras.styles.jmetro.FlatTextInputDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
-import java.awt.Color
-import java.awt.Insets
-
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
@@ -70,7 +67,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 }
 
                 this.bottom = addNotebookButton
-                //this.add(addNotebookButton, 0, 1)
             }
 
             PaneView.NOTES -> {
@@ -123,7 +119,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     }
 
                     this.bottom = addNoteButton
-                   // this.add(addNoteButton, 0, 1)
                 } else {
                     println("ERROR - We're in the side pane Notes paneview, but the current notebook Id is < 0")
                 }
