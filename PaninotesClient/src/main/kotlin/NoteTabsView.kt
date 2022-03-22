@@ -49,6 +49,11 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
+                        model.notifyViews()
+                        //save the current note
+                        StageUtils.confirmClose(model,stage,htmlEditor)
+                        print("from tabs: ${htmlEditor.htmlText}")
+                        model.currentNote!!.saveNote(htmlEditor.htmlText)
                         //find the note accross notebooks
                         val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
                         //set current notebook
@@ -59,6 +64,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
 //                        val openedNoteTab = model.currentOpenNotebook!!.notes.find { curNotes -> curNotes.title == note.title }
                         model.openNote(model.currentNote)
 //                        model.openNote(note)
+                        model.notifyViews()
                     }
                 }
 

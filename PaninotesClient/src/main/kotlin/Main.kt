@@ -5,7 +5,6 @@ import javafx.application.Application
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import jfxtras.styles.jmetro.JMetro
@@ -38,7 +37,7 @@ class Main : Application() {
         val htmlEditor = CustomHTMLEditor()
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
-        val noteTabsView = NoteTabsView(model, stage)
+        val noteTabsView = NoteTabsView(model,htmlEditor, stage)
         val sideNotebookPane = SideNotebookPaneView(model, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
 
