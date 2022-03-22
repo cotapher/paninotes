@@ -6,7 +6,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignS
 
-class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
+class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): TabPane(), IView {
     init {
         this.layoutView()
         this.id = "noteTabs"

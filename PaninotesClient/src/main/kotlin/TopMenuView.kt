@@ -20,7 +20,7 @@ import java.net.http.HttpResponse
 import java.util.*
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
 
     private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
@@ -286,6 +286,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         //add a condition to only show editor if there is file assigned to model.currentFile
         if(model.currentNote != null){
             htmlEditor.htmlText = model.currentNote?.htmlText
+            println("Html editor:${htmlEditor.htmlText}")
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message

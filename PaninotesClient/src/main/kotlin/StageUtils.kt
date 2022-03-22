@@ -8,7 +8,7 @@ object StageUtils {
     fun saveOnClose(
         model: Model,
         stage: Stage,
-        htmlEditor: HTMLEditor
+        htmlEditor: CustomHTMLEditor
     ) {
         if (confirmClose(model, stage, htmlEditor)) stage.close()
     }
@@ -16,7 +16,7 @@ object StageUtils {
     fun confirmClose(
         model: Model,
         stage: Stage,
-        htmlEditor: HTMLEditor
+        htmlEditor: CustomHTMLEditor
     ): Boolean {
         if (model.currentNote != null) {
             val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
