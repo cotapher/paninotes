@@ -85,9 +85,7 @@ class Model(val stage: Stage? = null) {
             addNotebook(newNotebook)
 
             // set to current notebook
-            if (newNotebookFolder != null) {
-                currentOpenNotebook = newNotebook
-            }
+            currentOpenNotebook = newNotebook
             notifyViews()
         }
     }
