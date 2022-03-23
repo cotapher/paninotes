@@ -1,4 +1,4 @@
-package BackupState
+package com.paninotes.paninotesserver.backupState
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

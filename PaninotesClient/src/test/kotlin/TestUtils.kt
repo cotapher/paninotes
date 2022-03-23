@@ -6,7 +6,7 @@ object TestUtils {
         val keyCodes: Array<KeyCode> = Array(str.length) { KeyCode.A }
 
         str.forEachIndexed { index, char ->
-            var keyCode: Int = KeyEvent.getExtendedKeyCodeForChar(char.code)
+            val keyCode: Int = KeyEvent.getExtendedKeyCodeForChar(char.code)
             keyCodes[index] = KeyCode.valueOf(KeyEvent.getKeyText(keyCode))
         }
 

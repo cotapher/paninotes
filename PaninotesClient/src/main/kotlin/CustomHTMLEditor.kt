@@ -138,7 +138,7 @@ class CustomHTMLEditor : HTMLEditor() {
             val buttonTypeAndText = result.get()
 
             // Make sure the OK button is pressed
-            if (buttonTypeAndText.first == ButtonType.OK && !buttonTypeAndText.second.isNullOrEmpty()) {
+            if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
                 val enteredText = buttonTypeAndText.second
                 val syntaxHighlightedTextHtml =
                     HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
@@ -161,7 +161,7 @@ class CustomHTMLEditor : HTMLEditor() {
     }
 
     private fun insertHtmlAtCursor(html: String) {
-        if (!html.isNullOrEmpty()) {
+        if (html.isNotEmpty()) {
             val webView = this.lookup("WebView") as WebView
             val engine = webView.engine
 

@@ -1,4 +1,4 @@
-import BackupState.BackupState
+import backupState.BackupState
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.io.File
 import java.time.LocalDateTime
@@ -7,7 +7,6 @@ class Note(var filePath: File? = null) {
     var id: Int? = null
     var title: String? = null
     var htmlText: String? = ""
-    var fileMetadata: MutableMap<String, String>? = null
     var notebookId: Int? = null
 
     @JsonIgnore
