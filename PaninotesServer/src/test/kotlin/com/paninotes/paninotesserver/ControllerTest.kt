@@ -8,6 +8,4 @@ import org.springframework.test.web.servlet.MockMvc
 
 @WebMvcTest
 @JsonIgnoreProperties
-internal class ControllerTest(@Autowired val mockMvc: MockMvc) {
-
-}
+internal class ControllerTest(@Autowired val mockMvc: MockMvc)

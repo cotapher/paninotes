@@ -1,5 +1,8 @@
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.file.Paths
 
@@ -43,25 +46,37 @@ object Config {
     // Defining getters/setters
     var width: Double
         get() = configFile.width
-        set(value) { configFile.width = value }
+        set(value) {
+            configFile.width = value
+        }
 
     var height: Double
         get() = configFile.height
-        set(value) { configFile.height = value }
+        set(value) {
+            configFile.height = value
+        }
 
     var x: Double
         get() = configFile.x
-        set(value) { configFile.x = value }
+        set(value) {
+            configFile.x = value
+        }
 
     var y: Double
         get() = configFile.y
-        set(value) { configFile.y = value }
+        set(value) {
+            configFile.y = value
+        }
 
     var isMaximized: Boolean
         get() = configFile.isMaximized
-        set(value) { configFile.isMaximized = value }
+        set(value) {
+            configFile.isMaximized = value
+        }
 
     var darkTheme: Boolean
         get() = configFile.darkTheme
-        set(value) { configFile.darkTheme = value }
+        set(value) {
+            configFile.darkTheme = value
+        }
 }

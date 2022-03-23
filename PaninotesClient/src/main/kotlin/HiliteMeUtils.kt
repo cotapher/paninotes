@@ -308,7 +308,7 @@ object HiliteMeUtils {
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-            return if(response.statusCode() == 200){
+            return if (response.statusCode() == 200) {
                 response.body().toString()
             } else {
                 print("ERROR ${response.statusCode()}")
