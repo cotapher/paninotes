@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 class Controller {
     @Autowired
     private val noteService: NoteService? = null
+
     @GetMapping("/")
     @ResponseBody
     fun getAllNotes(): NoteListResponse {
@@ -22,7 +23,7 @@ class Controller {
 
     @PostMapping("/backupNotebook")
     @ResponseBody
-    fun backupNotebook(@RequestBody newNotebook:Notebook): Notebook? {
+    fun backupNotebook(@RequestBody newNotebook: Notebook): Notebook? {
         return noteService!!.backupNotebook(newNotebook)
 
     }

@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
-    @Autowired val notebookRepository: NotebookRepository? = null){
+class NoteService(
+    @Autowired val noteRepository: NoteRepository? = null,
+    @Autowired val notebookRepository: NotebookRepository? = null
+) {
 
     fun getAllNotes(): NoteListResponse {
         val noteList = noteRepository?.findAll()?.toMutableList()
@@ -15,10 +17,10 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
 
     fun getAllNotebooks(): NotebookListResponse {
 
-        val notebooklist =notebookRepository?.findAll()!!.toMutableList()
+        val notebooklist = notebookRepository?.findAll()!!.toMutableList()
         notebooklist.forEach {
-            it.notes?.forEach {
-                    note -> note.backupState = BackupState.BACKED_UP
+            it.notes?.forEach { note ->
+                note.backupState = BackupState.BACKED_UP
             }
         }
         return NotebookListResponse(notebooklist)
@@ -26,7 +28,7 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
 
     fun backupNotebook(newNotebook: Notebook): Notebook? {
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
-        if(matchingNotebooks?.size == 0) {
+        if (matchingNotebooks?.size == 0) {
             println("Notebook not found by title, inserting into db")
             newNotebook.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
@@ -51,6 +53,7 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             return notebookRepository?.save(matchingNotebook)
         }
     }
+
     fun deleteAllData(): String {
         notebookRepository?.deleteAll()
         noteRepository?.deleteAll()
