@@ -15,6 +15,10 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         this.managedProperty().bind(this.visibleProperty())
     }
 
+    fun getNotebookAndNoteName(note: Note): String {
+        return note.notebook!!.title + "/" + note.title!!
+    }
+
     fun getNoteFromNotebookAndNoteName(notebookAndNoteName: String): Note? {
         val notebookAndNoteSplit: List<String> = notebookAndNoteName.split("/")
         val notebookTitle: String = notebookAndNoteSplit[0]
@@ -35,7 +39,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         model.openNotes.forEachIndexed { index, note ->
             // Check if we already have a tab for this open note
             // This string will be unique for each tab, since every notebook must have a different name
-            val notebookAndNoteName: String = note.notebook!!.title + "/" + note.title!!
+            val notebookAndNoteName = getNotebookAndNoteName(note)
 
             if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
                 val tab = Tab(notebookAndNoteName)
@@ -90,7 +94,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
         }
 
         if (model.currentNote != null) {
-        // Make sure the active tab corresponds to the model's current note
+            // Make sure the active tab corresponds to the model's current note
             val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
             for (i in 0 until this.tabs.size) {
                 if (this.tabs[i].text == currentNotebookAndNoteName) {
@@ -98,6 +102,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                     break
                 }
             }
+
             // refresh sync status icons
             model.currentOpenNotebook?.notes?.forEach { note ->
                 if(this.tabs.any{ it.text == note.notebook!!.title + "/" + note.title!! }){
@@ -109,6 +114,12 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                         }
                 }
             }
+        }
+
+        // Iterate through all the tabs, and make sure all the tab's notes are in model.openNotes
+        // When notes and notebooks get deleted, we can just automatically close those tabs
+        this.tabs.removeAll { tab ->
+            model.openNotes.filter {getNotebookAndNoteName(it) == tab.text}.size == 0
         }
     }
 

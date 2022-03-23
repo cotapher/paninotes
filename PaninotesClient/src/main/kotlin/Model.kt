@@ -178,6 +178,29 @@ class Model (val stage: Stage? = null) {
         notifyViews()
     }
 
+    fun deleteNotebook(notebook: Notebook) {
+        // Check if this is the current open notebook
+        if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+            currentOpenNotebook = null
+        }
+
+        // Remove notes from openNotes if these notes are being deleted with the notebook
+        openNotes.removeAll { openNote ->
+            openNote.notebook!!.equals(notebook)
+        }
+
+        // If the current note was in the notebook, just set the current open note to the first openNote
+        if (currentNote != null && currentNote!!.notebook!!.equals(notebook)) {
+            if (openNotes.size > 0) {
+                currentNote = openNotes[0]
+            }
+        }
+
+        // Finally, delete the notebook from the notebooks list, and then notify views
+        notebooks.remove(notebook)
+        notifyViews()
+    }
+
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
         val fileExistsAlert = FlatAlert(type)
         fileExistsAlert.initOwner(stage)
@@ -188,7 +211,7 @@ class Model (val stage: Stage? = null) {
         fileExistsAlert.showAndWait()
     }
 
-    // Server
+    // SERVER --------------------------------------------------------------------------------------------------
 
     fun makeBackup() {
         if(currentOpenNotebook != null) {

@@ -23,4 +23,8 @@ class Notebook(title: String) {
 
         return null
     }
+
+    override fun equals(other: Any?): Boolean {
+        return (other is Notebook) && other.title == title
+    }
 }
