@@ -2,7 +2,6 @@ package com.paninotes.paninotesserver
 
 
 import BackupState.BackupState
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
 import org.hibernate.annotations.UpdateTimestamp

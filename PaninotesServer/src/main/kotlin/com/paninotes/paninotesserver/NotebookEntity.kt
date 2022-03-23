@@ -21,7 +21,6 @@ data class Notebook(
     @OneToMany(
         orphanRemoval = true,
         cascade = [CascadeType.ALL],
-//        mappedBy = "notebook"
     )
     var notes: MutableList<Note>? = null
 ) {
