@@ -1,4 +1,5 @@
 import BackupState.BackupState
+import javafx.event.Event
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.stage.Stage
@@ -65,26 +66,30 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
                     }
                 }
 
-                tab.setOnClosed {
-                    // Remove the note from the open notes in the model
-                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
-                    model.closeNote(closedNote)
+                tab.setOnCloseRequest {
+                    evt: Event ->
+                    if (StageUtils.confirmClose(model, stage, htmlEditor)) {
+                        // Remove the note from the open notes in the model
+                        val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
+                        model.closeNote(closedNote)
 
-                    // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
-                    // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
-                    // So, make sure that the tab actually gets closed/removed
+                        // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
+                        // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
+                        // So, make sure that the tab actually gets closed/removed
 
-                    // Get the index of the tab that we need to close
-                    var tabIndex: Int = -1
+                        // Get the index of the tab that we need to close
+                        var tabIndex: Int = -1
 
-                    for (i in 0 until this.tabs.size) {
-                        if (this.tabs[i].text == tab.text) {
-                            tabIndex = i
-                            break
+                        for (i in 0 until this.tabs.size) {
+                            if (this.tabs[i].text == tab.text) {
+                                tabIndex = i
+                                break
+                            }
                         }
-                    }
 
-                    if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
+                        if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
+                    }
+                    else evt.consume()
                 }
 
                 this.tabs.add(tab)
