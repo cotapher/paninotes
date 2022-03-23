@@ -33,6 +33,12 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         // TODO - refactor to add elements to vBox without resetting vBox to make the animations nice
         val vBox = AnimatedVBox(AnimationPair(FadeInUp(), SlideOutLeft()).setSpeed(3.0, 3.0))
 
+        // If the current view is PaneView.NOTES, and the current open notebook is null, then it probably got deleted
+        // In this case, just change the view to PaneView.NOTEBOOKS
+        if (currentView == PaneView.NOTES && model.currentOpenNotebook == null) {
+            currentView = PaneView.NOTEBOOKS
+        }
+
         // Depending on the current view, we will either show a list of notebooks, or list of notes in a notebook
         when (currentView) {
             PaneView.NOTEBOOKS -> {
@@ -44,42 +50,20 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(135.0, 16.0)
 
-                    // create a context menu with a delete option
+                    // create a context menu with a 'Delete Notebook' option
                     val contextMenu = ContextMenu()
-                    val deleteOption = MenuItem("Delete")
+                    val deleteOption = MenuItem("Delete Notebook")
                     deleteOption.setOnAction {
-                        // Create a popup to confirm that the user wants to delete this notebook
-                        val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
-                        confirmationAlert.initOwner(stage)
-                        confirmationAlert.contentText = "WARNING: Deleting a notebook will delete all notes within the notebook.\n" +
-                                "Are you sure you want to delete Notebook: ${notebooks[i].title}"
-                        val result = confirmationAlert.showAndWait()
-
-                        if (result.isPresent) {
-                            // Delete the notebook and all the notes in the notebook
-                            model.deleteNotebook(notebooks[i])
-                        }
+                        deleteNotebookPopup(notebooks[i])
                     }
 
                     contextMenu.items.add(deleteOption)
-
                     notebookButton.contextMenu = contextMenu
 
                     notebookButton.setOnAction {
                         model.currentOpenNotebook = notebooks[i]
                         showNotes()
                     }
-
-                   /* notebookButton.setOnMouseClicked {
-                        val button: MouseButton = it.button
-                        if (button == MouseButton.PRIMARY) {
-                            println("notebook left click")
-                            model.currentOpenNotebook = notebooks[i]
-                            showNotes()
-                        } else if (button == MouseButton.SECONDARY) {
-                            println("notebook right click")
-                        }
-                    }*/
 
                     vBox.children.add(notebookButton)
                 }
@@ -113,6 +97,17 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     val currentNotebookButton = Button(model.currentOpenNotebook!!.title, backArrowIcon)
                     currentNotebookButton.id = "sideNotebookPane-current-notebook-button"
                     currentNotebookButton.setPrefSize(135.0, 16.0)
+
+                    // You can right-click the current notebook button to delete the notebook
+                    val contextMenu = ContextMenu()
+                    val deleteOption = MenuItem("Delete Notebook")
+                    deleteOption.setOnAction {
+                        deleteNotebookPopup(model.currentOpenNotebook!!)
+                    }
+
+                    contextMenu.items.add(deleteOption)
+                    currentNotebookButton.contextMenu = contextMenu
+
                     vBox.children.add(0, currentNotebookButton)
 
                     currentNotebookButton.setOnAction {
@@ -153,9 +148,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     }
 
                     this.bottom = addNoteButton
-                } else {
-                    // If the model's current open notebook is null, then maybe it got deleted, so just go back to the notebooks view
-                    showNotebooks()
                 }
             }
         }
@@ -170,19 +162,19 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         this.top = scrollPane
     }
 
-    fun showNotebooks() {
+    private fun showNotebooks() {
         currentView = PaneView.NOTEBOOKS
 
         this.layoutView()
     }
 
-    fun showNotes() {
+    private fun showNotes() {
         currentView = PaneView.NOTES
 
         this.layoutView()
     }
 
-    fun createNotebookPopup() {
+    private fun createNotebookPopup() {
         val popup = FlatTextInputDialog()
         popup.initOwner(stage)
 
@@ -194,6 +186,20 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         if (result.isPresent) {
             val notebookNameResult = result.get()
             model.createNotebookWithName(notebookNameResult)
+        }
+    }
+
+    private fun deleteNotebookPopup(notebook: Notebook) {
+        // Create a popup to confirm that the user wants to delete this notebook
+        val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+        confirmationAlert.initOwner(stage)
+        confirmationAlert.contentText = "WARNING: Deleting a notebook will delete all notes within the notebook.\n\n" +
+                "Are you sure you want to delete Notebook: ${notebook.title}"
+        val result = confirmationAlert.showAndWait()
+
+        if (result.isPresent) {
+            // Delete the notebook and all the notes in the notebook
+            model.deleteNotebook(notebook)
         }
     }
 
