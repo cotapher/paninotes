@@ -92,6 +92,8 @@ class Main : Application() {
         // save config on close
         stage.setOnHiding { Config.saveConfig() }
 
+        stage.minWidth = 890.0
+        stage.minHeight = 700.0
         stage.scene = scene
         stage.isResizable = true
         stage.title = "Paninotes"
