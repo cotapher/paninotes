@@ -4,12 +4,14 @@ import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
+import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatTextInputDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
+
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
@@ -43,8 +45,19 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.setPrefSize(135.0, 16.0)
 
                     notebookButton.setOnAction {
-                        model.currentOpenNotebook = notebooks[i]
-                        showNotes()
+                      //  model.currentOpenNotebook = notebooks[i]
+                       // showNotes()
+                    }
+
+                    notebookButton.setOnMouseClicked {
+                        val button: MouseButton = it.button
+                        if (button == MouseButton.PRIMARY) {
+                            println("notebook left click")
+                            model.currentOpenNotebook = notebooks[i]
+                            showNotes()
+                        } else if (button == MouseButton.SECONDARY) {
+                            println("notebook right click")
+                        }
                     }
 
                     vBox.children.add(notebookButton)
