@@ -193,6 +193,8 @@ class Model (val stage: Stage? = null) {
         if (currentNote != null && currentNote!!.notebook!!.equals(notebook)) {
             if (openNotes.size > 0) {
                 currentNote = openNotes[0]
+            } else {
+                currentNote = null
             }
         }
 

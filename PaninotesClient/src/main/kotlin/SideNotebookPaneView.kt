@@ -66,7 +66,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.contextMenu = contextMenu
 
                     notebookButton.setOnAction {
-                        println("notebook button clicked")
                         model.currentOpenNotebook = notebooks[i]
                         showNotes()
                     }
