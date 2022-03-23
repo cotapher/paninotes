@@ -1,4 +1,4 @@
-package BackupState
+package backupState
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

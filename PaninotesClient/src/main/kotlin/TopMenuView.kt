@@ -68,7 +68,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 model.createNotePopup(model.currentOpenNotebook!!)
             } else {
                 // Get list of all notebook names
-                val notebookNames: List<String> = model.notebooks.map({ it.title })
+                val notebookNames: List<String> = model.notebooks.map { it.title }
 
                 // If there is no notebooks, show an error popup telling the user to create a notebook first
                 if (notebookNames.isEmpty()) {
@@ -142,7 +142,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
                     val delim = " "
                     val list = noHtmlTags.split(delim)
-                    var wordIndexes = ArrayList<Int>()
+                    val wordIndexes = ArrayList<Int>()
 
                     var outputString = ""
                     for ((i, item) in list.withIndex()) {
@@ -150,7 +150,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                             outputString += " "
                         }
                         if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
-                            outputString = outputString + "<mark>" + item + "</mark>"
+                            outputString = "$outputString<mark>$item</mark>"
                             wordIndexes.add(i)
                         } else {
                             outputString += item
@@ -171,7 +171,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         }
 
         optionUsage.setOnAction {
-            val usageInfo = FlatAlert(Alert.AlertType.CONFIRMATION)
+            val usageInfo = FlatAlert(AlertType.CONFIRMATION)
             usageInfo.initOwner(stage)
             usageInfo.headerText = "Statistics:"
             usageInfo.title = "Usage Statistics"
@@ -184,8 +184,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             var characters = 0
             println(textInParagraphs)
 
-            for (i in 0..list.size - 1) {
-                for (j in 0..list[i].length - 1) {
+            for (element in list) {
+                for (j in element.indices) {
                     characters++
                 }
             }
@@ -194,7 +194,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
             usageInfo.contentText = "Words: ${list.size}\n" +
                     "Characters (no spaces): ${characters}\n" +
-                    "Charaters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
+                    "Characters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
                     "Paragraphs: ${paragraphs}\n"
 
             //show the popup
@@ -249,7 +249,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
             //get current note
             if (model.currentNote != null) {
-                val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+                val confirmationAlert = FlatAlert(AlertType.CONFIRMATION)
                 confirmationAlert.initOwner(stage)
                 confirmationAlert.contentText = "Export ${model.currentNote?.title} to PDF?"
                 //show the popup

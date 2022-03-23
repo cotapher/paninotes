@@ -1,4 +1,4 @@
-import BackupState.BackupState
+import backupState.BackupState
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -18,7 +18,7 @@ import java.nio.file.Paths
 import java.time.format.DateTimeFormatter
 
 class Model(val stage: Stage? = null) {
-    val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+    private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val views = mutableListOf<IView>()
     var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
@@ -96,8 +96,7 @@ class Model(val stage: Stage? = null) {
         if (directory != null) {
             val popup = FlatTextInputDialog()
             popup.initOwner(stage)
-            val currentFileOrDir = directory
-            if (currentFileOrDir.canWrite() == true) {
+            if (directory.canWrite()) {
 
                 popup.headerText = "Create a new note inside ${directory.name}"
                 popup.contentText = "Enter name for new Note file"
@@ -211,7 +210,7 @@ class Model(val stage: Stage? = null) {
                     currentOpenNotebook = notebookWithID
                     currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
                     //refresh open notes
-                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
+                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
                     notifyViews()
                 } else {
                     print("ERROR ${response.statusCode()}")
@@ -269,7 +268,7 @@ class Model(val stage: Stage? = null) {
 
                     alert.dialogPane.content = Label(
                         "Restored ${notebookList.size} notebooks\n" +
-                                "Restored a total of ${noteCount} notes\n" +
+                                "Restored a total of $noteCount notes\n" +
                                 "Most recent rdit was on ${
                                     mostRecent!!.lastBackupTime!!.format(
                                         DateTimeFormatter.ofPattern(

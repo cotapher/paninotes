@@ -27,7 +27,7 @@ internal class ModelTest {
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
-            for (file in testNotebookDir.listFiles()) {
+            for (file in testNotebookDir.listFiles() ?: emptyArray()) {
                 file.deleteRecursively()
             }
         }
@@ -136,6 +136,6 @@ internal class ModelTest {
         val testName = "testNotebook"
         val newNotebook = model.createNotebook(testName)
 
-        assertTrue(newNotebook != null && newNotebook.title == testName)
+        assertTrue(newNotebook.title == testName)
     }
 }

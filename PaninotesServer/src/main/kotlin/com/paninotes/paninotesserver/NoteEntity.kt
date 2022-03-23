@@ -1,7 +1,7 @@
 package com.paninotes.paninotesserver
 
 
-import BackupState.BackupState
+import com.paninotes.paninotesserver.backupState.BackupState
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
 import org.hibernate.annotations.UpdateTimestamp

@@ -1,4 +1,4 @@
-import BackupState.BackupState
+import backupState.BackupState
 import javafx.event.Event
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
@@ -38,7 +38,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
             // This string will be unique for each tab, since every notebook must have a different name
             val notebookAndNoteName: String = note.notebook!!.title + "/" + note.title!!
 
-            if (this.tabs.filter { it.text == notebookAndNoteName }.size == 0) {
+            if (this.tabs.none { it.text == notebookAndNoteName }) {
                 val tab = Tab(notebookAndNoteName)
                 tab.id = "noteTabs-tab-$index"
 
@@ -52,7 +52,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
                     if (tab.isSelected) {
                         //save the current note
                         model.currentNote!!.saveNote(htmlEditor.htmlText)
-                        //find the note accross notebooks
+                        //find the note across notebooks
                         val selectedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
                         //set current notebook
                         model.currentOpenNotebook = selectedNote?.notebook

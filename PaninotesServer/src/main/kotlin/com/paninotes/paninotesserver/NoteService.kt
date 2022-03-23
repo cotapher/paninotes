@@ -1,6 +1,6 @@
 package com.paninotes.paninotesserver
 
-import BackupState.BackupState
+import com.paninotes.paninotesserver.backupState.BackupState
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

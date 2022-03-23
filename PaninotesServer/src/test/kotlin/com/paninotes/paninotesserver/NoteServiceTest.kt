@@ -1,7 +1,7 @@
 package com.paninotes.paninotesserver
 
-import TestDataObject
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -14,14 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 internal class NoteServiceTest {
-    val mockNoteRepository = mock(NoteRepository::class.java)
-    val mockNotebookRepository: NotebookRepository = mock(NotebookRepository::class.java)
+    private final val mockNoteRepository: NoteRepository = mock(NoteRepository::class.java)
+    private final val mockNotebookRepository: NotebookRepository = mock(NotebookRepository::class.java)
 
 
     val mockNoteService: NoteService? = NoteService(mockNoteRepository, mockNotebookRepository)
-    val mapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    val testNotebook: MutableList<Notebook> = mutableListOf()
-    val testNoteList: MutableList<Note> = mutableListOf()
+    private final val mapper: ObjectMapper = jacksonObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 
     val testNoteListResponse: NoteListResponse = mapper.readValue(TestDataObject.listOfNotesString)
     val testNotebookListResponse: NotebookListResponse = mapper.readValue(TestDataObject.notebookListString)
