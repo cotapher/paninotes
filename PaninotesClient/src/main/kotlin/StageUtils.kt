@@ -1,4 +1,5 @@
 import javafx.scene.control.Alert
+import javafx.scene.control.ButtonBar
 import javafx.scene.control.ButtonType
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
@@ -17,15 +18,16 @@ object StageUtils {
         stage: Stage,
         htmlEditor: CustomHTMLEditor
     ): Boolean {
-        if (model.currentNote != null) {
+        if (model.currentNote != null && model.currentNote!!.htmlText != htmlEditor.htmlText) {
             val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
             confirmationAlert.initOwner(stage)
             confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
             confirmationAlert.buttonTypes.clear()
-            val discardButton = ButtonType("Discard")
-            val saveButton = ButtonType("Save")
-            val cancelButton = ButtonType("Cancel")
-            confirmationAlert.buttonTypes.addAll(discardButton, saveButton, cancelButton)
+            val saveButton = ButtonType("Save", ButtonBar.ButtonData.YES)
+            val discardButton = ButtonType("Discard", ButtonBar.ButtonData.NO)
+            val cancelButton = ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE)
+            confirmationAlert.buttonTypes.addAll(saveButton, discardButton, cancelButton)
+
             //show the popup
             val result = confirmationAlert.showAndWait()
 
