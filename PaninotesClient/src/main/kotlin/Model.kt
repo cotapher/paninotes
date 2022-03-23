@@ -209,7 +209,10 @@ class Model(val stage: Stage? = null) {
                     val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
                     notebooks[idx] = notebookWithID
                     currentOpenNotebook = notebookWithID
-                    currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                    //check if the note is
+                    if(currentNote != null){
+                        currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                    }
                     //refresh open notes
                     openNotes = currentOpenNotebook!!.notes.filter { it.isOpen == true }.toMutableList()
                     notifyViews()
