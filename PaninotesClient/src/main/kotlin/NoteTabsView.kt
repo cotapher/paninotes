@@ -6,7 +6,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignS
 
-class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
+class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): TabPane(), IView {
     init {
         this.layoutView()
         this.id = "noteTabs"
@@ -49,6 +49,8 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
+                        //save the current note
+                        model.currentNote!!.saveNote(htmlEditor.htmlText)
                         //find the note accross notebooks
                         val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
                         //set current notebook
@@ -59,6 +61,7 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 //                        val openedNoteTab = model.currentOpenNotebook!!.notes.find { curNotes -> curNotes.title == note.title }
                         model.openNote(model.currentNote)
 //                        model.openNote(note)
+                        model.notifyViews()
                     }
                 }
 

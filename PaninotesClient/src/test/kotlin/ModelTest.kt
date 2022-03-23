@@ -35,6 +35,8 @@ internal class ModelTest {
 
     @Start
     private fun start(stage: Stage) {
+        val htmlEditor = CustomHTMLEditor()
+
         // Set the model's notebook directory to our test directory
         model.NOTEBOOK_DIR = testNotebookDir
         model.initializeNotebooks()
@@ -42,7 +44,7 @@ internal class ModelTest {
         // Clear the test notebook directory before each test
         clearTestNotebookDirectory()
 
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()

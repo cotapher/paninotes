@@ -5,7 +5,6 @@ import javafx.application.Application
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import jfxtras.styles.jmetro.JMetro
@@ -40,8 +39,8 @@ class Main : Application() {
         htmlEditor.stage = stage
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
-        val noteTabsView = NoteTabsView(model, stage)
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val noteTabsView = NoteTabsView(model,htmlEditor, stage)
+        val sideNotebookPane = SideNotebookPaneView(model,htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane

@@ -9,7 +9,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignW
 
-class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor: HTMLEditor, val model: Model): BorderPane() {
+class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor: CustomHTMLEditor, val model: Model): BorderPane() {
 
     private val titleLabel = Label("Paninotes")
 
