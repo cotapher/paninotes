@@ -1,6 +1,10 @@
+import BackupState.BackupState
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.stage.Stage
+import org.kordamp.ikonli.javafx.FontIcon
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC
+import org.kordamp.ikonli.materialdesign2.MaterialDesignS
 
 class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
     init {
@@ -37,9 +41,24 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                 val tab = Tab(notebookAndNoteName)
                 tab.id = "noteTabs-tab-$index"
 
+                when(model.currentNote!!.backupState){
+                    BackupState.NOT_BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
+                    BackupState.OUT_OF_SYNC ->  tab.graphic = FontIcon(MaterialDesignS.SYNC)
+                    BackupState.BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_CHECK)
+                }
+
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
-                        model.openNote(note)
+                        //find the note accross notebooks
+                        val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
+                        //set current notebook
+                        model.currentOpenNotebook = selectedNote?.notebook
+                        model.currentNote = selectedNote
+
+
+//                        val openedNoteTab = model.currentOpenNotebook!!.notes.find { curNotes -> curNotes.title == note.title }
+                        model.openNote(model.currentNote)
+//                        model.openNote(note)
                     }
                 }
 
@@ -70,13 +89,24 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
             }
         }
 
-        // Make sure the active tab corresponds to the model's current note
         if (model.currentNote != null) {
+        // Make sure the active tab corresponds to the model's current note
             val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
             for (i in 0 until this.tabs.size) {
                 if (this.tabs[i].text == currentNotebookAndNoteName) {
                     this.selectionModel.select(this.tabs[i])
                     break
+                }
+            }
+            // refresh sync status icons
+            model.currentOpenNotebook?.notes?.forEach { note ->
+                if(this.tabs.any{ it.text == note.notebook!!.title + "/" + note.title!! }){
+                    this.tabs.find { it.text == note.notebook!!.title + "/" + note.title!! }!!.graphic =
+                        when(note.backupState){
+                            BackupState.NOT_BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
+                            BackupState.OUT_OF_SYNC ->  FontIcon(MaterialDesignS.SYNC)
+                            BackupState.BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_CHECK)
+                        }
                 }
             }
         }

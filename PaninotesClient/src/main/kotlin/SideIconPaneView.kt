@@ -43,7 +43,8 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         searchButton.setPrefSize(30.0, 40.0)
         infoButton.setPrefSize(30.0, 40.0)
 
-        // JMetro MDL2 icons
+        // Kordamp Material Design icons
+        // https://kordamp.org/ikonli/cheat-sheet-materialdesign2.html
         val notebookIcon = FontIcon(MaterialDesignN.NOTEBOOK_OUTLINE)
         val searchIcon = FontIcon(MaterialDesignM.MAGNIFY)
         val infoIcon = FontIcon(MaterialDesignI.INFORMATION_OUTLINE)

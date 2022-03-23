@@ -3,13 +3,13 @@ import animatefx.animation.SlideOutLeft
 import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
-import javafx.scene.layout.BorderPane
+import javafx.scene.control.ScrollPane
+import javafx.scene.layout.*
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatTextInputDialog
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
-
 
 class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
@@ -35,7 +35,7 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         when (currentView) {
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
-                val notebooks: ArrayList<Notebook> = model.getAllNotebooks()
+                val notebooks: MutableList<Notebook> = model.notebooks
 
                 for (i in notebooks.indices) {
                     val notebookButton = Button(notebooks[i].title)
@@ -57,6 +57,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                 val addNotebookButton = Button("ADD NOTEBOOK", plusIcon)
                 addNotebookButton.id = "sideNotebookPane-add-notebook-button"
                 addNotebookButton.prefWidth = 135.0
+                addNotebookButton.minHeight = 40.0
+                addNotebookButton.prefHeight = 40.0
+                addNotebookButton.styleClass.add("add-note-notebook-button")
 
                 addNotebookButton.setOnAction {
                     // Open the dialog to create the notebook
@@ -104,6 +107,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     val addNoteButton = Button("ADD NOTE", plusIcon)
                     addNoteButton.id = "sideNotebookPane-add-note-button"
                     addNoteButton.prefWidth = 135.0
+                    addNoteButton.minHeight = 40.0
+                    addNoteButton.prefHeight = 40.0
+                    addNoteButton.styleClass.add("add-note-notebook-button")
 
                     addNoteButton.setOnAction {
                         // create the note in the current open notebook
@@ -121,7 +127,12 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
         vBox.spacing = 1.0
 
-        this.top = vBox
+        val scrollPane = ScrollPane(vBox)
+        scrollPane.isFitToWidth = true
+        scrollPane.isFitToHeight = true
+        scrollPane.prefHeightProperty().bind(stage.heightProperty().multiply(0.8))
+
+        this.top = scrollPane
     }
 
     fun showNotebooks() {

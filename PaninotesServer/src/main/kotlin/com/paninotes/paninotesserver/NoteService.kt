@@ -1,5 +1,6 @@
 package com.paninotes.paninotesserver
 
+import BackupState.BackupState
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -15,6 +16,11 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
     fun getAllNotebooks(): NotebookListResponse {
 
         val notebooklist =notebookRepository?.findAll()!!.toMutableList()
+        notebooklist.forEach {
+            it.notes?.forEach {
+                    note -> note.backupState = BackupState.BACKED_UP
+            }
+        }
         return NotebookListResponse(notebooklist)
     }
 
@@ -22,9 +28,9 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if(matchingNotebooks?.size == 0) {
             println("Notebook not found by title, inserting into db")
-            //associate notes with notebooks
-//            newNotebook.notes?.forEach { it.notebook = newNotebook }
-            //return the notes with ids
+            newNotebook!!.notes!!.forEach {
+                it.backupState = BackupState.BACKED_UP
+            }
             return notebookRepository?.save(newNotebook)
 
         } else {
@@ -37,16 +43,11 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             matchingNotebookNotes.forEach {
                 noteRepository?.deleteById(it.id!!)
             }
-            /*
-            //compare which note objects have changed
-            val newNotes = newNotebook.notes!!
-            val merged = (matchingNotebookNotes union newNotes.toSet())
-            val newNoteList = merged.toMutableList()
-             */
-
             matchingNotebookNotes.clear()
             matchingNotebookNotes.addAll(newNotebook.notes!!)
-
+            matchingNotebook!!.notes!!.forEach {
+                it.backupState = BackupState.BACKED_UP
+            }
             return notebookRepository?.save(matchingNotebook)
         }
     }

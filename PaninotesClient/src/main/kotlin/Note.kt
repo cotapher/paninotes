@@ -1,10 +1,9 @@
+import BackupState.BackupState
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.File
-import java.sql.Date
-import java.time.Instant
 import java.time.LocalDateTime
 
 class Note(var filePath: File? =null ) {
@@ -15,8 +14,9 @@ class Note(var filePath: File? =null ) {
     var notebookId: Int? =null
     @JsonIgnore
     var notebook: Notebook? = null
-    var lastSynced: LocalDateTime? = null
-
+    var lastBackupTime: LocalDateTime? = null
+    var backupState: BackupState = BackupState.NOT_BACKED_UP
+    var isOpen: Boolean = false
     init {
         this.title = resolveNameFromPath()
         if (!this.filePath!!.parentFile.exists()){
@@ -60,6 +60,7 @@ class Note(var filePath: File? =null ) {
     fun saveNote(HTMLString:String){
         filePath?.writeText(HTMLString)
         setContents()
+        backupState = BackupState.OUT_OF_SYNC
     }
 
     override fun equals(other: Any?): Boolean {

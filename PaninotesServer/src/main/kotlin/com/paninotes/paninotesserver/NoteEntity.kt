@@ -1,11 +1,14 @@
 package com.paninotes.paninotesserver
 
 
+import BackupState.BackupState
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.Hibernate
 import org.hibernate.annotations.Nationalized
+import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.lang.NonNull
 import java.io.File
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -25,9 +28,11 @@ data class Note(
     var htmlText: String? = null, //gives nclob
     @Column(name = "filepath")
     var filePath: File? = null,
-//    @ManyToOne(cascade = [CascadeType.ALL])
-//    var notebook: Notebook? =null,
-
+    @UpdateTimestamp
+    var lastBackupTime: LocalDateTime? = null,
+    @Enumerated(EnumType.STRING)
+    var backupState: BackupState = BackupState.NOT_BACKED_UP,
+    var isOpen: Boolean?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

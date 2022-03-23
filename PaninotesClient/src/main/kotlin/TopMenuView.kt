@@ -55,6 +55,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         val optionExport = createAddToMenu(optionMenu, "Export To PDF")
         menuBar.menus.add(optionMenu)
 
+        if (Config.darkTheme) optionTheme.text = "Use Light Theme"
+
         fileMenu.id = "menu-fileMenu"
         fileNewNote.id = "menuitem-fileNewNote"
         fileSave.id = "menuitem-fileSave"
@@ -102,8 +104,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         fileSave.setOnAction {
-            print(htmlEditor.htmlText)
-            model.currentNote?.saveNote(htmlEditor.htmlText)
+            model.saveNote(htmlEditor.htmlText)
         }
 
 
