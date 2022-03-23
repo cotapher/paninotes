@@ -34,27 +34,9 @@ class Note(var filePath: File? =null ) {
     fun setContents() {
         htmlText = readHTMLFile(filePath)
     }
-    fun setMetaData() {
-        fileMetadata = htmlText?.let { readMetaData(it) }
-    }
 
     fun readHTMLFile(file:File?): String? {
         return file?.readText(Charsets.UTF_8)
-    }
-
-    fun readMetaData(HTMLString: String): MutableMap<String,String>{
-        //JSoup docs
-        val doc: Document = Jsoup.parse(HTMLString)
-        val metaTags: Elements = doc.getElementsByTag("meta")
-        val metadataMap = mutableMapOf<String,String>()
-        //parsing metadata tags
-        for (metaTag in metaTags) {
-            val name: String = metaTag.attr("name")
-            val content: String = metaTag.attr("content")
-            metadataMap[name] = content
-        }
-
-        return metadataMap
     }
 
     fun saveNote(HTMLString:String){

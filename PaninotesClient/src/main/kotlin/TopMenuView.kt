@@ -48,7 +48,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
         val optionSearch = createAddToMenu(optionMenu, "Search")
         val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
         val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
-        val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
         val optionBackupCurrentNotebook = createAddToMenu(optionMenu,"Backup Current Notebook")
         val optionDeleteAllData = createAddToMenu(optionMenu,"Delete Backup Data")
         val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
@@ -223,9 +222,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
             model.restoreBackup()
         }
 
-        optionTestSend.setOnAction {
-            model.testSendNote()
-        }
 
         optionBackupCurrentNotebook.setOnAction {
             model.makeBackup()
