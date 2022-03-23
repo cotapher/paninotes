@@ -127,7 +127,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
 
             (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
 
-            val oldText = htmlEditor.htmlText
             val result = dialog.showAndWait()
             if (result.isPresent) {
                 val entered = result.get()
