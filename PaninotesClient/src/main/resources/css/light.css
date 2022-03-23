@@ -30,6 +30,11 @@
     -fx-view-order: 1.0;
 }
 
+/*** Scroll pane ***/
+.scroll-pane > .viewport {
+    -fx-background-color: #CCCCCC;
+}
+
 .middle-pane {
     -fx-background-color: #CCCCCC;
     -fx-view-order: 2.0;
@@ -41,4 +46,8 @@
 
 .close-button:hover {
     -fx-background-color: red !important;
+}
+
+.add-note-notebook-button:hover {
+    -fx-background-color: #a8a7a7;
 }

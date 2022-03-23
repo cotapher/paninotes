@@ -55,6 +55,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
         val optionExport = createAddToMenu(optionMenu, "Export To PDF")
         menuBar.menus.add(optionMenu)
 
+        if (Config.darkTheme) optionTheme.text = "Use Light Theme"
+
         fileMenu.id = "menu-fileMenu"
         fileNewNote.id = "menuitem-fileNewNote"
         fileSave.id = "menuitem-fileSave"
