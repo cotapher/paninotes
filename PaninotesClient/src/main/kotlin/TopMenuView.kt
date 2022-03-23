@@ -179,8 +179,24 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
             val delim = " "
             val list = noHtmlTags.split(delim)
-            usageInfo.contentText = "Number of Words: ${list.size-1}\n" +
-                    "Number of Whitespace: ${list.size-2}\n"
+            val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
+            val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
+            val paragraphs = textInParagraphs.size
+            var characters = 0;
+            println(textInParagraphs)
+
+            for (i in 0..list.size-1) {
+                for (j in 0..list[i].length-1) {
+                    characters++
+                }
+            }
+
+            println(emptyParagraphs.size)
+
+            usageInfo.contentText = "Words: ${list.size}\n" +
+                    "Characters (no spaces): ${characters}\n" +
+                    "Charaters (with spaces) ${characters + (noHtmlTags.length- characters -paragraphs)}\n" +
+                    "Paragraphs: ${paragraphs}\n"
 
             //show the popup
             usageInfo.showAndWait()
