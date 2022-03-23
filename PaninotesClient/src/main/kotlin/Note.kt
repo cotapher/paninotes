@@ -59,8 +59,11 @@ class Note(var filePath: File? =null ) {
 
     fun saveNote(HTMLString:String){
         filePath?.writeText(HTMLString)
+        if(HTMLString != htmlText){
+            //only update if text changed
+            backupState = BackupState.OUT_OF_SYNC
+        }
         setContents()
-        backupState = BackupState.OUT_OF_SYNC
     }
 
     override fun equals(other: Any?): Boolean {
