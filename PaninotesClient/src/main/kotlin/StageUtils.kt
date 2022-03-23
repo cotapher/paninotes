@@ -18,7 +18,7 @@ object StageUtils {
         stage: Stage,
         htmlEditor: CustomHTMLEditor
     ): Boolean {
-        if (model.currentNote != null) {
+        if (model.currentNote != null && model.currentNote!!.htmlText != htmlEditor.htmlText) {
             val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
             confirmationAlert.initOwner(stage)
             confirmationAlert.contentText = "Save changes to ${model.currentNote?.title}?"
