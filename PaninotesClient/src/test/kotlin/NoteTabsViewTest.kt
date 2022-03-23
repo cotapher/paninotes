@@ -21,11 +21,11 @@ class NoteTabsViewTest {
 
     private val testNotebookDir = File(Paths.get("src/main/resources/UnitTestNotebooks").toUri())
     private val model = Model()
-    private val htmlEditor = CustomHTMLEditor()
     private lateinit var noteTabsView: NoteTabsView
 
     @Start
     private fun start(stage: Stage) {
+        val htmlEditor = CustomHTMLEditor()
         // Set the model's notebook directory to our test directory
         // The test directory will have some fake notebooks and notes in there
         model.NOTEBOOK_DIR = testNotebookDir

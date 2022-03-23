@@ -24,7 +24,6 @@ internal class ModelTest {
     private val testNotebookName2 = "notebookb"
     private val testNoteName = "notea"
     private val model = Model()
-    private val htmlEditor = CustomHTMLEditor()
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
@@ -36,6 +35,8 @@ internal class ModelTest {
 
     @Start
     private fun start(stage: Stage) {
+        val htmlEditor = CustomHTMLEditor()
+
         // Set the model's notebook directory to our test directory
         model.NOTEBOOK_DIR = testNotebookDir
         model.initializeNotebooks()
