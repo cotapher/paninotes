@@ -12,12 +12,17 @@ import jfxtras.styles.jmetro.Style
 import java.io.File
 import java.nio.file.Paths
 
-class Main : Application() {
+class PaninotesClient : Application() {
 
-    private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css")?.toExternalForm()
+    private val LIGHT_STYLESHEET_URL = PaninotesClient::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
     private val BASE_DIRECTORY = File(Paths.get(System.getProperty("user.home"), ".paninotes").toUri())
-
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            launch(PaninotesClient::class.java, *args)
+        }
+    }
     override fun start(stage: Stage) {
         if (!BASE_DIRECTORY.exists()) BASE_DIRECTORY.mkdir()
 
