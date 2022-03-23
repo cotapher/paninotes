@@ -94,7 +94,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
                         if (selectedNotebookTitle.isNotEmpty()) {
                             val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
                             if (selectedNotebook != null) {
-                                model.createNotePopup(selectedNotebook!!)
+                                model.createNotePopup(selectedNotebook)
                             }
                         }
                     }
@@ -181,7 +181,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
             val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
             val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
             val paragraphs = textInParagraphs.size
-            var characters = 0;
+            var characters = 0
             println(textInParagraphs)
 
             for (i in 0..list.size-1) {

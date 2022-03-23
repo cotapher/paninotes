@@ -20,7 +20,7 @@ class Note(var filePath: File? =null ) {
     init {
         this.title = resolveNameFromPath()
         if (!this.filePath!!.parentFile.exists()){
-            this.filePath?.parentFile?.mkdirs();
+            this.filePath?.parentFile?.mkdirs()
         }
         if (!this.filePath!!.exists()){
             this.filePath?.createNewFile()

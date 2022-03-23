@@ -100,9 +100,9 @@ class Model (val stage: Stage? = null) {
             val popup = FlatTextInputDialog()
             popup.initOwner(stage)
             val currentFileOrDir = directory
-            if (currentFileOrDir?.canWrite() == true) {
+            if (currentFileOrDir.canWrite() == true) {
 
-                popup.headerText = "Create a new note inside ${directory?.name}"
+                popup.headerText = "Create a new note inside ${directory.name}"
                 popup.contentText = "Enter name for new Note file"
 
                 //show the popup

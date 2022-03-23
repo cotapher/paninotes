@@ -105,7 +105,7 @@ class CustomHTMLEditor: HTMLEditor() {
 
         dialog.title = "Paninotes"
 
-        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
 
         val vboxPane = VBox(5.0)
         val headerText = Text("Enter your code:")

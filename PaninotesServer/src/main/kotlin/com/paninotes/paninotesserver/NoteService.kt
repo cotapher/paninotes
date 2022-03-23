@@ -28,7 +28,7 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if(matchingNotebooks?.size == 0) {
             println("Notebook not found by title, inserting into db")
-            newNotebook!!.notes!!.forEach {
+            newNotebook.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
             return notebookRepository?.save(newNotebook)
@@ -45,7 +45,7 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             }
             matchingNotebookNotes.clear()
             matchingNotebookNotes.addAll(newNotebook.notes!!)
-            matchingNotebook!!.notes!!.forEach {
+            matchingNotebook.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
             return notebookRepository?.save(matchingNotebook)
