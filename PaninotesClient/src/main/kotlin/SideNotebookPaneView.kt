@@ -4,7 +4,7 @@ import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatTextInputDialog
 import org.kordamp.ikonli.javafx.FontIcon
@@ -12,7 +12,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
-class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): BorderPane(), IView {
+class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage) : BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -96,7 +96,7 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
                         noteButton.setPrefSize(135.0, 16.0)
                         noteButton.setOnAction {
                             // Open the clicked note
-                            if(model.currentNote != null){
+                            if (model.currentNote != null) {
                                 model.currentNote!!.saveNote(htmlEditor.htmlText)
                             }
                             model.openNote(model.currentOpenNotebook!!.notes[i])

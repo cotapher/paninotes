@@ -3,13 +3,13 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetroStyleClass
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignW
 
-class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor: CustomHTMLEditor, val model: Model): BorderPane() {
+class TitleBarView(val scene: BorderlessScene, val stage: Stage, val htmlEditor: CustomHTMLEditor, val model: Model) :
+    BorderPane() {
 
     private val titleLabel = Label("Paninotes")
 
