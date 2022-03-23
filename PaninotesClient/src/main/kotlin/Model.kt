@@ -138,7 +138,6 @@ class Model (val stage: Stage? = null) {
     fun openNote(note: Note?) {
         currentNote = note
         currentNote?.setContents()
-        currentNote?.setMetaData()
         //set note to open
         currentNote?.isOpen = true
         if (note != null) {
