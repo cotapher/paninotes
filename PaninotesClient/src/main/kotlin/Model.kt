@@ -137,7 +137,6 @@ class Model (val stage: Stage? = null) {
     fun openNote(note: Note?) {
         currentNote = note
         currentNote?.setContents()
-        currentNote?.setMetaData()
         //set note to open
         currentNote?.isOpen = true
         if (note != null) {
@@ -237,7 +236,6 @@ class Model (val stage: Stage? = null) {
         val testFile = File(path.toUri())
         val testNote: Note = Note(testFile)
         testNote.setContents()
-        testNote.setMetaData()
         val requestBody = mapper.writeValueAsString(testNote)
         val request = HttpRequest.newBuilder()
             .uri(URI.create("http://localhost:8080/new"))

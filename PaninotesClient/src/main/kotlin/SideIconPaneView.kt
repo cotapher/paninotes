@@ -76,14 +76,6 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
 
         searchButton.setOnAction {
         }
-
-        infoButton.setOnAction {
-            val popup = FlatAlert(Alert.AlertType.INFORMATION)
-            popup.initOwner(stage)
-            popup.title = "Note HTML Metadata Info"
-            popup.dialogPane.content =  Label(model.currentNote?.fileMetadata.toString())
-            popup.show()
-        }
     }
 
     override fun update() {
