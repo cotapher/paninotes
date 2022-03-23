@@ -19,7 +19,7 @@ data class ConfigFile(
 object Config {
 
     private var configFile = ConfigFile(800.0, 500.0, 0.0, 0.0, isMaximized = false, darkTheme = false)
-    private val CONFIG_PATH = File(Paths.get("src/main/resources/config.json").toUri())
+    private val CONFIG_PATH = File(Paths.get(System.getProperty("user.home"), ".paninotes", "config.json").toUri())
 
     init {
         if (CONFIG_PATH.exists()) {

@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter
 class Model(val stage: Stage? = null) {
     private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val views = mutableListOf<IView>()
-    var NOTEBOOK_DIR = File(Paths.get("src/main/resources/Notebooks").toUri())
+    var NOTEBOOK_DIR = File(Paths.get(System.getProperty("user.home"), ".paninotes", "Notebooks").toUri())
     var currentOpenNotebook: Notebook? = null
     var currentNote: Note? = null
     var openNotes = mutableListOf<Note>()
