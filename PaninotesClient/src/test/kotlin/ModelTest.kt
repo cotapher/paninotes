@@ -24,6 +24,7 @@ internal class ModelTest {
     private val testNotebookName2 = "notebookb"
     private val testNoteName = "notea"
     private val model = Model()
+    private val htmlEditor = CustomHTMLEditor()
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
@@ -42,7 +43,7 @@ internal class ModelTest {
         // Clear the test notebook directory before each test
         clearTestNotebookDirectory()
 
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()

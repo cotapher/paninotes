@@ -1,7 +1,6 @@
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -33,7 +32,7 @@ class NoteTabsViewTest {
         model.initializeNotebooks()
 
         noteTabsView = NoteTabsView(model, htmlEditor, stage)
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()

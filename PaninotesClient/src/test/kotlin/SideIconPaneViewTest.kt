@@ -20,9 +20,10 @@ class SideIconPaneViewTest {
     @Start
     private fun start(stage: Stage) {
         val model = Model(stage)
+        val htmlEditor = CustomHTMLEditor()
         model.initializeNotebooks()
 
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()

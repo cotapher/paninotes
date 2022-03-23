@@ -38,7 +38,7 @@ class Main : Application() {
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model,htmlEditor, stage)
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model,htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane

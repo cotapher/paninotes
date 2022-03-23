@@ -11,7 +11,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
-class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
+class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -92,6 +92,9 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         noteButton.setPrefSize(135.0, 16.0)
                         noteButton.setOnAction {
                             // Open the clicked note
+                            if(model.currentNote != null){
+                                model.currentNote!!.saveNote(htmlEditor.htmlText)
+                            }
                             model.openNote(model.currentOpenNotebook!!.notes[i])
                         }
                         vBox.children.add(noteButton)
