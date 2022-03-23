@@ -1,6 +1,5 @@
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 

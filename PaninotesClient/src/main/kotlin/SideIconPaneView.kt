@@ -1,18 +1,16 @@
 import animatefx.animation.SlideInLeft
 import animatefx.animation.SlideOutLeft
-import javafx.scene.control.Alert
 import javafx.scene.control.Button
-import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
-import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.JMetroStyleClass
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignI
 import org.kordamp.ikonli.materialdesign2.MaterialDesignM
 import org.kordamp.ikonli.materialdesign2.MaterialDesignN
 
-class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView, val stage: Stage): GridPane(), IView {
+class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView, val stage: Stage) : GridPane(),
+    IView {
 
     private val notebookButton = Button()
     private val searchButton = Button()
@@ -23,7 +21,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         this.add(notebookButton, 0, 0)
         this.add(searchButton, 0, 1)
         this.add(infoButton, 0, 2)
-        
+
         // Default don't show the notebook pane
         sideNotebookPaneView.isVisible = false
 
@@ -63,7 +61,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
             if (sideNotebookPaneView.isVisible) {
                 val anim = SlideOutLeft(sideNotebookPaneView)
                 anim.setSpeed(2.5)
-                anim.setOnFinished{sideNotebookPaneView.isVisible = false}
+                anim.setOnFinished { sideNotebookPaneView.isVisible = false }
                 anim.play()
 
             } else {

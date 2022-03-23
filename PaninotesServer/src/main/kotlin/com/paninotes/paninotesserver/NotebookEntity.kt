@@ -1,7 +1,6 @@
 package com.paninotes.paninotesserver
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.lang.NonNull
 import java.io.File
 import javax.persistence.*
@@ -16,7 +15,7 @@ data class Notebook(
     @NonNull
     var title: String? = null,
 
-    @Column(name= "filepath")
+    @Column(name = "filepath")
     var filePath: File? = null,
     @OneToMany(
         orphanRemoval = true,

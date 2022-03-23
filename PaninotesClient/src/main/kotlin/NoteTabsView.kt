@@ -6,7 +6,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignS
 
-class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): TabPane(), IView {
+class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage) : TabPane(), IView {
     init {
         this.layoutView()
         this.id = "noteTabs"
@@ -37,13 +37,13 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
             // This string will be unique for each tab, since every notebook must have a different name
             val notebookAndNoteName: String = note.notebook!!.title + "/" + note.title!!
 
-            if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
+            if (this.tabs.filter { it.text == notebookAndNoteName }.size == 0) {
                 val tab = Tab(notebookAndNoteName)
                 tab.id = "noteTabs-tab-$index"
 
-                when(model.currentNote!!.backupState){
+                when (model.currentNote!!.backupState) {
                     BackupState.NOT_BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
-                    BackupState.OUT_OF_SYNC ->  tab.graphic = FontIcon(MaterialDesignS.SYNC)
+                    BackupState.OUT_OF_SYNC -> tab.graphic = FontIcon(MaterialDesignS.SYNC)
                     BackupState.BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_CHECK)
                 }
 
@@ -52,7 +52,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
                         //save the current note
                         model.currentNote!!.saveNote(htmlEditor.htmlText)
                         //find the note accross notebooks
-                        val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
+                        val selectedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
                         //set current notebook
                         model.currentOpenNotebook = selectedNote?.notebook
                         model.currentNote = selectedNote
@@ -93,8 +93,9 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
         }
 
         if (model.currentNote != null) {
-        // Make sure the active tab corresponds to the model's current note
-            val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
+            // Make sure the active tab corresponds to the model's current note
+            val currentNotebookAndNoteName: String =
+                model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
             for (i in 0 until this.tabs.size) {
                 if (this.tabs[i].text == currentNotebookAndNoteName) {
                     this.selectionModel.select(this.tabs[i])
@@ -103,11 +104,11 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
             }
             // refresh sync status icons
             model.currentOpenNotebook?.notes?.forEach { note ->
-                if(this.tabs.any{ it.text == note.notebook!!.title + "/" + note.title!! }){
+                if (this.tabs.any { it.text == note.notebook!!.title + "/" + note.title!! }) {
                     this.tabs.find { it.text == note.notebook!!.title + "/" + note.title!! }!!.graphic =
-                        when(note.backupState){
+                        when (note.backupState) {
                             BackupState.NOT_BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
-                            BackupState.OUT_OF_SYNC ->  FontIcon(MaterialDesignS.SYNC)
+                            BackupState.OUT_OF_SYNC -> FontIcon(MaterialDesignS.SYNC)
                             BackupState.BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_CHECK)
                         }
                 }
