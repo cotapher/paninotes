@@ -15,7 +15,7 @@ import java.nio.file.Paths
 class PaninotesClient : Application() {
 
     private val LIGHT_STYLESHEET_URL = PaninotesClient::class.java.getResource("css/light.css")?.toExternalForm()
-    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
+    private val DARK_STYLESHEET_URL = PaninotesClient::class.java.getResource("css/dark.css")?.toExternalForm()
     private val BASE_DIRECTORY = File(Paths.get(System.getProperty("user.home"), ".paninotes").toUri())
     companion object {
         @JvmStatic
