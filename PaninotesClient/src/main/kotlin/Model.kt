@@ -231,36 +231,6 @@ class Model (val stage: Stage? = null) {
         }
     }
 
-    fun testSendNote() {
-        val client = HttpClient.newBuilder().build()
-        val path = Paths.get(System.getProperty("user.dir")).resolve("src/main/resources/testNotebook1/fancynotes.html")
-        val testFile = File(path.toUri())
-        val testNote: Note = Note(testFile)
-        testNote.setContents()
-        testNote.setMetaData()
-        val requestBody = mapper.writeValueAsString(testNote)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/new"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build()
-        try{
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-    //                val noteList: List<Note> = mapper.readValue(response.body().toString())
-    //                print(noteList.size)
-    //                print(noteList.toString())
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-            }
-        } catch (e:ConnectException){
-            println("Server is not running")
-        }
-    }
-
     fun restoreBackup() {
         //TODO Create a dialog box that confirms overwrite
         if(openNotes.size == 0) {
