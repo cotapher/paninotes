@@ -15,7 +15,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 
 
 // Referenced from: https://gist.github.com/dipu-bd/425a86105dbeb42ad31d
-class CustomHTMLEditor: HTMLEditor() {
+class CustomHTMLEditor : HTMLEditor() {
     var stage: Stage? = null
 
     private val TOP_TOOLBAR = ".top-toolbar"
@@ -105,7 +105,7 @@ class CustomHTMLEditor: HTMLEditor() {
 
         dialog.title = "Paninotes"
 
-        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
 
         val vboxPane = VBox(5.0)
         val headerText = Text("Enter your code:")
@@ -116,7 +116,8 @@ class CustomHTMLEditor: HTMLEditor() {
         languagesKeys.forEach { key ->
             languagesList.add(key)
         }
-        val languagePicker = ComboBox(languagesList) // Add a dropdown with all the available languages for the hilite.me api
+        val languagePicker =
+            ComboBox(languagesList) // Add a dropdown with all the available languages for the hilite.me api
         languagePicker.selectionModel.select("Kotlin")
 
         vboxPane.children.addAll(headerText, textArea, languagePicker)
@@ -137,9 +138,10 @@ class CustomHTMLEditor: HTMLEditor() {
             val buttonTypeAndText = result.get()
 
             // Make sure the OK button is pressed
-            if (buttonTypeAndText.first == ButtonType.OK && !buttonTypeAndText.second.isNullOrEmpty()) {
+            if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
                 val enteredText = buttonTypeAndText.second
-                val syntaxHighlightedTextHtml = HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
+                val syntaxHighlightedTextHtml =
+                    HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
 
                 // We will replace the user's highlighted text with the syntax highlighted text
                 if (syntaxHighlightedTextHtml != null) {
@@ -159,7 +161,7 @@ class CustomHTMLEditor: HTMLEditor() {
     }
 
     private fun insertHtmlAtCursor(html: String) {
-        if (!html.isNullOrEmpty()) {
+        if (html.isNotEmpty()) {
             val webView = this.lookup("WebView") as WebView
             val engine = webView.engine
 
