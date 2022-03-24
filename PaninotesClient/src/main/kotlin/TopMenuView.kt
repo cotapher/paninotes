@@ -311,6 +311,16 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor,val stage: 
             model.notifyViews()
         }
 
+        sortNoteA.setOnAction {
+            model.notesReversed = false
+            model.notifyViews()
+        }
+
+        sortNoteZ.setOnAction {
+            model.notesReversed = true
+            model.notifyViews()
+        }
+
         this.children.add(menuBar)
     }
 

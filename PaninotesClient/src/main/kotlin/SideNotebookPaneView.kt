@@ -98,7 +98,15 @@ class   SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor,
                         model.currentOpenNotebook = null
                     }
 
-                    for (i in model.currentOpenNotebook!!.notes.indices) {
+                    var y = model.currentOpenNotebook!!.notes.indices.reversed()
+
+                    if (!model.notesReversed) {
+                        y = model.currentOpenNotebook!!.notes.indices
+                    } else {
+                        y = model.currentOpenNotebook!!.notes.indices.reversed()
+                    }
+                    model.currentOpenNotebook!!.notes.sortBy { it.title }
+                    for (i in y) {
                         val noteButton = Button(model.currentOpenNotebook!!.notes[i].title)
                         noteButton.id = "sideNotebookPane-note-button-$i"
                         noteButton.setPrefSize(135.0, 16.0)
