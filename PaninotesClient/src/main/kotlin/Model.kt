@@ -111,7 +111,7 @@ class Model(val stage: Stage? = null) {
         }
     }
 
-    fun setCurrentNote(noteFileName: String, notebook: Notebook) {
+    private fun setCurrentNote(noteFileName: String, notebook: Notebook) {
         val newNoteFile = File(notebook.filePath!!.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
@@ -168,7 +168,7 @@ class Model(val stage: Stage? = null) {
         return Notebook(title)
     }
 
-    fun addNotebook(notebook: Notebook) {
+    private fun addNotebook(notebook: Notebook) {
         notebooks.add(notebook)
         notifyViews()
     }
