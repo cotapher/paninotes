@@ -1,15 +1,25 @@
 import animatefx.animation.SlideInLeft
 import animatefx.animation.SlideOutLeft
+import javafx.scene.control.Alert
 import javafx.scene.control.Button
+import javafx.scene.control.ButtonType
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
+import jfxtras.styles.jmetro.FlatAlert
+import jfxtras.styles.jmetro.FlatTextInputDialog
 import jfxtras.styles.jmetro.JMetroStyleClass
+import org.jsoup.Jsoup
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignI
 import org.kordamp.ikonli.materialdesign2.MaterialDesignM
 import org.kordamp.ikonli.materialdesign2.MaterialDesignN
 
-class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookPaneView, val stage: Stage) : GridPane(),
+class SideIconPaneView(
+    val model: Model,
+    val htmlEditor: CustomHTMLEditor,
+    val sideNotebookPaneView: SideNotebookPaneView,
+    val stage: Stage
+) : GridPane(),
     IView {
 
     private val notebookButton = Button()
@@ -73,12 +83,99 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
         }
 
         searchButton.setOnAction {
+            searchText()
+        }
+
+        infoButton.setOnAction {
+            usageStats()
+        }
+    }
+
+    private fun usageStats() {
+        val usageInfo = FlatAlert(Alert.AlertType.CONFIRMATION)
+        usageInfo.initOwner(stage)
+        usageInfo.headerText = "Statistics:"
+        usageInfo.title = "Usage Statistics"
+        val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+        val delim = " "
+        val list = noHtmlTags.split(delim)
+        val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
+        val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
+        val paragraphs = textInParagraphs.size
+        var characters = 0
+        println(textInParagraphs)
+
+        for (element in list) {
+            for (j in element.indices) {
+                characters++
+            }
+        }
+
+        println(emptyParagraphs.size)
+
+        usageInfo.contentText = "Words: ${list.size}\n" +
+                "Characters (no spaces): ${characters}\n" +
+                "Characters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
+                "Paragraphs: ${paragraphs}\n"
+
+        //show the popup
+        usageInfo.showAndWait()
+    }
+
+    private fun searchText() {
+        val dialog = FlatTextInputDialog("")
+        dialog.initOwner(stage)
+        dialog.title = "Search"
+        dialog.headerText = "Find Word"
+
+        (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
+
+        val result = dialog.showAndWait()
+        if (result.isPresent) {
+            val entered = result.get()
+            if (entered.compareTo("") == 0) {
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+                dialog.show()
+                dialog.headerText = "No Input"
+            } else {
+                val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                println(htmlEditor.htmlText)
+                println(noHtmlTags)
+
+                val delim = " "
+                val list = noHtmlTags.split(delim)
+                val wordIndexes = ArrayList<Int>()
+
+                var outputString = ""
+                for ((i, item) in list.withIndex()) {
+                    if (i != 0) {
+                        outputString += " "
+                    }
+                    if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
+                        outputString = "$outputString<mark>$item</mark>"
+                        wordIndexes.add(i)
+                    } else {
+                        outputString += item
+                    }
+                }
+
+                println(outputString)
+                val oldText = htmlEditor.htmlText
+                htmlEditor.htmlText = outputString
+
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+
+                dialog.headerText = "Found " + wordIndexes.size
+                dialog.showAndWait()
+                htmlEditor.htmlText = oldText
+            }
         }
     }
 
     override fun update() {
         this.layoutView()
         //add a condition to only show editor if there is file assigned to model.currentFile
+        searchButton.isVisible = model.currentNote != null
         infoButton.isVisible = model.currentNote != null
     }
 }

@@ -130,85 +130,11 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
 
         optionSearch.setOnAction {
-            val dialog = FlatTextInputDialog("")
-            dialog.initOwner(stage)
-            dialog.title = "Search"
-            dialog.headerText = "Find Word"
-
-            (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
-
-            val result = dialog.showAndWait()
-            if (result.isPresent) {
-                val entered = result.get()
-                if (entered.compareTo("") == 0) {
-                    (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
-                    dialog.show()
-                    dialog.headerText = "No Input"
-                } else {
-                    val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-                    println(htmlEditor.htmlText)
-                    println(noHtmlTags)
-
-                    val delim = " "
-                    val list = noHtmlTags.split(delim)
-                    val wordIndexes = ArrayList<Int>()
-
-                    var outputString = ""
-                    for ((i, item) in list.withIndex()) {
-                        if (i != 0) {
-                            outputString += " "
-                        }
-                        if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
-                            outputString = "$outputString<mark>$item</mark>"
-                            wordIndexes.add(i)
-                        } else {
-                            outputString += item
-                        }
-                    }
-
-                    println(outputString)
-                    val oldText = htmlEditor.htmlText
-                    htmlEditor.htmlText = outputString
-
-                    (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
-
-                    dialog.headerText = "Found " + wordIndexes.size
-                    dialog.showAndWait()
-                    htmlEditor.htmlText = oldText
-                }
-            }
+            searchText()
         }
 
         optionUsage.setOnAction {
-            val usageInfo = FlatAlert(AlertType.CONFIRMATION)
-            usageInfo.initOwner(stage)
-            usageInfo.headerText = "Statistics:"
-            usageInfo.title = "Usage Statistics"
-            val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-            val delim = " "
-            val list = noHtmlTags.split(delim)
-            val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
-            val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
-            val paragraphs = textInParagraphs.size
-            var characters = 0
-            println(textInParagraphs)
-
-            for (element in list) {
-                for (j in element.indices) {
-                    characters++
-                }
-            }
-
-            println(emptyParagraphs.size)
-
-            usageInfo.contentText = "Words: ${list.size}\n" +
-                    "Characters (no spaces): ${characters}\n" +
-                    "Characters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
-                    "Paragraphs: ${paragraphs}\n"
-
-            //show the popup
-            usageInfo.showAndWait()
-
+            usageStats()
         }
 
         optionTheme.setOnAction {
@@ -245,9 +171,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             if (response.statusCode() == 200) {
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
             } else {
                 print("ERROR ${response.statusCode()}")
                 print(response.body().toString())
@@ -316,6 +239,87 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         }
 
         this.children.add(menuBar)
+    }
+
+    private fun usageStats() {
+        val usageInfo = FlatAlert(AlertType.CONFIRMATION)
+        usageInfo.initOwner(stage)
+        usageInfo.headerText = "Statistics:"
+        usageInfo.title = "Usage Statistics"
+        val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+        val delim = " "
+        val list = noHtmlTags.split(delim)
+        val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
+        val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
+        val paragraphs = textInParagraphs.size
+        var characters = 0
+        println(textInParagraphs)
+
+        for (element in list) {
+            for (j in element.indices) {
+                characters++
+            }
+        }
+
+        println(emptyParagraphs.size)
+
+        usageInfo.contentText = "Words: ${list.size}\n" +
+                "Characters (no spaces): ${characters}\n" +
+                "Characters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
+                "Paragraphs: ${paragraphs}\n"
+
+        //show the popup
+        usageInfo.showAndWait()
+    }
+
+    private fun searchText() {
+        val dialog = FlatTextInputDialog("")
+        dialog.initOwner(stage)
+        dialog.title = "Search"
+        dialog.headerText = "Find Word"
+
+        (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
+
+        val result = dialog.showAndWait()
+        if (result.isPresent) {
+            val entered = result.get()
+            if (entered.compareTo("") == 0) {
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+                dialog.show()
+                dialog.headerText = "No Input"
+            } else {
+                val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                println(htmlEditor.htmlText)
+                println(noHtmlTags)
+
+                val delim = " "
+                val list = noHtmlTags.split(delim)
+                val wordIndexes = ArrayList<Int>()
+
+                var outputString = ""
+                for ((i, item) in list.withIndex()) {
+                    if (i != 0) {
+                        outputString += " "
+                    }
+                    if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
+                        outputString = "$outputString<mark>$item</mark>"
+                        wordIndexes.add(i)
+                    } else {
+                        outputString += item
+                    }
+                }
+
+                println(outputString)
+                val oldText = htmlEditor.htmlText
+                htmlEditor.htmlText = outputString
+
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+
+                dialog.headerText = "Found " + wordIndexes.size
+                dialog.showAndWait()
+                htmlEditor.htmlText = oldText
+            }
+        }
     }
 
     private fun createAddToMenu(menu: Menu, menuItemName: String): MenuItem {

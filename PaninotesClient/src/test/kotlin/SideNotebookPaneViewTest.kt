@@ -27,7 +27,7 @@ class SideNotebookPaneViewTest {
         model.initializeNotebooks()
 
         val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
-        val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
+        val sideIconPane = SideIconPaneView(model, htmlEditor, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()
         sidePane.children.addAll(sideIconPane, sideNotebookPane)
