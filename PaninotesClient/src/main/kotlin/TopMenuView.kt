@@ -54,6 +54,14 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val optionExport = createAddToMenu(optionMenu, "Export To PDF")
         menuBar.menus.add(optionMenu)
 
+        // Sort
+        val sortMenu = Menu("Sort")
+        val sortNoteA = createAddToMenu(sortMenu, "Sort Notes (A-Z)")
+        val sortNoteZ = createAddToMenu(sortMenu, "Sort Notes (Z-A)")
+        val sortNoteBookA = createAddToMenu(sortMenu, "Sort Notebook (A-Z)")
+        val sortNoteBookZ = createAddToMenu(sortMenu, "Sort Notebook (Z-A)")
+        menuBar.menus.add(sortMenu)
+
         if (Config.darkTheme) optionTheme.text = "Use Light Theme"
 
         fileMenu.id = "menu-fileMenu"
@@ -61,6 +69,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
         optionMenu.id = "menu-optionMenu"
+        sortMenu.id = "menu-sortMenu"
 
         fileNewNote.setOnAction {
             // If there is currently a notebook open, then we will automatically create a new note in that notebook
@@ -284,6 +293,27 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             }
 
 
+        }
+
+        sortNoteBookA.setOnAction {
+            // sort alphabetically
+            model.notebookReversed = false
+            model.notifyViews()
+        }
+
+        sortNoteBookZ.setOnAction {
+            model.notebookReversed = true
+            model.notifyViews()
+        }
+
+        sortNoteA.setOnAction {
+            model.notesReversed = false
+            model.notifyViews()
+        }
+
+        sortNoteZ.setOnAction {
+            model.notesReversed = true
+            model.notifyViews()
         }
 
         this.children.add(menuBar)

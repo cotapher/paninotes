@@ -37,8 +37,16 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
                 val notebooks: MutableList<Notebook> = model.notebooks
+                var x = notebooks.indices.reversed()
 
-                for (i in notebooks.indices) {
+                if (!model.notebookReversed) {
+                    x = notebooks.indices
+                } else {
+                    x = notebooks.indices.reversed()
+                }
+                model.notebooks.sortBy {it.title}
+
+                for (i in x) {
                     val notebookButton = Button(notebooks[i].title)
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(135.0, 16.0)
@@ -90,7 +98,15 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
                         model.currentOpenNotebook = null
                     }
 
-                    for (i in model.currentOpenNotebook!!.notes.indices) {
+                    var y = model.currentOpenNotebook!!.notes.indices.reversed()
+
+                    if (!model.notesReversed) {
+                        y = model.currentOpenNotebook!!.notes.indices
+                    } else {
+                        y = model.currentOpenNotebook!!.notes.indices.reversed()
+                    }
+                    model.currentOpenNotebook!!.notes.sortBy { it.title }
+                    for (i in y) {
                         val noteButton = Button(model.currentOpenNotebook!!.notes[i].title)
                         noteButton.id = "sideNotebookPane-note-button-$i"
                         noteButton.setPrefSize(135.0, 16.0)
