@@ -238,7 +238,10 @@ class Model(val stage: Stage? = null) {
         // We also have to delete the note from the database too
         // Check if the note has an id, because if it doesn't have an id, it wasn't even backed up anyway
         if (note.id != null) {
-            serverDeleteNote(note)
+            // In the server, we are not able to delete a note by itself, cause of the one-to-many constraint
+            // And so, we can delete the note from the notebook first, then just back up that notebook
+           // serverDeleteNote(note)
+            makeBackup(note.notebook)
         }
     }
 
@@ -254,10 +257,10 @@ class Model(val stage: Stage? = null) {
 
     // SERVER --------------------------------------------------------------------------------------------------
 
-    fun makeBackup() {
-        if (currentOpenNotebook != null) {
+    fun makeBackup(notebook: Notebook?) {
+        if (notebook != null) {
             val client = HttpClient.newBuilder().build()
-            val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+            val requestBody = mapper.writeValueAsString(notebook)
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/backupNotebook"))
                 .header("Content-Type", "application/json")
@@ -275,13 +278,17 @@ class Model(val stage: Stage? = null) {
                     notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
                     val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
                     notebooks[idx] = notebookWithID
-                    currentOpenNotebook = notebookWithID
-                    //check if the note is
-                    if (currentNote != null) {
-                        currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+
+                    if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+                        currentOpenNotebook = notebookWithID
+                        //check if the note is
+                        if (currentNote != null) {
+                            currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                        }
+                        //refresh open notes
+                        openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
                     }
-                    //refresh open notes
-                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
+
                     notifyViews()
                 } else {
                     print("ERROR ${response.statusCode()}")
@@ -374,28 +381,6 @@ class Model(val stage: Stage? = null) {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() == 200) {
                 println("Delete notebook Success ${response.statusCode()}")
-                print(response.body().toString())
-            } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
-            }
-        } catch (e: ConnectException) {
-            println("Server is not running")
-        }
-    }
-
-    private fun serverDeleteNote(note: Note) {
-        val client = HttpClient.newBuilder().build()
-        val requestBody = mapper.writeValueAsString(note)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("http://localhost:8080/deleteNote"))
-            .header("Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-            .build()
-        try {
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if (response.statusCode() == 200) {
-                println("Delete note Success ${response.statusCode()}")
                 print(response.body().toString())
             } else {
                 print("ERROR ${response.statusCode()}")

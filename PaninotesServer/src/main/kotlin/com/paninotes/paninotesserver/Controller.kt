@@ -33,12 +33,6 @@ class Controller {
         return noteService!!.deleteNotebook(notebookToDelete)
     }
 
-    @PostMapping("/deleteNote")
-    @ResponseBody
-    fun deleteNote(@RequestBody noteToDelete:Note): String {
-        return noteService!!.deleteNote(noteToDelete)
-    }
-
     @GetMapping("/deleteAll")
     @ResponseBody
     fun deleteAllData(): String {

@@ -59,11 +59,6 @@ class NoteService(
         return "NOTEBOOK DELETED: ${notebookToDelete.title}"
     }
 
-    fun deleteNote(noteToDelete: Note): String {
-        noteRepository?.deleteById(noteToDelete.id!!)
-        return "NOTE DELETED: ${noteToDelete.title}"
-    }
-
     fun deleteAllData(): String {
         notebookRepository?.deleteAll()
         noteRepository?.deleteAll()
