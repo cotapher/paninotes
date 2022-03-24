@@ -232,7 +232,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
 
         optionBackupCurrentNotebook.setOnAction {
-            model.makeBackup()
+            model.makeBackup(model.currentOpenNotebook)
         }
 
         optionDeleteAllData.setOnAction {

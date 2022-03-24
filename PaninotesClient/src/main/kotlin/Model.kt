@@ -175,6 +175,75 @@ class Model(val stage: Stage? = null) {
         notifyViews()
     }
 
+    fun deleteNotebook(notebook: Notebook) {
+        // Check if this is the current open notebook
+        if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+            currentOpenNotebook = null
+        }
+
+        // Remove notes from openNotes if these notes are being deleted with the notebook
+        openNotes.removeAll { openNote ->
+            openNote.notebook!!.equals(notebook)
+        }
+
+        // If the current note was in the notebook, just set the current open note to the first openNote
+        if (currentNote != null && currentNote!!.notebook!!.equals(notebook)) {
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
+            } else {
+                null
+            }
+        }
+
+        // Delete the notebook from the notebooks list, and then notify views
+        notebooks.remove(notebook)
+        notifyViews()
+
+        // Delete the notebook folder in the local directory
+        if (notebook.filePath != null && notebook.filePath!!.exists()) {
+            notebook.filePath!!.deleteRecursively()
+        }
+
+        // We also have to delete the notebook from the database too
+        // Check if the notebook has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (notebook.id != null) {
+            serverDeleteNotebook(notebook)
+        }
+    }
+
+    fun deleteNote(note: Note) {
+        // Remove the note from the openNotes if it's in there
+        openNotes.removeAll { openNote ->
+            openNote.equals(note)
+        }
+
+        // If the note was the current open note, then just open the first note in openNotes
+        if (currentNote != null && currentNote!!.equals(note)) {
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
+            } else {
+                null
+            }
+        }
+
+        // Delete the note from the notebook, and then notify views
+        note.notebook!!.deleteNote(note)
+        notifyViews()
+
+        // Delete the note file in the local directory
+        if (note.filePath != null && note.filePath!!.exists()) {
+            note.filePath!!.deleteRecursively()
+        }
+
+        // We also have to delete the note from the database too
+        // Check if the note has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (note.id != null) {
+            // In the server, we are not able to delete a note by itself, cause of the one-to-many constraint
+            // And so, we can delete the note from the notebook first, then just back up that notebook
+            makeBackup(note.notebook)
+        }
+    }
+
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
         val fileExistsAlert = FlatAlert(type)
         fileExistsAlert.initOwner(stage)
@@ -185,12 +254,12 @@ class Model(val stage: Stage? = null) {
         fileExistsAlert.showAndWait()
     }
 
-    // Server
+    // SERVER --------------------------------------------------------------------------------------------------
 
-    fun makeBackup() {
-        if (currentOpenNotebook != null) {
+    fun makeBackup(notebook: Notebook?) {
+        if (notebook != null) {
             val client = HttpClient.newBuilder().build()
-            val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+            val requestBody = mapper.writeValueAsString(notebook)
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/backupNotebook"))
                 .header("Content-Type", "application/json")
@@ -208,13 +277,17 @@ class Model(val stage: Stage? = null) {
                     notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
                     val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
                     notebooks[idx] = notebookWithID
-                    currentOpenNotebook = notebookWithID
-                    //check if the note is
-                    if (currentNote != null) {
-                        currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+
+                    if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+                        currentOpenNotebook = notebookWithID
+                        //check if the note is
+                        if (currentNote != null) {
+                            currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                        }
+                        //refresh open notes
+                        openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
                     }
-                    //refresh open notes
-                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
+
                     notifyViews()
                 } else {
                     print("ERROR ${response.statusCode()}")
@@ -292,6 +365,28 @@ class Model(val stage: Stage? = null) {
             val alert = FlatAlert(Alert.AlertType.WARNING)
             alert.headerText = "Please close all open notes to restore"
             alert.show()
+        }
+    }
+
+    private fun serverDeleteNotebook(notebook: Notebook) {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(notebook)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/deleteNotebook"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                println("Delete notebook Success ${response.statusCode()}")
+                print(response.body().toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e: ConnectException) {
+            println("Server is not running")
         }
     }
 }
