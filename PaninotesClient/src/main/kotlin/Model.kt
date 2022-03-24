@@ -208,7 +208,7 @@ class Model(val stage: Stage? = null) {
                     notebooks[idx] = notebookWithID
                     currentOpenNotebook = notebookWithID
                     //check if the note is
-                    if(currentNote != null){
+                    if (currentNote != null) {
                         currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
                     }
                     //refresh open notes
@@ -227,7 +227,7 @@ class Model(val stage: Stage? = null) {
             alert.show()
         }
     }
-    
+
     fun restoreBackup() {
         if (openNotes.size == 0) {
             val client = HttpClient.newBuilder().build()

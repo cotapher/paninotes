@@ -66,8 +66,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
                     }
                 }
 
-                tab.setOnCloseRequest {
-                    evt: Event ->
+                tab.setOnCloseRequest { evt: Event ->
                     if (StageUtils.confirmClose(model, stage, htmlEditor)) {
                         // Remove the note from the open notes in the model
                         val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
@@ -88,8 +87,7 @@ class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage
                         }
 
                         if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
-                    }
-                    else evt.consume()
+                    } else evt.consume()
                 }
 
                 this.tabs.add(tab)
