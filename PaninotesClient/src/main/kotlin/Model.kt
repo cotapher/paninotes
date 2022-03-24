@@ -199,6 +199,11 @@ class Model(val stage: Stage? = null) {
         notebooks.remove(notebook)
         notifyViews()
 
+        // Delete the notebook folder in the local directory
+        if (notebook.filePath != null && notebook.filePath!!.exists()) {
+            notebook.filePath!!.deleteRecursively()
+        }
+
         // We also have to delete the notebook from the database too
         // Check if the notebook has an id, because if it doesn't have an id, it wasn't even backed up anyway
         if (notebook.id != null) {
@@ -224,6 +229,11 @@ class Model(val stage: Stage? = null) {
         // Delete the note from the notebook, and then notify views
         note.notebook!!.deleteNote(note)
         notifyViews()
+
+        // Delete the note file in the local directory
+        if (note.filePath != null && note.filePath!!.exists()) {
+            note.filePath!!.deleteRecursively()
+        }
 
         // We also have to delete the note from the database too
         // Check if the note has an id, because if it doesn't have an id, it wasn't even backed up anyway
