@@ -3,7 +3,7 @@ import animatefx.animation.SlideOutLeft
 import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.*
-import javafx.scene.layout.*
+import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.FlatTextInputDialog
@@ -12,7 +12,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
-class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IView {
+class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage) : BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -29,7 +29,6 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
 
     private fun layoutView() {
         // Animated VBox holds the buttons for the list of notebooks and notes
-        // TODO - refactor to add elements to vBox without resetting vBox to make the animations nice
         val vBox = AnimatedVBox(AnimationPair(FadeInUp(), SlideOutLeft()).setSpeed(3.0, 3.0))
 
         // If the current view is PaneView.NOTES, and the current open notebook is null, then it probably got deleted
@@ -43,8 +42,16 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
                 val notebooks: MutableList<Notebook> = model.notebooks
+                var x = notebooks.indices.reversed()
 
-                for (i in notebooks.indices) {
+                if (!model.notebookReversed) {
+                    x = notebooks.indices
+                } else {
+                    x = notebooks.indices.reversed()
+                }
+                model.notebooks.sortBy {it.title}
+
+                for (i in x) {
                     val notebookButton = Button(notebooks[i].title)
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(135.0, 16.0)
@@ -117,12 +124,23 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                         model.currentOpenNotebook = null
                     }
 
-                    for (i in model.currentOpenNotebook!!.notes.indices) {
+                    var y = model.currentOpenNotebook!!.notes.indices.reversed()
+
+                    if (!model.notesReversed) {
+                        y = model.currentOpenNotebook!!.notes.indices
+                    } else {
+                        y = model.currentOpenNotebook!!.notes.indices.reversed()
+                    }
+                    model.currentOpenNotebook!!.notes.sortBy { it.title }
+                    for (i in y) {
                         val noteButton = Button(model.currentOpenNotebook!!.notes[i].title)
                         noteButton.id = "sideNotebookPane-note-button-$i"
                         noteButton.setPrefSize(135.0, 16.0)
                         noteButton.setOnAction {
                             // Open the clicked note
+                            if (model.currentNote != null) {
+                                model.currentNote!!.saveNote(htmlEditor.htmlText)
+                            }
                             model.openNote(model.currentOpenNotebook!!.notes[i])
                         }
 

@@ -1,23 +1,33 @@
-
 import com.goxr3plus.fxborderlessscene.borderless.BorderlessScene
 import fr.brouillard.oss.cssfx.CSSFX
 import javafx.application.Application
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import jfxtras.styles.jmetro.JMetro
 import jfxtras.styles.jmetro.JMetroStyleClass
 import jfxtras.styles.jmetro.Style
+import java.io.File
+import java.nio.file.Paths
 
-class Main : Application() {
+class PaninotesClient : Application() {
 
-    private val LIGHT_STYLESHEET_URL = Main::class.java.getResource("css/light.css")?.toExternalForm()
-    private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
+    private val LIGHT_STYLESHEET_URL = PaninotesClient::class.java.getResource("css/light.css")?.toExternalForm()
+    private val DARK_STYLESHEET_URL = PaninotesClient::class.java.getResource("css/dark.css")?.toExternalForm()
+    private val BASE_DIRECTORY = File(Paths.get(System.getProperty("user.home"), ".paninotes").toUri())
+
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            launch(PaninotesClient::class.java, *args)
+        }
+    }
 
     override fun start(stage: Stage) {
+        if (!BASE_DIRECTORY.exists()) BASE_DIRECTORY.mkdir()
+
         // activate css live update
         CSSFX.start()
 
@@ -40,8 +50,8 @@ class Main : Application() {
         htmlEditor.stage = stage
         val titleBarView = TitleBarView(scene, stage, htmlEditor, model)
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
-        val noteTabsView = NoteTabsView(model, stage)
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val noteTabsView = NoteTabsView(model, htmlEditor, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane
@@ -93,6 +103,8 @@ class Main : Application() {
         // save config on close
         stage.setOnHiding { Config.saveConfig() }
 
+        stage.minWidth = 890.0
+        stage.minHeight = 700.0
         stage.scene = scene
         stage.isResizable = true
         stage.title = "Paninotes"

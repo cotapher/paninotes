@@ -5,7 +5,6 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
 import javafx.scene.layout.Pane
-import javafx.scene.web.HTMLEditor
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
@@ -20,7 +19,8 @@ import java.net.http.HttpResponse
 import java.util.*
 
 
-class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage, val jMetro: JMetro) : Pane(), IView{
+class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage, val jMetro: JMetro) : Pane(),
+    IView {
 
     private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
@@ -38,22 +38,29 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
         // File: Quit
         val fileMenu = Menu("File")
-        val fileNewNote = createAddToMenu(fileMenu,"New Note")
-        val fileSave = createAddToMenu(fileMenu,"Save")
-        val fileQuit = createAddToMenu(fileMenu,"Quit")
+        val fileNewNote = createAddToMenu(fileMenu, "New Note")
+        val fileSave = createAddToMenu(fileMenu, "Save")
+        val fileQuit = createAddToMenu(fileMenu, "Quit")
         menuBar.menus.add(fileMenu)
 
         // Option:
         val optionMenu = Menu("Option")
         val optionSearch = createAddToMenu(optionMenu, "Search")
         val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
-        val optionRestoreBackup = createAddToMenu(optionMenu,"Restore Backup")
-        val optionTestSend = createAddToMenu(optionMenu,"Send a Test Note")
-        val optionBackupCurrentNotebook = createAddToMenu(optionMenu,"Backup Current Notebook")
-        val optionDeleteAllData = createAddToMenu(optionMenu,"Delete Backup Data")
+        val optionRestoreBackup = createAddToMenu(optionMenu, "Restore Backup")
+        val optionBackupCurrentNotebook = createAddToMenu(optionMenu, "Backup Current Notebook")
+        val optionDeleteAllData = createAddToMenu(optionMenu, "Delete Backup Data")
         val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
         val optionExport = createAddToMenu(optionMenu, "Export To PDF")
         menuBar.menus.add(optionMenu)
+
+        // Sort
+        val sortMenu = Menu("Sort")
+        val sortNoteA = createAddToMenu(sortMenu, "Sort Notes (A-Z)")
+        val sortNoteZ = createAddToMenu(sortMenu, "Sort Notes (Z-A)")
+        val sortNoteBookA = createAddToMenu(sortMenu, "Sort Notebook (A-Z)")
+        val sortNoteBookZ = createAddToMenu(sortMenu, "Sort Notebook (Z-A)")
+        menuBar.menus.add(sortMenu)
 
         if (Config.darkTheme) optionTheme.text = "Use Light Theme"
 
@@ -62,6 +69,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
         optionMenu.id = "menu-optionMenu"
+        sortMenu.id = "menu-sortMenu"
 
         fileNewNote.setOnAction {
             // If there is currently a notebook open, then we will automatically create a new note in that notebook
@@ -69,7 +77,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 model.createNotePopup(model.currentOpenNotebook!!)
             } else {
                 // Get list of all notebook names
-                val notebookNames: List<String> = model.notebooks.map({ it.title })
+                val notebookNames: List<String> = model.notebooks.map { it.title }
 
                 // If there is no notebooks, show an error popup telling the user to create a notebook first
                 if (notebookNames.isEmpty()) {
@@ -81,7 +89,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                     warningPopup.showAndWait()
                 } else {
                     // Open a choice dialog to prompt the user what notebook they want to create the note in
-                    val chooseNotebookDialog: FlatChoiceDialog<String> = FlatChoiceDialog(notebookNames[0], notebookNames)
+                    val chooseNotebookDialog: FlatChoiceDialog<String> =
+                        FlatChoiceDialog(notebookNames[0], notebookNames)
                     chooseNotebookDialog.initOwner(stage)
                     chooseNotebookDialog.headerText = "Choose Notebook to create a note in:"
 
@@ -95,7 +104,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                         if (selectedNotebookTitle.isNotEmpty()) {
                             val selectedNotebook: Notebook? = model.getNotebookByTitle(selectedNotebookTitle)
                             if (selectedNotebook != null) {
-                                model.createNotePopup(selectedNotebook!!)
+                                model.createNotePopup(selectedNotebook)
                             }
                         }
                     }
@@ -120,7 +129,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         optionSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
 
 
-        optionSearch.setOnAction{
+        optionSearch.setOnAction {
             val dialog = FlatTextInputDialog("")
             dialog.initOwner(stage)
             dialog.title = "Search"
@@ -128,7 +137,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
             (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
 
-            val oldText = htmlEditor.htmlText
             val result = dialog.showAndWait()
             if (result.isPresent) {
                 val entered = result.get()
@@ -143,15 +151,15 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
                     val delim = " "
                     val list = noHtmlTags.split(delim)
-                    var wordIndexes = ArrayList<Int>()
+                    val wordIndexes = ArrayList<Int>()
 
                     var outputString = ""
                     for ((i, item) in list.withIndex()) {
                         if (i != 0) {
                             outputString += " "
                         }
-                        if((item.lowercase()).compareTo(entered.lowercase()) == 0 ) {
-                            outputString = outputString + "<mark>" + item + "</mark>"
+                        if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
+                            outputString = "$outputString<mark>$item</mark>"
                             wordIndexes.add(i)
                         } else {
                             outputString += item
@@ -172,15 +180,31 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         }
 
         optionUsage.setOnAction {
-            val usageInfo = FlatAlert(Alert.AlertType.CONFIRMATION)
+            val usageInfo = FlatAlert(AlertType.CONFIRMATION)
             usageInfo.initOwner(stage)
             usageInfo.headerText = "Statistics:"
             usageInfo.title = "Usage Statistics"
             val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
             val delim = " "
             val list = noHtmlTags.split(delim)
-            usageInfo.contentText = "Number of Words: ${list.size-1}\n" +
-                    "Number of Whitespace: ${list.size-2}\n"
+            val textInParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p")
+            val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
+            val paragraphs = textInParagraphs.size
+            var characters = 0
+            println(textInParagraphs)
+
+            for (element in list) {
+                for (j in element.indices) {
+                    characters++
+                }
+            }
+
+            println(emptyParagraphs.size)
+
+            usageInfo.contentText = "Words: ${list.size}\n" +
+                    "Characters (no spaces): ${characters}\n" +
+                    "Characters (with spaces) ${characters + (noHtmlTags.length - characters - paragraphs)}\n" +
+                    "Paragraphs: ${paragraphs}\n"
 
             //show the popup
             usageInfo.showAndWait()
@@ -194,8 +218,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 jMetro.style = Style.DARK
                 ss.add(DARK_STYLESHEET_URL)
                 optionTheme.text = "Use Light theme"
-            }
-            else {
+            } else {
                 ss.clear()
                 jMetro.style = Style.LIGHT
                 ss.add(LIGHT_STYLESHEET_URL)
@@ -207,9 +230,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
             model.restoreBackup()
         }
 
-        optionTestSend.setOnAction {
-            model.testSendNote()
-        }
 
         optionBackupCurrentNotebook.setOnAction {
             model.makeBackup()
@@ -222,7 +242,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                 .GET()
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            if(response.statusCode() == 200){
+            if (response.statusCode() == 200) {
                 println("Success ${response.statusCode()}")
                 print(response.body().toString())
 //                val noteList: List<Note> = mapper.readValue(response.body().toString())
@@ -237,8 +257,8 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
         optionExport.setOnAction {
 
             //get current note
-            if(model.currentNote != null){
-                val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+            if (model.currentNote != null) {
+                val confirmationAlert = FlatAlert(AlertType.CONFIRMATION)
                 confirmationAlert.initOwner(stage)
                 confirmationAlert.contentText = "Export ${model.currentNote?.title} to PDF?"
                 //show the popup
@@ -255,7 +275,7 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                         directoryChooser.title = "Choose where to export file on disk"
 
                         val exportDirectory = directoryChooser.showDialog(stage)
-                        if(exportDirectory != null){
+                        if (exportDirectory != null) {
                             val pdfDest = exportDirectory.resolve("${model.currentNote!!.title}.pdf")
                             HtmlConverter.convertToPdf(FileInputStream(htmlSource), FileOutputStream(pdfDest))
                         } else {
@@ -266,7 +286,6 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
                     }
                 }
             } else {
-                //TODO add status bar text
                 val alert = FlatAlert(AlertType.WARNING)
                 alert.headerText = "Please open a note first"
                 alert.show()
@@ -275,10 +294,31 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
         }
 
+        sortNoteBookA.setOnAction {
+            // sort alphabetically
+            model.notebookReversed = false
+            model.notifyViews()
+        }
+
+        sortNoteBookZ.setOnAction {
+            model.notebookReversed = true
+            model.notifyViews()
+        }
+
+        sortNoteA.setOnAction {
+            model.notesReversed = false
+            model.notifyViews()
+        }
+
+        sortNoteZ.setOnAction {
+            model.notesReversed = true
+            model.notifyViews()
+        }
+
         this.children.add(menuBar)
     }
 
-    private fun createAddToMenu(menu: Menu, menuItemName:String): MenuItem {
+    private fun createAddToMenu(menu: Menu, menuItemName: String): MenuItem {
         val menuItem = MenuItem(menuItemName)
         menu.items.add(menuItem)
         return menuItem
@@ -286,8 +326,9 @@ class TopMenuView(val model: Model, val htmlEditor: HTMLEditor,val stage: Stage,
 
     override fun update() {
         //add a condition to only show editor if there is file assigned to model.currentFile
-        if(model.currentNote != null){
+        if (model.currentNote != null) {
             htmlEditor.htmlText = model.currentNote?.htmlText
+            println("Html editor:${htmlEditor.htmlText}")
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message

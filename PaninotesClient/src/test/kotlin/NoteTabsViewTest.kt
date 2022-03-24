@@ -25,13 +25,14 @@ class NoteTabsViewTest {
 
     @Start
     private fun start(stage: Stage) {
+        val htmlEditor = CustomHTMLEditor()
         // Set the model's notebook directory to our test directory
         // The test directory will have some fake notebooks and notes in there
         model.NOTEBOOK_DIR = testNotebookDir
         model.initializeNotebooks()
 
-        noteTabsView = NoteTabsView(model, stage)
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        noteTabsView = NoteTabsView(model, htmlEditor, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()

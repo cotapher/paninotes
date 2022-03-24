@@ -1,7 +1,7 @@
 /* VARIABLE DEFINITIONS: Only these 4 variables have to be adjusted, the rest is copy-paste */
 * {
-    -fx-my-menu-color: #e8e8e8;                  /* Change according to your needs */
-    -fx-my-menu-color-highlighted: #CCCCCC;      /* Change according to your needs */
+    -fx-my-menu-color: #e8e8e8; /* Change according to your needs */
+    -fx-my-menu-color-highlighted: #CCCCCC; /* Change according to your needs */
 }
 
 /* MENU BAR + Top-level MENU BUTTONS */

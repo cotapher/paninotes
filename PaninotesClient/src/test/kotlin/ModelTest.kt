@@ -27,7 +27,7 @@ internal class ModelTest {
 
     private fun clearTestNotebookDirectory() {
         if (testNotebookDir.exists()) {
-            for (file in testNotebookDir.listFiles()) {
+            for (file in testNotebookDir.listFiles() ?: emptyArray()) {
                 file.deleteRecursively()
             }
         }
@@ -35,6 +35,8 @@ internal class ModelTest {
 
     @Start
     private fun start(stage: Stage) {
+        val htmlEditor = CustomHTMLEditor()
+
         // Set the model's notebook directory to our test directory
         model.NOTEBOOK_DIR = testNotebookDir
         model.initializeNotebooks()
@@ -42,7 +44,7 @@ internal class ModelTest {
         // Clear the test notebook directory before each test
         clearTestNotebookDirectory()
 
-        val sideNotebookPane = SideNotebookPaneView(model, stage)
+        val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
         val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
         val layout = BorderPane()
         val sidePane = HBox()
@@ -134,6 +136,6 @@ internal class ModelTest {
         val testName = "testNotebook"
         val newNotebook = model.createNotebook(testName)
 
-        assertTrue(newNotebook != null && newNotebook.title == testName)
+        assertTrue(newNotebook.title == testName)
     }
 }

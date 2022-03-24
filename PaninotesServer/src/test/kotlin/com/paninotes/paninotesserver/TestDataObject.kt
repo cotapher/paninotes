@@ -1,5 +1,7 @@
+package com.paninotes.paninotesserver
+
 object TestDataObject {
-    val notebookListString: String = "{\n" +
+    const val notebookListString: String = "{\n" +
             "  \"response\": {\n" +
             "    \"id\": 1,\n" +
             "    \"title\": \"ordertest\",\n" +
@@ -38,7 +40,7 @@ object TestDataObject {
             "    ]\n" +
             "  }\n" +
             "}"
-    val listOfNotesString: String = "{\n" +
+    const val listOfNotesString: String = "{\n" +
             "  \"response\": [\n" +
             "    {\n" +
             "      \"id\": 2,\n" +

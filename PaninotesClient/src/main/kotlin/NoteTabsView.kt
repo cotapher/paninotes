@@ -1,4 +1,5 @@
-import BackupState.BackupState
+import backupState.BackupState
+import javafx.event.Event
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.stage.Stage
@@ -6,7 +7,7 @@ import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignS
 
-class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
+class NoteTabsView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage) : TabPane(), IView {
     init {
         this.layoutView()
         this.id = "noteTabs"
@@ -41,48 +42,56 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
             // This string will be unique for each tab, since every notebook must have a different name
             val notebookAndNoteName = getNotebookAndNoteName(note)
 
-            if (this.tabs.filter {it.text == notebookAndNoteName}.size == 0) {
+            if (this.tabs.none { it.text == notebookAndNoteName }) {
                 val tab = Tab(notebookAndNoteName)
                 tab.id = "noteTabs-tab-$index"
 
-                when(model.currentNote!!.backupState){
+                when (model.currentNote!!.backupState) {
                     BackupState.NOT_BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
-                    BackupState.OUT_OF_SYNC ->  tab.graphic = FontIcon(MaterialDesignS.SYNC)
+                    BackupState.OUT_OF_SYNC -> tab.graphic = FontIcon(MaterialDesignS.SYNC)
                     BackupState.BACKED_UP -> tab.graphic = FontIcon(MaterialDesignC.CLOUD_CHECK)
                 }
 
                 tab.setOnSelectionChanged {
                     if (tab.isSelected) {
-                        //find the note across notebooks
-                        val selectedNote: Note?  = getNoteFromNotebookAndNoteName(tab.text)
+                        // save the current note
+                        model.currentNote!!.saveNote(htmlEditor.htmlText)
 
+                        // find the note across notebooks
+                        val selectedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
+
+                        //set current notebook
                         if (selectedNote != null) {
                             model.currentNote = selectedNote
                             model.openNote(model.currentNote)
                         }
+
+                        model.notifyViews()
                     }
                 }
 
-                tab.setOnClosed {
-                    // Remove the note from the open notes in the model
-                    val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
-                    model.closeNote(closedNote)
+                tab.setOnCloseRequest { evt: Event ->
+                    if (StageUtils.confirmClose(model, stage, htmlEditor)) {
+                        // Remove the note from the open notes in the model
+                        val closedNote: Note? = getNoteFromNotebookAndNoteName(tab.text)
+                        model.closeNote(closedNote)
 
-                    // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
-                    // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
-                    // So, make sure that the tab actually gets closed/removed
+                        // For some reason, tab.setOnSelectionChanged is run before tab.setOnClosed, so when model.openNote is called
+                        // in setOnSelectionChanged, that will call layoutView again and re-add the tab we just closed
+                        // So, make sure that the tab actually gets closed/removed
 
-                    // Get the index of the tab that we need to close
-                    var tabIndex: Int = -1
+                        // Get the index of the tab that we need to close
+                        var tabIndex: Int = -1
 
-                    for (i in 0 until this.tabs.size) {
-                        if (this.tabs[i].text == tab.text) {
-                            tabIndex = i
-                            break
+                        for (i in 0 until this.tabs.size) {
+                            if (this.tabs[i].text == tab.text) {
+                                tabIndex = i
+                                break
+                            }
                         }
-                    }
 
-                    if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
+                        if (tabIndex >= 0) this.tabs.removeAt(tabIndex)
+                    } else evt.consume()
                 }
 
                 this.tabs.add(tab)
@@ -100,7 +109,9 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 
         if (model.currentNote != null) {
             // Make sure the active tab corresponds to the model's current note
-            val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
+            val currentNotebookAndNoteName: String =
+                model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
+
             for (i in 0 until this.tabs.size) {
                 if (this.tabs[i].text == currentNotebookAndNoteName) {
                     this.selectionModel.select(this.tabs[i])
@@ -110,11 +121,11 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
 
             // refresh sync status icons
             model.currentOpenNotebook?.notes?.forEach { note ->
-                if(this.tabs.any{ it.text == note.notebook!!.title + "/" + note.title!! }){
+                if (this.tabs.any { it.text == note.notebook!!.title + "/" + note.title!! }) {
                     this.tabs.find { it.text == note.notebook!!.title + "/" + note.title!! }!!.graphic =
-                        when(note.backupState){
+                        when (note.backupState) {
                             BackupState.NOT_BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_OFF_OUTLINE)
-                            BackupState.OUT_OF_SYNC ->  FontIcon(MaterialDesignS.SYNC)
+                            BackupState.OUT_OF_SYNC -> FontIcon(MaterialDesignS.SYNC)
                             BackupState.BACKED_UP -> FontIcon(MaterialDesignC.CLOUD_CHECK)
                         }
                 }

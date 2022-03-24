@@ -1,6 +1,5 @@
 import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
-import javafx.scene.web.HTMLEditor
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.JMetro
 import org.junit.jupiter.api.Test
