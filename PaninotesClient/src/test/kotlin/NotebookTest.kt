@@ -25,4 +25,13 @@ internal class NotebookTest {
 
         assertEquals(query?.title, note.title)
     }
+
+    @Test
+    fun deleteNote() {
+        val notebook = Notebook("test")
+        val note = Note(testNotePath)
+        notebook.addNote(note)
+        notebook.deleteNote(note)
+        assert(notebook.notes.isEmpty())
+    }
 }
