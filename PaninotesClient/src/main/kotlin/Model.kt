@@ -198,10 +198,15 @@ class Model (val stage: Stage? = null) {
             }
         }
 
-        // Finally, delete the notebook from the notebooks list, and then notify views
+        // Delete the notebook from the notebooks list, and then notify views
         notebooks.remove(notebook)
-
         notifyViews()
+
+        // We also have to delete the notebook from the database too
+        // Check if the notebook has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (notebook.id != null) {
+            serverDeleteNotebook(notebook)
+        }
     }
 
     fun deleteNote(note: Note) {
@@ -219,10 +224,15 @@ class Model (val stage: Stage? = null) {
             }
         }
 
-        // Finally, delete the note from the notebook, and then notify views
+        // Delete the note from the notebook, and then notify views
         note.notebook!!.deleteNote(note)
-
         notifyViews()
+
+        // We also have to delete the note from the database too
+        // Check if the note has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (note.id != null) {
+            serverDeleteNote(note)
+        }
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
@@ -349,6 +359,50 @@ class Model (val stage: Stage? = null) {
                 print(response.body().toString())
             }
         } catch (e:ConnectException){
+            println("Server is not running")
+        }
+    }
+
+    private fun serverDeleteNotebook(notebook: Notebook) {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(notebook)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/deleteNotebook"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                println("Delete notebook Success ${response.statusCode()}")
+                print(response.body().toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e: ConnectException) {
+            println("Server is not running")
+        }
+    }
+
+    private fun serverDeleteNote(note: Note) {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(note)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/deleteNote"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                println("Delete note Success ${response.statusCode()}")
+                print(response.body().toString())
+            } else {
+                print("ERROR ${response.statusCode()}")
+                print(response.body().toString())
+            }
+        } catch (e: ConnectException) {
             println("Server is not running")
         }
     }

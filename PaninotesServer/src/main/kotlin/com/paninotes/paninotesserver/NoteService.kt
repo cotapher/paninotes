@@ -51,6 +51,17 @@ class NoteService (    @Autowired val noteRepository: NoteRepository? = null,
             return notebookRepository?.save(matchingNotebook)
         }
     }
+
+    fun deleteNotebook(notebookToDelete: Notebook): String {
+        notebookRepository?.deleteById(notebookToDelete.id!!)
+        return "NOTEBOOK DELETED: ${notebookToDelete.title}"
+    }
+
+    fun deleteNote(noteToDelete: Note): String {
+        noteRepository?.deleteById(noteToDelete.id!!)
+        return "NOTE DELETED: ${noteToDelete.title}"
+    }
+
     fun deleteAllData(): String {
         notebookRepository?.deleteAll()
         noteRepository?.deleteAll()
