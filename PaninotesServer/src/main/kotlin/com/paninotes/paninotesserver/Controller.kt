@@ -25,7 +25,12 @@ class Controller {
     @ResponseBody
     fun backupNotebook(@RequestBody newNotebook: Notebook): Notebook? {
         return noteService!!.backupNotebook(newNotebook)
+    }
 
+    @PostMapping("/deleteNotebook")
+    @ResponseBody
+    fun deleteNotebook(@RequestBody notebookToDelete:Notebook): String {
+        return noteService!!.deleteNotebook(notebookToDelete)
     }
 
     @GetMapping("/deleteAll")
