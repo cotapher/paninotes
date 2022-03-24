@@ -26,6 +26,7 @@ class Model (val stage: Stage? = null) {
     var currentNote: Note? = null
     var openNotes = mutableListOf<Note>()
     val notebooks = mutableListOf<Notebook>()
+    var notebookReversed = false
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory

@@ -12,7 +12,7 @@ import org.kordamp.ikonli.materialdesign2.MaterialDesignA
 import org.kordamp.ikonli.materialdesign2.MaterialDesignP
 
 
-class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): BorderPane(), IView {
+class   SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage): BorderPane(), IView {
     private enum class PaneView {
         NOTEBOOKS,
         NOTES
@@ -37,8 +37,16 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
                 val notebooks: MutableList<Notebook> = model.notebooks
+                var x = notebooks.indices.reversed()
 
-                for (i in notebooks.indices) {
+                if (!model.notebookReversed) {
+                    x = notebooks.indices
+                } else {
+                    x = notebooks.indices.reversed()
+                }
+                model.notebooks.sortBy {it.title}
+
+                for (i in x) {
                     val notebookButton = Button(notebooks[i].title)
                     notebookButton.id = "sideNotebookPane-notebook-button-$i"
                     notebookButton.setPrefSize(135.0, 16.0)
