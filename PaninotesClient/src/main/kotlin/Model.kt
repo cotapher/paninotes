@@ -200,6 +200,7 @@ class Model (val stage: Stage? = null) {
 
         // Finally, delete the notebook from the notebooks list, and then notify views
         notebooks.remove(notebook)
+
         notifyViews()
     }
 

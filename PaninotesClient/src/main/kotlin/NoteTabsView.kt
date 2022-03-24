@@ -90,6 +90,14 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
             }
         }
 
+        // Iterate through all the tabs, and make sure all the tab's notes are in model.openNotes
+        // When notes and notebooks get deleted, we can just automatically close those tabs
+        for (i in this.tabs.indices.reversed()) {
+            if (i < this.tabs.size && model.openNotes.filter {getNotebookAndNoteName(it) == this.tabs[i].text}.size == 0) {
+                this.tabs.removeAt(i)
+            }
+        }
+
         if (model.currentNote != null) {
             // Make sure the active tab corresponds to the model's current note
             val currentNotebookAndNoteName: String = model.currentNote!!.notebook!!.title + "/" + model.currentNote!!.title!!
@@ -111,12 +119,6 @@ class NoteTabsView(val model: Model, val stage: Stage): TabPane(), IView {
                         }
                 }
             }
-        }
-
-        // Iterate through all the tabs, and make sure all the tab's notes are in model.openNotes
-        // When notes and notebooks get deleted, we can just automatically close those tabs
-        this.tabs.removeAll { tab ->
-            model.openNotes.filter {getNotebookAndNoteName(it) == tab.text}.size == 0
         }
     }
 
