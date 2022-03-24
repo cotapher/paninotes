@@ -191,15 +191,36 @@ class Model (val stage: Stage? = null) {
 
         // If the current note was in the notebook, just set the current open note to the first openNote
         if (currentNote != null && currentNote!!.notebook!!.equals(notebook)) {
-            if (openNotes.size > 0) {
-                currentNote = openNotes[0]
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
             } else {
-                currentNote = null
+                null
             }
         }
 
         // Finally, delete the notebook from the notebooks list, and then notify views
         notebooks.remove(notebook)
+
+        notifyViews()
+    }
+
+    fun deleteNote(note: Note) {
+        // Remove the note from the openNotes if it's in there
+        openNotes.removeAll { openNote ->
+            openNote.equals(note)
+        }
+
+        // If the note was the current open note, then just open the first note in openNotes
+        if (currentNote != null && currentNote!!.equals(note)) {
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
+            } else {
+                null
+            }
+        }
+
+        // Finally, delete the note from the notebook, and then notify views
+        note.notebook!!.deleteNote(note)
 
         notifyViews()
     }

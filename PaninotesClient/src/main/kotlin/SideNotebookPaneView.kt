@@ -3,7 +3,6 @@ import animatefx.animation.SlideOutLeft
 import eu.iamgio.animated.AnimatedVBox
 import eu.iamgio.animated.AnimationPair
 import javafx.scene.control.*
-import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
@@ -51,14 +50,14 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     notebookButton.setPrefSize(135.0, 16.0)
 
                     // create a context menu with a 'Delete Notebook' option
-                    val contextMenu = ContextMenu()
+                    val notebookContextMenu = ContextMenu()
                     val deleteOption = MenuItem("Delete Notebook")
                     deleteOption.setOnAction {
                         deleteNotebookPopup(notebooks[i])
                     }
 
-                    contextMenu.items.add(deleteOption)
-                    notebookButton.contextMenu = contextMenu
+                    notebookContextMenu.items.add(deleteOption)
+                    notebookButton.contextMenu = notebookContextMenu
 
                     notebookButton.setOnAction {
                         model.currentOpenNotebook = notebooks[i]
@@ -99,14 +98,14 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                     currentNotebookButton.setPrefSize(135.0, 16.0)
 
                     // You can right-click the current notebook button to delete the notebook
-                    val contextMenu = ContextMenu()
+                    val notebookContextMenu = ContextMenu()
                     val deleteOption = MenuItem("Delete Notebook")
                     deleteOption.setOnAction {
                         deleteNotebookPopup(model.currentOpenNotebook!!)
                     }
 
-                    contextMenu.items.add(deleteOption)
-                    currentNotebookButton.contextMenu = contextMenu
+                    notebookContextMenu.items.add(deleteOption)
+                    currentNotebookButton.contextMenu = notebookContextMenu
 
                     vBox.children.add(0, currentNotebookButton)
 
@@ -126,6 +125,17 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
                             // Open the clicked note
                             model.openNote(model.currentOpenNotebook!!.notes[i])
                         }
+
+                        // You can right-click the note button to delete the note
+                        val noteContextMenu = ContextMenu()
+                        val deleteOption = MenuItem("Delete Note")
+                        deleteOption.setOnAction {
+                            deleteNotePopup(model.currentOpenNotebook!!.notes[i])
+                        }
+
+                        noteContextMenu.items.add(deleteOption)
+                        noteButton.contextMenu = noteContextMenu
+
                         vBox.children.add(noteButton)
                     }
 
@@ -194,12 +204,25 @@ class SideNotebookPaneView(val model: Model, val stage: Stage): BorderPane(), IV
         val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
         confirmationAlert.initOwner(stage)
         confirmationAlert.contentText = "WARNING: Deleting a notebook will delete all notes within the notebook.\n\n" +
-                "Are you sure you want to delete Notebook: ${notebook.title}"
+                "Are you sure you want to delete Notebook: ${notebook.title}?"
         val result = confirmationAlert.showAndWait()
 
         if (result.isPresent) {
             // Delete the notebook and all the notes in the notebook
             model.deleteNotebook(notebook)
+        }
+    }
+
+    private fun deleteNotePopup(note: Note) {
+        // Create a popup to confirm that the user wants to delete this notebook
+        val confirmationAlert = FlatAlert(Alert.AlertType.CONFIRMATION)
+        confirmationAlert.initOwner(stage)
+        confirmationAlert.contentText = "Are you sure you want to delete note: ${note.title}?"
+        val result = confirmationAlert.showAndWait()
+
+        if (result.isPresent) {
+            // Delete the note
+            model.deleteNote(note)
         }
     }
 
