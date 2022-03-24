@@ -240,7 +240,6 @@ class Model(val stage: Stage? = null) {
         if (note.id != null) {
             // In the server, we are not able to delete a note by itself, cause of the one-to-many constraint
             // And so, we can delete the note from the notebook first, then just back up that notebook
-           // serverDeleteNote(note)
             makeBackup(note.notebook)
         }
     }
