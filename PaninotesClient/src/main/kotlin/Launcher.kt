@@ -1,4 +1,3 @@
-
 class Launcher {
     companion object {
         @JvmStatic

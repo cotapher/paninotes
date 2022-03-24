@@ -113,7 +113,7 @@ class Model(val stage: Stage? = null) {
         }
     }
 
-    fun setCurrentNote(noteFileName: String, notebook: Notebook) {
+    private fun setCurrentNote(noteFileName: String, notebook: Notebook) {
         val newNoteFile = File(notebook.filePath!!.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
             println("Error: ${newNoteFile.name} already exists")
@@ -170,7 +170,7 @@ class Model(val stage: Stage? = null) {
         return Notebook(title)
     }
 
-    fun addNotebook(notebook: Notebook) {
+    private fun addNotebook(notebook: Notebook) {
         notebooks.add(notebook)
         notifyViews()
     }
@@ -201,8 +201,7 @@ class Model(val stage: Stage? = null) {
                 if (response.statusCode() == 200) {
                     println("Success ${response.statusCode()}")
                     print(response.body().toString())
-                    //TODO need integrate with view
-                    //            now we want to add ids to note objects
+
                     val notebookWithID: Notebook = mapper.readValue(response.body().toString())
                     //map notes back to notebook
                     notebookWithID.notes.forEach { it.notebook = notebookWithID }
@@ -211,7 +210,7 @@ class Model(val stage: Stage? = null) {
                     notebooks[idx] = notebookWithID
                     currentOpenNotebook = notebookWithID
                     //check if the note is
-                    if(currentNote != null){
+                    if (currentNote != null) {
                         currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
                     }
                     //refresh open notes
@@ -230,9 +229,8 @@ class Model(val stage: Stage? = null) {
             alert.show()
         }
     }
-    
+
     fun restoreBackup() {
-        //TODO Create a dialog box that confirms overwrite
         if (openNotes.size == 0) {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
@@ -255,7 +253,6 @@ class Model(val stage: Stage? = null) {
                         notebook.notes.forEach { note ->
                             note.notebook = notebook
                             note.htmlText?.let { note.saveNote(it) }
-                            //TODO check open notes and set flag
                             note.isOpen = false
                             note.backupState = BackupState.BACKED_UP
                         }
