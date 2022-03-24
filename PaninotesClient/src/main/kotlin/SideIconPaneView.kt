@@ -77,8 +77,7 @@ class SideIconPaneView(val model: Model, val sideNotebookPaneView: SideNotebookP
     }
 
     override fun update() {
-        this.layoutView() //TODO don't want to refresh everything
-
+        this.layoutView()
         //add a condition to only show editor if there is file assigned to model.currentFile
         infoButton.isVisible = model.currentNote != null
     }

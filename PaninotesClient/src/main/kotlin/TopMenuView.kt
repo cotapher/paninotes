@@ -277,7 +277,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                     }
                 }
             } else {
-                //TODO add status bar text
                 val alert = FlatAlert(AlertType.WARNING)
                 alert.headerText = "Please open a note first"
                 alert.show()
