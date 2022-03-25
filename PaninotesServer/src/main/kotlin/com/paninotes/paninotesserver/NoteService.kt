@@ -1,6 +1,7 @@
 package com.paninotes.paninotesserver
 
 import com.paninotes.paninotesserver.backupState.BackupState
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -9,7 +10,7 @@ class NoteService(
     @Autowired val noteRepository: NoteRepository? = null,
     @Autowired val notebookRepository: NotebookRepository? = null
 ) {
-
+    private val logger = LoggerFactory.getLogger(javaClass)
     fun getAllNotes(): NoteListResponse {
         val noteList = noteRepository?.findAll()?.toMutableList()
         return NoteListResponse(noteList)
@@ -29,7 +30,7 @@ class NoteService(
     fun backupNotebook(newNotebook: Notebook): Notebook? {
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if (matchingNotebooks?.size == 0) {
-            println("Notebook not found by title, inserting into db")
+            logger.info("Notebook not found by title, inserting into db")
             newNotebook.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
@@ -37,7 +38,7 @@ class NoteService(
 
         } else {
             //there should only be one make
-            println("Notebook exist")
+            logger.info("Notebook exist")
 
             val matchingNotebook = matchingNotebooks!!.first()
             val matchingNotebookNotes = matchingNotebook.notes!!

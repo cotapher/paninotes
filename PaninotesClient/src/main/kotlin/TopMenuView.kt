@@ -9,6 +9,7 @@ import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -21,7 +22,7 @@ import java.util.*
 
 class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage, val jMetro: JMetro) : Pane(),
     IView {
-
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
 
@@ -169,11 +170,17 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() == 200) {
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("Success ${response.statusCode()}")
+                logger.info(response.body().toString())
+                generateAlertDialogPopup(
+                    AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("ERROR ${response.statusCode()}")
+                logger.info(response.body().toString())
+                generateAlertDialogPopup(
+                    AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         }
 
@@ -188,10 +195,10 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 val result = confirmationAlert.showAndWait()
 
                 if (result.isPresent) {
-                    println(result)
-                    println(result.get())
+                    logger.info(result.toString())
+                    logger.info(result.get().toString())
                     if (result.get() == ButtonType.OK) {
-                        println("Exporting note")
+                        logger.info("Exporting note")
                         val htmlSource = model.currentNote!!.filePath!!
                         val directoryChooser = DirectoryChooser()
                         directoryChooser.initialDirectory = File(System.getProperty("user.dir"))
@@ -328,11 +335,21 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         return menuItem
     }
 
+    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
+        val alertBox = FlatAlert(type)
+        alertBox.initOwner(stage)
+        alertBox.title = title
+        val errorContent = Label(content)
+        errorContent.isWrapText = true
+        alertBox.dialogPane.content = errorContent
+        alertBox.showAndWait()
+    }
+
     override fun update() {
         //add a condition to only show editor if there is file assigned to model.currentFile
         if (model.currentNote != null) {
             htmlEditor.htmlText = model.currentNote?.htmlText
-            println("Html editor:${htmlEditor.htmlText}")
+            logger.info("Html editor:${htmlEditor.htmlText}")
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message

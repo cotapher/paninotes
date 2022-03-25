@@ -1,3 +1,4 @@
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient
@@ -6,6 +7,7 @@ import java.net.http.HttpResponse
 import javax.ws.rs.core.UriBuilder
 
 object HiliteMeUtils {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     // Map from the languages to show in the dropdown to the Pygments lexer short name (so the hilite.me API can process it)
     // https://pygments.org/docs/lexers/
@@ -311,8 +313,8 @@ object HiliteMeUtils {
             return if (response.statusCode() == 200) {
                 response.body().toString()
             } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("ERROR ${response.statusCode()}")
+                logger.info(response.body().toString())
                 null
             }
         }

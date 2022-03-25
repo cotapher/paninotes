@@ -42,7 +42,7 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
                 val notebooks: MutableList<Notebook> = model.notebooks
-                var x = notebooks.indices.reversed()
+                val x: IntProgression
 
                 if (!model.notebookReversed) {
                     x = notebooks.indices
@@ -58,12 +58,12 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
 
                     // create a context menu with a 'Delete Notebook' option
                     val notebookContextMenu = ContextMenu()
-                    val deleteOption = MenuItem("Delete Notebook")
-                    deleteOption.setOnAction {
+                    val deleteNotebookOption = MenuItem("Delete Notebook")
+                    deleteNotebookOption.setOnAction {
                         deleteNotebookPopup(notebooks[i])
                     }
 
-                    notebookContextMenu.items.add(deleteOption)
+                    notebookContextMenu.items.add(deleteNotebookOption)
                     notebookButton.contextMenu = notebookContextMenu
 
                     notebookButton.setOnAction {
@@ -106,12 +106,12 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
 
                     // You can right-click the current notebook button to delete the notebook
                     val notebookContextMenu = ContextMenu()
-                    val deleteOption = MenuItem("Delete Notebook")
-                    deleteOption.setOnAction {
+                    val deleteNotebookOption = MenuItem("Delete Notebook")
+                    deleteNotebookOption.setOnAction {
                         deleteNotebookPopup(model.currentOpenNotebook!!)
                     }
 
-                    notebookContextMenu.items.add(deleteOption)
+                    notebookContextMenu.items.add(deleteNotebookOption)
                     currentNotebookButton.contextMenu = notebookContextMenu
 
                     vBox.children.add(0, currentNotebookButton)
@@ -124,7 +124,7 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
                         model.currentOpenNotebook = null
                     }
 
-                    var y = model.currentOpenNotebook!!.notes.indices.reversed()
+                    val y: IntProgression
 
                     if (!model.notesReversed) {
                         y = model.currentOpenNotebook!!.notes.indices
@@ -146,12 +146,12 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
 
                         // You can right-click the note button to delete the note
                         val noteContextMenu = ContextMenu()
-                        val deleteOption = MenuItem("Delete Note")
-                        deleteOption.setOnAction {
+                        val deleteNoteOption = MenuItem("Delete Note")
+                        deleteNoteOption.setOnAction {
                             deleteNotePopup(model.currentOpenNotebook!!.notes[i])
                         }
 
-                        noteContextMenu.items.add(deleteOption)
+                        noteContextMenu.items.add(deleteNoteOption)
                         noteButton.contextMenu = noteContextMenu
 
                         vBox.children.add(noteButton)
