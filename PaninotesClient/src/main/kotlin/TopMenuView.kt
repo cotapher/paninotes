@@ -313,7 +313,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 val list = noHtmlTags.split(delim)
 
                 var outputString = ""
-                for ((i, item) in list.withIndex()) {
+                for (item in list) {
                     if (entered in item) {
                         count++
                     }
@@ -359,7 +359,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 val list = noHtmlTags.split(delim)
                 val found = replaceWord(htmlEditor.htmlText, entered, "<mark>$entered</mark>", true)
 
-                for ((i, item) in list.withIndex()) {
+                for (item in list) {
                     if (entered in item) {
                         count++
                     }
@@ -378,7 +378,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
     }
 
     private fun replaceWord(html: String, word: String, new: String, highlight: Boolean): String {
-        var replaced = ""
+        var replaced: String
         val doc = Jsoup.parse(html) // document
         val els = doc.body().allElements
 
