@@ -7,6 +7,7 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.FlatTextInputDialog
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.ConnectException
 import java.net.URI
@@ -18,6 +19,7 @@ import java.nio.file.Paths
 import java.time.format.DateTimeFormatter
 
 class Model(val stage: Stage? = null) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val views = mutableListOf<IView>()
     var NOTEBOOK_DIR = File(Paths.get(System.getProperty("user.home"), ".paninotes", "Notebooks").toUri())
@@ -72,7 +74,7 @@ class Model(val stage: Stage? = null) {
         val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
-            println("Error: ${newNotebookFolder.name} already exists")
+            logger.info("Error: ${newNotebookFolder.name} already exists")
             generateAlertDialogPopup(
                 Alert.AlertType.ERROR, "Creation Error", "$newNotebookFolder notebook already exists, " +
                         "try choosing a different name"
@@ -116,7 +118,7 @@ class Model(val stage: Stage? = null) {
     private fun setCurrentNote(noteFileName: String, notebook: Notebook) {
         val newNoteFile = File(notebook.filePath!!.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
-            println("Error: ${newNoteFile.name} already exists")
+            logger.info("Error: ${newNoteFile.name} already exists")
             generateAlertDialogPopup(
                 Alert.AlertType.ERROR, "Creation Error", "$newNoteFile already exists, " +
                         "try choosing a different name"
@@ -147,7 +149,7 @@ class Model(val stage: Stage? = null) {
     }
 
     fun saveNote(htmlText: String) {
-        print(htmlText)
+        logger.info(htmlText)
         currentNote?.saveNote(htmlText)
         notifyViews()
     }
@@ -268,8 +270,8 @@ class Model(val stage: Stage? = null) {
             try {
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
                 if (response.statusCode() == 200) {
-                    println("Success ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("Success ${response.statusCode()}")
+                    logger.info(response.body().toString())
 
                     val notebookWithID: Notebook = mapper.readValue(response.body().toString())
                     //map notes back to notebook
@@ -290,14 +292,14 @@ class Model(val stage: Stage? = null) {
 
                     notifyViews()
                 } else {
-                    print("ERROR ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("ERROR ${response.statusCode()}")
+                    logger.info(response.body().toString())
                     generateAlertDialogPopup(
                         Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
                     )
                 }
             } catch (e: ConnectException) {
-                println("Server is not running")
+                logger.info("Server is not running")
                 generateAlertDialogPopup(
                     Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
                 )
@@ -320,12 +322,11 @@ class Model(val stage: Stage? = null) {
             try {
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
                 if (response.statusCode() == 200) {
-                    println("Success ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("Success ${response.statusCode()}")
+                    logger.info(response.body().toString())
                     val result: NotebookListResponse = mapper.readValue(response.body().toString())
                     val notebookList: MutableList<Notebook> = result.response!!
-                    print(notebookList.size)
-//                    print(notebookList.toString())
+                    logger.info(notebookList.size.toString())
 
                     notebookList.forEach { notebook ->
                         // For each notebook, also initialize all the notes in the notebook
@@ -361,11 +362,11 @@ class Model(val stage: Stage? = null) {
                     alert.show()
                     notifyViews()
                 } else {
-                    print("ERROR ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("ERROR ${response.statusCode()}")
+                    logger.info(response.body().toString())
                 }
             } catch (e: ConnectException) {
-                println("Server is not running")
+                logger.info("Server is not running")
             }
         } else {
             val alert = FlatAlert(Alert.AlertType.WARNING)
@@ -385,17 +386,17 @@ class Model(val stage: Stage? = null) {
         try {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() == 200) {
-                println("Delete notebook Success ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("Delete notebook Success ${response.statusCode()}")
+                logger.info(response.body().toString())
             } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("ERROR ${response.statusCode()}")
+                logger.info(response.body().toString())
                 generateAlertDialogPopup(
                     Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
                 )
             }
         } catch (e: ConnectException) {
-            println("Server is not running")
+            logger.info("Server is not running")
             generateAlertDialogPopup(
                 Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
             )

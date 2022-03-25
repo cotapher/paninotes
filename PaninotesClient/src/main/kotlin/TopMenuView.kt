@@ -9,6 +9,7 @@ import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -21,7 +22,7 @@ import java.util.*
 
 class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage: Stage, val jMetro: JMetro) : Pane(),
     IView {
-
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val LIGHT_STYLESHEET_URL = TopMenuView::class.java.getResource("css/light.css")?.toExternalForm()
     private val DARK_STYLESHEET_URL = TopMenuView::class.java.getResource("css/dark.css")?.toExternalForm()
 
@@ -146,8 +147,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                     dialog.headerText = "No Input"
                 } else {
                     val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-                    println(htmlEditor.htmlText)
-                    println(noHtmlTags)
+                    logger.info(htmlEditor.htmlText)
+                    logger.info(noHtmlTags)
 
                     val delim = " "
                     val list = noHtmlTags.split(delim)
@@ -166,7 +167,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                         }
                     }
 
-                    println(outputString)
+                    logger.info(outputString)
                     val oldText = htmlEditor.htmlText
                     htmlEditor.htmlText = outputString
 
@@ -191,7 +192,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             val emptyParagraphs = Jsoup.parse(htmlEditor.htmlText).select("p:empty")
             val paragraphs = textInParagraphs.size
             var characters = 0
-            println(textInParagraphs)
+            logger.info(textInParagraphs.toString())
 
             for (element in list) {
                 for (j in element.indices) {
@@ -199,7 +200,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 }
             }
 
-            println(emptyParagraphs.size)
+            logger.info(emptyParagraphs.size.toString())
 
             usageInfo.contentText = "Words: ${list.size}\n" +
                     "Characters (no spaces): ${characters}\n" +
@@ -243,14 +244,11 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 .build()
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() == 200) {
-                println("Success ${response.statusCode()}")
-                print(response.body().toString())
-//                val noteList: List<Note> = mapper.readValue(response.body().toString())
-//                print(noteList.size)
-//                print(noteList.toString())
+                logger.info("Success ${response.statusCode()}")
+                logger.info(response.body().toString())
             } else {
-                print("ERROR ${response.statusCode()}")
-                print(response.body().toString())
+                logger.info("ERROR ${response.statusCode()}")
+                logger.info(response.body().toString())
             }
         }
 
@@ -265,10 +263,10 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 val result = confirmationAlert.showAndWait()
 
                 if (result.isPresent) {
-                    println(result)
-                    println(result.get())
+                    logger.info(result.toString())
+                    logger.info(result.get().toString())
                     if (result.get() == ButtonType.OK) {
-                        println("Exporting note")
+                        logger.info("Exporting note")
                         val htmlSource = model.currentNote!!.filePath!!
                         val directoryChooser = DirectoryChooser()
                         directoryChooser.initialDirectory = File(System.getProperty("user.dir"))
@@ -328,7 +326,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         //add a condition to only show editor if there is file assigned to model.currentFile
         if (model.currentNote != null) {
             htmlEditor.htmlText = model.currentNote?.htmlText
-            println("Html editor:${htmlEditor.htmlText}")
+            logger.info("Html editor:${htmlEditor.htmlText}")
             htmlEditor.isVisible = true
         } else {
             //hide the editor maybe welcome message

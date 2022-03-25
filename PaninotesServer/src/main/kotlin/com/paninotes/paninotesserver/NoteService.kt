@@ -29,7 +29,7 @@ class NoteService(
     fun backupNotebook(newNotebook: Notebook): Notebook? {
         val matchingNotebooks: MutableList<Notebook>? = notebookRepository?.findByTitle(newNotebook.title)
         if (matchingNotebooks?.size == 0) {
-            println("Notebook not found by title, inserting into db")
+            logger.info("Notebook not found by title, inserting into db")
             newNotebook.notes!!.forEach {
                 it.backupState = BackupState.BACKED_UP
             }
@@ -37,7 +37,7 @@ class NoteService(
 
         } else {
             //there should only be one make
-            println("Notebook exist")
+            logger.info("Notebook exist")
 
             val matchingNotebook = matchingNotebooks!!.first()
             val matchingNotebookNotes = matchingNotebook.notes!!

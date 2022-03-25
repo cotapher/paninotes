@@ -3,8 +3,10 @@ import javafx.scene.control.ButtonBar
 import javafx.scene.control.ButtonType
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
+import org.slf4j.LoggerFactory
 
 object StageUtils {
+    private val logger = LoggerFactory.getLogger(javaClass)
     fun saveOnClose(
         model: Model,
         stage: Stage,
@@ -32,10 +34,10 @@ object StageUtils {
             val result = confirmationAlert.showAndWait()
 
             if (result.isPresent) {
-                println(result)
-                println(result.get())
+                logger.info(result.toString())
+                logger.info(result.get().toString())
                 if (result.get() == saveButton) {
-                    print(htmlEditor.htmlText)
+                    logger.info(htmlEditor.htmlText)
                     model.currentNote?.saveNote(htmlEditor.htmlText)
                     return true
                 }
