@@ -10,7 +10,6 @@ import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
-import org.jsoup.nodes.TextNode
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -45,33 +44,39 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val fileQuit = createAddToMenu(fileMenu, "Quit")
         menuBar.menus.add(fileMenu)
 
-        // Option:
-        val optionMenu = Menu("Option")
-        val optionSearch = createAddToMenu(optionMenu, "Search")
-        val optionSandR = createAddToMenu(optionMenu, "Search and Replace")
-        val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
-        val optionRestoreBackup = createAddToMenu(optionMenu, "Restore Backup")
-        val optionBackupCurrentNotebook = createAddToMenu(optionMenu, "Backup Current Notebook")
-        val optionDeleteAllData = createAddToMenu(optionMenu, "Delete Backup Data")
-        val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
-        val optionExport = createAddToMenu(optionMenu, "Export To PDF")
-        menuBar.menus.add(optionMenu)
+        //View
+        val viewMenu = Menu("View")
+        val viewTheme = createAddToMenu(viewMenu, "Use Dark Theme")
+        menuBar.menus.add(viewMenu)
+
+        //Sync
+        val syncMenu = Menu("Sync")
+        val syncRestoreBackup = createAddToMenu(syncMenu, "Restore Backup")
+        val syncBackupCurrentNotebook = createAddToMenu(syncMenu, "Backup Current Notebook")
+        val syncDeleteAllData = createAddToMenu(syncMenu, "Delete Backup Data")
+        menuBar.menus.add(syncMenu)
+
+        // Tools:
+        val toolsMenu = Menu("Tools")
+        val toolsSearch = createAddToMenu(toolsMenu, "Search")
+        val toolsSandR = createAddToMenu(toolsMenu, "Search and Replace")
+        val toolsUsage = createAddToMenu(toolsMenu, "Usage Statistics")
+        val toolsExport = createAddToMenu(toolsMenu, "Export To PDF")
+        menuBar.menus.add(toolsMenu)
 
         // Sort
         val sortMenu = Menu("Sort")
-        val sortNoteA = createAddToMenu(sortMenu, "Sort Notes (A-Z)")
-        val sortNoteZ = createAddToMenu(sortMenu, "Sort Notes (Z-A)")
-        val sortNoteBookA = createAddToMenu(sortMenu, "Sort Notebook (A-Z)")
-        val sortNoteBookZ = createAddToMenu(sortMenu, "Sort Notebook (Z-A)")
+        val sortNote = createAddToMenu(sortMenu, "Toggle Note Sorting (A-Z)")
+        val sortNoteBook = createAddToMenu(sortMenu, "Toggle Notebook Sorting (A-Z)")
         menuBar.menus.add(sortMenu)
 
-        if (Config.darkTheme) optionTheme.text = "Use Light Theme"
+        if (Config.darkTheme) viewTheme.text = "Use Light Theme"
 
         fileMenu.id = "menu-fileMenu"
         fileNewNote.id = "menuitem-fileNewNote"
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
-        optionMenu.id = "menu-optionMenu"
+        toolsMenu.id = "menu-toolsMenu"
         sortMenu.id = "menu-sortMenu"
 
         fileNewNote.setOnAction {
@@ -129,46 +134,54 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         //need new directory, open directory
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
-        optionSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        viewTheme.accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN)
+        syncBackupCurrentNotebook.accelerator = KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN)
+        syncRestoreBackup.accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN)
+        syncDeleteAllData.accelerator = KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN)
+        toolsSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        toolsUsage.accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)
+        toolsExport.accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
 
+        sortNoteBook.accelerator = KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN)
+        sortNote.accelerator = KeyCodeCombination(KeyCode.DIGIT2, KeyCombination.CONTROL_DOWN)
 
-        optionSandR.setOnAction {
+        toolsSandR.setOnAction {
             replaceText()
         }
 
-        optionSearch.setOnAction {
+        toolsSearch.setOnAction {
             searchText()
         }
 
-        optionUsage.setOnAction {
+        toolsUsage.setOnAction {
             usageStats()
         }
 
-        optionTheme.setOnAction {
+        viewTheme.setOnAction {
             val ss = jMetro.scene.stylesheets
             if (jMetro.style == Style.LIGHT) {
                 ss.clear()
                 jMetro.style = Style.DARK
                 ss.add(DARK_STYLESHEET_URL)
-                optionTheme.text = "Use Light theme"
+                viewTheme.text = "Use Light theme"
             } else {
                 ss.clear()
                 jMetro.style = Style.LIGHT
                 ss.add(LIGHT_STYLESHEET_URL)
-                optionTheme.text = "Use Dark theme"
+                viewTheme.text = "Use Dark theme"
             }
         }
 
-        optionRestoreBackup.setOnAction {
+        syncRestoreBackup.setOnAction {
             model.restoreBackup()
         }
 
 
-        optionBackupCurrentNotebook.setOnAction {
+        syncBackupCurrentNotebook.setOnAction {
             model.makeBackup(model.currentOpenNotebook)
         }
 
-        optionDeleteAllData.setOnAction {
+        syncDeleteAllData.setOnAction {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/deleteAll"))
@@ -190,7 +203,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             }
         }
 
-        optionExport.setOnAction {
+        toolsExport.setOnAction {
 
             //get current note
             if (model.currentNote != null) {
@@ -228,24 +241,14 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             }
         }
 
-        sortNoteBookA.setOnAction {
+        sortNoteBook.setOnAction {
             // sort alphabetically
-            model.notebookReversed = false
+            model.notebookReversed = !model.notebookReversed
             model.notifyViews()
         }
 
-        sortNoteBookZ.setOnAction {
-            model.notebookReversed = true
-            model.notifyViews()
-        }
-
-        sortNoteA.setOnAction {
-            model.notesReversed = false
-            model.notifyViews()
-        }
-
-        sortNoteZ.setOnAction {
-            model.notesReversed = true
+        sortNote.setOnAction {
+            model.notesReversed = !model.notesReversed
             model.notifyViews()
         }
 
