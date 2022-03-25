@@ -52,7 +52,7 @@ class PaninotesClient : Application() {
         val topMenuView = TopMenuView(model, htmlEditor, stage, jMetro)
         val noteTabsView = NoteTabsView(model, htmlEditor, stage)
         val sideNotebookPane = SideNotebookPaneView(model, htmlEditor, stage)
-        val sideIconPane = SideIconPaneView(model, sideNotebookPane, stage)
+        val sideIconPane = SideIconPaneView(model, htmlEditor, sideNotebookPane, stage)
 
         // Hacky thing so when the notebook pane is not visible, it doesn't take up any empty space in the side pane
         sideNotebookPane.managedProperty().bind(sideNotebookPane.visibleProperty())
