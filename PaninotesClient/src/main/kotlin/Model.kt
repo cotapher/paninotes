@@ -292,14 +292,20 @@ class Model(val stage: Stage? = null) {
                 } else {
                     print("ERROR ${response.statusCode()}")
                     print(response.body().toString())
+                    generateAlertDialogPopup(
+                        Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                    )
                 }
             } catch (e: ConnectException) {
                 println("Server is not running")
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         } else {
-            val alert = FlatAlert(Alert.AlertType.WARNING)
-            alert.headerText = "No notebook selected"
-            alert.show()
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "No notebook selected", "Please select a notebook"
+            )
         }
     }
 
@@ -384,9 +390,15 @@ class Model(val stage: Stage? = null) {
             } else {
                 print("ERROR ${response.statusCode()}")
                 print(response.body().toString())
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                )
             }
         } catch (e: ConnectException) {
             println("Server is not running")
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+            )
         }
     }
 }
