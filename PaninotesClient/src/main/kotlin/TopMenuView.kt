@@ -65,10 +65,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
         // Sort
         val sortMenu = Menu("Sort")
-        val sortNoteA = createAddToMenu(sortMenu, "Sort Notes (A-Z)")
-        val sortNoteZ = createAddToMenu(sortMenu, "Sort Notes (Z-A)")
-        val sortNoteBookA = createAddToMenu(sortMenu, "Sort Notebook (A-Z)")
-        val sortNoteBookZ = createAddToMenu(sortMenu, "Sort Notebook (Z-A)")
+        val sortNote = createAddToMenu(sortMenu, "Toggle Note Sorting (A-Z)")
+        val sortNoteBook = createAddToMenu(sortMenu, "Toggle Notebook Sorting (A-Z)")
         menuBar.menus.add(sortMenu)
 
         if (Config.darkTheme) viewTheme.text = "Use Light Theme"
@@ -143,7 +141,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         toolsUsage.accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)
         toolsExport.accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
 
-
+        sortNoteBook.accelerator = KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN)
+        sortNote.accelerator = KeyCodeCombination(KeyCode.DIGIT2, KeyCombination.CONTROL_DOWN)
 
         toolsSearch.setOnAction {
             searchText()
@@ -239,26 +238,18 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
         }
 
-        sortNoteBookA.setOnAction {
+        sortNoteBook.setOnAction {
             // sort alphabetically
-            model.notebookReversed = false
+            model.notebookReversed = !model.notebookReversed
             model.notifyViews()
         }
 
-        sortNoteBookZ.setOnAction {
-            model.notebookReversed = true
+
+        sortNote.setOnAction {
+            model.notesReversed = !model.notesReversed
             model.notifyViews()
         }
 
-        sortNoteA.setOnAction {
-            model.notesReversed = false
-            model.notifyViews()
-        }
-
-        sortNoteZ.setOnAction {
-            model.notesReversed = true
-            model.notifyViews()
-        }
 
         this.children.add(menuBar)
     }
