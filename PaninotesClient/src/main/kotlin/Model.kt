@@ -364,9 +364,15 @@ class Model(val stage: Stage? = null) {
                 } else {
                     logger.info("ERROR ${response.statusCode()}")
                     logger.info(response.body().toString())
+                    generateAlertDialogPopup(
+                        Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                    )
                 }
             } catch (e: ConnectException) {
                 logger.info("Server is not running")
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         } else {
             val alert = FlatAlert(Alert.AlertType.WARNING)
