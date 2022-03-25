@@ -59,6 +59,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         // Tools:
         val toolsMenu = Menu("Tools")
         val toolsSearch = createAddToMenu(toolsMenu, "Search")
+        val toolsSandR = createAddToMenu(toolsMenu, "Search and Replace")
         val toolsUsage = createAddToMenu(toolsMenu, "Usage Statistics")
         val toolsExport = createAddToMenu(toolsMenu, "Export To PDF")
         menuBar.menus.add(toolsMenu)
@@ -138,11 +139,16 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         syncRestoreBackup.accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN)
         syncDeleteAllData.accelerator = KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN)
         toolsSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        toolsSandR.accelerator = KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN)
         toolsUsage.accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)
         toolsExport.accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
 
         sortNoteBook.accelerator = KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN)
         sortNote.accelerator = KeyCodeCombination(KeyCode.DIGIT2, KeyCombination.CONTROL_DOWN)
+
+        toolsSandR.setOnAction {
+            replaceText()
+        }
 
         toolsSearch.setOnAction {
             searchText()
@@ -234,8 +240,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 alert.headerText = "Please open a note first"
                 alert.show()
             }
-
-
         }
 
         sortNoteBook.setOnAction {
@@ -244,12 +248,10 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             model.notifyViews()
         }
 
-
         sortNote.setOnAction {
             model.notesReversed = !model.notesReversed
             model.notifyViews()
         }
-
 
         this.children.add(menuBar)
     }
@@ -302,33 +304,26 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 dialog.headerText = "No Input"
             } else {
                 val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                var count = 0
                 println(htmlEditor.htmlText)
                 println(noHtmlTags)
+                val text = replaceWord(htmlEditor.htmlText, entered, "<mark>$entered</mark>", true)
 
                 val delim = " "
                 val list = noHtmlTags.split(delim)
-                val wordIndexes = ArrayList<Int>()
 
                 var outputString = ""
                 for ((i, item) in list.withIndex()) {
-                    if (i != 0) {
-                        outputString += " "
-                    }
-                    if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
-                        outputString = "$outputString<mark>$item</mark>"
-                        wordIndexes.add(i)
-                    } else {
-                        outputString += item
+                    if (entered in item) {
+                        count++
                     }
                 }
 
                 println(outputString)
                 val oldText = htmlEditor.htmlText
-                htmlEditor.htmlText = outputString
-
+                htmlEditor.htmlText = text
                 (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
-
-                dialog.headerText = "Found " + wordIndexes.size
+                dialog.headerText = "Found: $count"
                 dialog.showAndWait()
                 htmlEditor.htmlText = oldText
             }
@@ -339,6 +334,69 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val menuItem = MenuItem(menuItemName)
         menu.items.add(menuItem)
         return menuItem
+    }
+
+    private fun replaceText() {
+        val dialog = FlatTextInputDialog("")
+        dialog.initOwner(stage)
+        dialog.title = "Search and Replace"
+        dialog.headerText = "Find Word"
+
+        (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Search"
+
+        val result = dialog.showAndWait()
+        if (result.isPresent) {
+            val entered = result.get()
+            if (entered.compareTo("") == 0) {
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
+                dialog.show()
+                dialog.headerText = "No Input"
+            } else {
+                val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                val oldText = htmlEditor.htmlText
+                var count = 0
+                val delim = " "
+                val list = noHtmlTags.split(delim)
+                val found = replaceWord(htmlEditor.htmlText, entered, "<mark>$entered</mark>", true)
+
+                for ((i, item) in list.withIndex()) {
+                    if (entered in item) {
+                        count++
+                    }
+                }
+
+                htmlEditor.htmlText = found
+                (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "Replace"
+                dialog.headerText = "Replacing: $count"
+
+                val result2 = dialog.showAndWait()
+                val replacingWord = result2.get()
+                val replacedStr = replaceWord(oldText, entered, replacingWord, false)
+                htmlEditor.htmlText = replacedStr
+            }
+        }
+    }
+
+    private fun replaceWord(html: String, word: String, new: String, highlight: Boolean): String {
+        var replaced = ""
+        val doc = Jsoup.parse(html) // document
+        val els = doc.body().allElements
+
+        for (e in els) {
+            val tnList = e.textNodes()
+            for (tn in tnList) {
+                val orig = tn.text()
+                tn.text(orig.replace(word, new))
+            }
+        }
+        replaced = doc.toString()
+
+        if (highlight) {
+            replaced = replaced.replace("&lt;mark&gt;", "<mark>")
+            replaced = replaced.replace("&lt;/mark&gt;", "</mark>")
+        }
+
+        return replaced
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
