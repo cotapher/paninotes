@@ -7,9 +7,9 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
-import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
@@ -47,5 +47,9 @@ internal class NoteServiceTest {
         assertEquals(result, testNotebookListResponse.response?.get(0))
     }
 
-
+    @Test
+    fun deleteNotebook() {
+        testNotebookListResponse.response?.get(0)?.let { mockNoteService?.deleteNotebook(it) }
+        Mockito.verify(mockNotebookRepository, times(1)).deleteById(anyInt())
+    }
 }
