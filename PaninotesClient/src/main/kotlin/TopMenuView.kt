@@ -135,7 +135,14 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         //need new directory, open directory
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
+        viewTheme.accelerator = KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN)
+        syncBackupCurrentNotebook.accelerator = KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN)
+        syncRestoreBackup.accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN)
+        syncDeleteAllData.accelerator = KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN)
         toolsSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        toolsUsage.accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)
+        toolsExport.accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
+
 
 
         toolsSearch.setOnAction {
