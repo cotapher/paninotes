@@ -139,6 +139,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         syncRestoreBackup.accelerator = KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN)
         syncDeleteAllData.accelerator = KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN)
         toolsSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        toolsSandR.accelerator = KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN)
         toolsUsage.accelerator = KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)
         toolsExport.accelerator = KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN)
 
