@@ -246,9 +246,15 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             if (response.statusCode() == 200) {
                 logger.info("Success ${response.statusCode()}")
                 logger.info(response.body().toString())
+                generateAlertDialogPopup(
+                    AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             } else {
                 logger.info("ERROR ${response.statusCode()}")
                 logger.info(response.body().toString())
+                generateAlertDialogPopup(
+                    AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         }
 
@@ -320,6 +326,16 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val menuItem = MenuItem(menuItemName)
         menu.items.add(menuItem)
         return menuItem
+    }
+
+    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
+        val fileExistsAlert = FlatAlert(type)
+        fileExistsAlert.initOwner(stage)
+        fileExistsAlert.title = title
+        val errorContent = Label(content)
+        errorContent.isWrapText = true
+        fileExistsAlert.dialogPane.content = errorContent
+        fileExistsAlert.showAndWait()
     }
 
     override fun update() {
