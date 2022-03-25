@@ -247,13 +247,13 @@ class Model(val stage: Stage? = null) {
     }
 
     private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
-        val fileExistsAlert = FlatAlert(type)
-        fileExistsAlert.initOwner(stage)
-        fileExistsAlert.title = title
+        val alertBox = FlatAlert(type)
+        alertBox.initOwner(stage)
+        alertBox.title = title
         val errorContent = Label(content)
         errorContent.isWrapText = true
-        fileExistsAlert.dialogPane.content = errorContent
-        fileExistsAlert.showAndWait()
+        alertBox.dialogPane.content = errorContent
+        alertBox.showAndWait()
     }
 
     // SERVER --------------------------------------------------------------------------------------------------
