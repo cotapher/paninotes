@@ -139,37 +139,52 @@ class SideIconPaneView(
                 dialog.headerText = "No Input"
             } else {
                 val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
+                var count = 0
                 println(htmlEditor.htmlText)
                 println(noHtmlTags)
+                val text = replaceWord(htmlEditor.htmlText, entered, "<mark>$entered</mark>", true)
 
                 val delim = " "
                 val list = noHtmlTags.split(delim)
-                val wordIndexes = ArrayList<Int>()
 
                 var outputString = ""
-                for ((i, item) in list.withIndex()) {
-                    if (i != 0) {
-                        outputString += " "
-                    }
-                    if ((item.lowercase()).compareTo(entered.lowercase()) == 0) {
-                        outputString = "$outputString<mark>$item</mark>"
-                        wordIndexes.add(i)
-                    } else {
-                        outputString += item
+                for (item in list) {
+                    if (entered in item) {
+                        count++
                     }
                 }
 
                 println(outputString)
                 val oldText = htmlEditor.htmlText
-                htmlEditor.htmlText = outputString
-
+                htmlEditor.htmlText = text
                 (dialog.dialogPane.lookupButton(ButtonType.OK) as Button).text = "OK"
-
-                dialog.headerText = "Found " + wordIndexes.size
+                dialog.headerText = "Found: $count"
                 dialog.showAndWait()
                 htmlEditor.htmlText = oldText
             }
         }
+    }
+
+    private fun replaceWord(html: String, word: String, new: String, highlight: Boolean): String {
+        var replaced: String
+        val doc = Jsoup.parse(html) // document
+        val els = doc.body().allElements
+
+        for (e in els) {
+            val tnList = e.textNodes()
+            for (tn in tnList) {
+                val orig = tn.text()
+                tn.text(orig.replace(word, new))
+            }
+        }
+        replaced = doc.toString()
+
+        if (highlight) {
+            replaced = replaced.replace("&lt;mark&gt;", "<mark>")
+            replaced = replaced.replace("&lt;/mark&gt;", "</mark>")
+        }
+
+        return replaced
     }
 
     override fun update() {
