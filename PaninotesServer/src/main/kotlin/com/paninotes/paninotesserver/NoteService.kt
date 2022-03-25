@@ -1,6 +1,7 @@
 package com.paninotes.paninotesserver
 
 import com.paninotes.paninotesserver.backupState.BackupState
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -9,7 +10,7 @@ class NoteService(
     @Autowired val noteRepository: NoteRepository? = null,
     @Autowired val notebookRepository: NotebookRepository? = null
 ) {
-
+    private val logger = LoggerFactory.getLogger(javaClass)
     fun getAllNotes(): NoteListResponse {
         val noteList = noteRepository?.findAll()?.toMutableList()
         return NoteListResponse(noteList)
