@@ -26,7 +26,7 @@ class Note(var filePath: File? = null) {
 
     }
 
-    fun resolveNameFromPath(): String? {
+    private fun resolveNameFromPath(): String? {
         return filePath?.nameWithoutExtension
     }
 
@@ -34,7 +34,7 @@ class Note(var filePath: File? = null) {
         htmlText = readHTMLFile(filePath)
     }
 
-    fun readHTMLFile(file: File?): String? {
+    private fun readHTMLFile(file: File?): String? {
         return file?.readText(Charsets.UTF_8)
     }
 

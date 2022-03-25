@@ -140,24 +140,43 @@ class CustomHTMLEditor : HTMLEditor() {
             // Make sure the OK button is pressed
             if (buttonTypeAndText.first == ButtonType.OK && buttonTypeAndText.second.isNotEmpty()) {
                 val enteredText = buttonTypeAndText.second
-                val syntaxHighlightedTextHtml =
-                    HiliteMeUtils.getSyntaxHighlightedText(enteredText, buttonTypeAndText.third)
+                try {
 
-                // We will replace the user's highlighted text with the syntax highlighted text
-                if (syntaxHighlightedTextHtml != null) {
-                    insertHtmlAtCursor(syntaxHighlightedTextHtml)
-                } else {
-                    // There was an error with the hilite.me api so show an error dialog
-                    val alert = FlatAlert(AlertType.ERROR)
-                    alert.initOwner(stage)
-                    alert.title = "Paninotes"
-                    alert.headerText = "Syntax Highlighting Error"
-                    alert.contentText = "Sorry, there was an error with the hilite.me api for syntax highlighting :("
+                    val syntaxHighlightedTextHtml =
+                        HiliteMeUtils.getSyntaxHighlightedText(
+                            enteredText,
+                            buttonTypeAndText.third
+                        )                // We will replace the user's highlighted text with the syntax highlighted text
+                    if (syntaxHighlightedTextHtml != null) {
+                        insertHtmlAtCursor(syntaxHighlightedTextHtml)
+                    } else {
+                        // There was an error with the hilite.me api so show an error dialog
+                        val alert = FlatAlert(AlertType.ERROR)
+                        alert.initOwner(stage)
+                        alert.title = "Paninotes"
+                        alert.headerText = "Syntax Highlighting Error"
+                        alert.contentText =
+                            "Sorry, there was an error with the hilite.me api for syntax highlighting :("
 
-                    alert.showAndWait()
+                        alert.showAndWait()
+                    }
+                } catch (e: Exception) {
+                    generateAlertDialogPopup(Alert.AlertType.ERROR, "An error occured", "Please try again")
                 }
+
+
             }
         }
+    }
+
+    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
+        val alertBox = FlatAlert(type)
+        alertBox.initOwner(stage)
+        alertBox.title = title
+        val errorContent = Label(content)
+        errorContent.isWrapText = true
+        alertBox.dialogPane.content = errorContent
+        alertBox.showAndWait()
     }
 
     private fun insertHtmlAtCursor(html: String) {

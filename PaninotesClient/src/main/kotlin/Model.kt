@@ -7,6 +7,7 @@ import javafx.scene.control.Label
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.FlatAlert
 import jfxtras.styles.jmetro.FlatTextInputDialog
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.ConnectException
 import java.net.URI
@@ -18,6 +19,7 @@ import java.nio.file.Paths
 import java.time.format.DateTimeFormatter
 
 class Model(val stage: Stage? = null) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
     private val views = mutableListOf<IView>()
     var NOTEBOOK_DIR = File(Paths.get(System.getProperty("user.home"), ".paninotes", "Notebooks").toUri())
@@ -25,6 +27,8 @@ class Model(val stage: Stage? = null) {
     var currentNote: Note? = null
     var openNotes = mutableListOf<Note>()
     val notebooks = mutableListOf<Notebook>()
+    var notebookReversed = false
+    var notesReversed = false
 
     fun initializeNotebooks() {
         // Initialize and create all the notebook objects from iterating through the Notebook directory
@@ -70,7 +74,7 @@ class Model(val stage: Stage? = null) {
         val newNotebookFolder = File(NOTEBOOK_DIR.resolve(notebookName).toString())
 
         if (newNotebookFolder.exists()) {
-            println("Error: ${newNotebookFolder.name} already exists")
+            logger.info("Error: ${newNotebookFolder.name} already exists")
             generateAlertDialogPopup(
                 Alert.AlertType.ERROR, "Creation Error", "$newNotebookFolder notebook already exists, " +
                         "try choosing a different name"
@@ -111,10 +115,10 @@ class Model(val stage: Stage? = null) {
         }
     }
 
-    fun setCurrentNote(noteFileName: String, notebook: Notebook) {
+    private fun setCurrentNote(noteFileName: String, notebook: Notebook) {
         val newNoteFile = File(notebook.filePath!!.resolve(noteFileName).toString())
         if (newNoteFile.exists()) {
-            println("Error: ${newNoteFile.name} already exists")
+            logger.info("Error: ${newNoteFile.name} already exists")
             generateAlertDialogPopup(
                 Alert.AlertType.ERROR, "Creation Error", "$newNoteFile already exists, " +
                         "try choosing a different name"
@@ -145,7 +149,7 @@ class Model(val stage: Stage? = null) {
     }
 
     fun saveNote(htmlText: String) {
-        print(htmlText)
+        logger.info(htmlText)
         currentNote?.saveNote(htmlText)
         notifyViews()
     }
@@ -168,27 +172,96 @@ class Model(val stage: Stage? = null) {
         return Notebook(title)
     }
 
-    fun addNotebook(notebook: Notebook) {
+    private fun addNotebook(notebook: Notebook) {
         notebooks.add(notebook)
         notifyViews()
     }
 
-    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
-        val fileExistsAlert = FlatAlert(type)
-        fileExistsAlert.initOwner(stage)
-        fileExistsAlert.title = title
-        val errorContent = Label(content)
-        errorContent.isWrapText = true
-        fileExistsAlert.dialogPane.content = errorContent
-        fileExistsAlert.showAndWait()
+    fun deleteNotebook(notebook: Notebook) {
+        // Check if this is the current open notebook
+        if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+            currentOpenNotebook = null
+        }
+
+        // Remove notes from openNotes if these notes are being deleted with the notebook
+        openNotes.removeAll { openNote ->
+            openNote.notebook!!.equals(notebook)
+        }
+
+        // If the current note was in the notebook, just set the current open note to the first openNote
+        if (currentNote != null && currentNote!!.notebook!!.equals(notebook)) {
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
+            } else {
+                null
+            }
+        }
+
+        // Delete the notebook from the notebooks list, and then notify views
+        notebooks.remove(notebook)
+        notifyViews()
+
+        // Delete the notebook folder in the local directory
+        if (notebook.filePath != null && notebook.filePath!!.exists()) {
+            notebook.filePath!!.deleteRecursively()
+        }
+
+        // We also have to delete the notebook from the database too
+        // Check if the notebook has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (notebook.id != null) {
+            serverDeleteNotebook(notebook)
+        }
     }
 
-    // Server
+    fun deleteNote(note: Note) {
+        // Remove the note from the openNotes if it's in there
+        openNotes.removeAll { openNote ->
+            openNote.equals(note)
+        }
 
-    fun makeBackup() {
-        if (currentOpenNotebook != null) {
+        // If the note was the current open note, then just open the first note in openNotes
+        if (currentNote != null && currentNote!!.equals(note)) {
+            currentNote = if (openNotes.size > 0) {
+                openNotes[0]
+            } else {
+                null
+            }
+        }
+
+        // Delete the note from the notebook, and then notify views
+        note.notebook!!.deleteNote(note)
+        notifyViews()
+
+        // Delete the note file in the local directory
+        if (note.filePath != null && note.filePath!!.exists()) {
+            note.filePath!!.deleteRecursively()
+        }
+
+        // We also have to delete the note from the database too
+        // Check if the note has an id, because if it doesn't have an id, it wasn't even backed up anyway
+        if (note.id != null) {
+            // In the server, we are not able to delete a note by itself, cause of the one-to-many constraint
+            // And so, we can delete the note from the notebook first, then just back up that notebook
+            makeBackup(note.notebook)
+        }
+    }
+
+    private fun generateAlertDialogPopup(type: Alert.AlertType, title: String, content: String) {
+        val alertBox = FlatAlert(type)
+        alertBox.initOwner(stage)
+        alertBox.title = title
+        val errorContent = Label(content)
+        errorContent.isWrapText = true
+        alertBox.dialogPane.content = errorContent
+        alertBox.showAndWait()
+    }
+
+    // SERVER --------------------------------------------------------------------------------------------------
+
+    fun makeBackup(notebook: Notebook?) {
+        if (notebook != null) {
             val client = HttpClient.newBuilder().build()
-            val requestBody = mapper.writeValueAsString(currentOpenNotebook)
+            val requestBody = mapper.writeValueAsString(notebook)
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/backupNotebook"))
                 .header("Content-Type", "application/json")
@@ -197,40 +270,48 @@ class Model(val stage: Stage? = null) {
             try {
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
                 if (response.statusCode() == 200) {
-                    println("Success ${response.statusCode()}")
-                    print(response.body().toString())
-                    //TODO need integrate with view
-                    //            now we want to add ids to note objects
+                    logger.info("Success ${response.statusCode()}")
+                    logger.info(response.body().toString())
+
                     val notebookWithID: Notebook = mapper.readValue(response.body().toString())
                     //map notes back to notebook
                     notebookWithID.notes.forEach { it.notebook = notebookWithID }
                     notebookWithID.notes.forEach { it.notebookId = notebookWithID.id }
                     val idx = notebooks.indexOfFirst { it.title == notebookWithID.title }
                     notebooks[idx] = notebookWithID
-                    currentOpenNotebook = notebookWithID
-                    //check if the note is
-                    if(currentNote != null){
-                        currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+
+                    if (currentOpenNotebook != null && currentOpenNotebook!!.equals(notebook)) {
+                        currentOpenNotebook = notebookWithID
+                        //check if the note is
+                        if (currentNote != null) {
+                            currentNote = currentOpenNotebook?.getNoteByTitle(currentNote?.title!!)
+                        }
+                        //refresh open notes
+                        openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
                     }
-                    //refresh open notes
-                    openNotes = currentOpenNotebook!!.notes.filter { it.isOpen }.toMutableList()
+
                     notifyViews()
                 } else {
-                    print("ERROR ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("ERROR ${response.statusCode()}")
+                    logger.info(response.body().toString())
+                    generateAlertDialogPopup(
+                        Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                    )
                 }
             } catch (e: ConnectException) {
-                println("Server is not running")
+                logger.info("Server is not running")
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         } else {
-            val alert = FlatAlert(Alert.AlertType.WARNING)
-            alert.headerText = "No notebook selected"
-            alert.show()
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "No notebook selected", "Please select a notebook"
+            )
         }
     }
-    
+
     fun restoreBackup() {
-        //TODO Create a dialog box that confirms overwrite
         if (openNotes.size == 0) {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
@@ -241,19 +322,17 @@ class Model(val stage: Stage? = null) {
             try {
                 val response = client.send(request, HttpResponse.BodyHandlers.ofString())
                 if (response.statusCode() == 200) {
-                    println("Success ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("Success ${response.statusCode()}")
+                    logger.info(response.body().toString())
                     val result: NotebookListResponse = mapper.readValue(response.body().toString())
                     val notebookList: MutableList<Notebook> = result.response!!
-                    print(notebookList.size)
-//                    print(notebookList.toString())
+                    logger.info(notebookList.size.toString())
 
                     notebookList.forEach { notebook ->
                         // For each notebook, also initialize all the notes in the notebook
                         notebook.notes.forEach { note ->
                             note.notebook = notebook
                             note.htmlText?.let { note.saveNote(it) }
-                            //TODO check open notes and set flag
                             note.isOpen = false
                             note.backupState = BackupState.BACKED_UP
                         }
@@ -283,16 +362,50 @@ class Model(val stage: Stage? = null) {
                     alert.show()
                     notifyViews()
                 } else {
-                    print("ERROR ${response.statusCode()}")
-                    print(response.body().toString())
+                    logger.info("ERROR ${response.statusCode()}")
+                    logger.info(response.body().toString())
+                    generateAlertDialogPopup(
+                        Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                    )
                 }
             } catch (e: ConnectException) {
-                println("Server is not running")
+                logger.info("Server is not running")
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+                )
             }
         } else {
             val alert = FlatAlert(Alert.AlertType.WARNING)
             alert.headerText = "Please close all open notes to restore"
             alert.show()
+        }
+    }
+
+    private fun serverDeleteNotebook(notebook: Notebook) {
+        val client = HttpClient.newBuilder().build()
+        val requestBody = mapper.writeValueAsString(notebook)
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("http://localhost:8080/deleteNotebook"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+            .build()
+        try {
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() == 200) {
+                logger.info("Delete notebook Success ${response.statusCode()}")
+                logger.info(response.body().toString())
+            } else {
+                logger.info("ERROR ${response.statusCode()}")
+                logger.info(response.body().toString())
+                generateAlertDialogPopup(
+                    Alert.AlertType.ERROR, "An error occured", "Status code: ${response.statusCode()}"
+                )
+            }
+        } catch (e: ConnectException) {
+            logger.info("Server is not running")
+            generateAlertDialogPopup(
+                Alert.AlertType.ERROR, "Server is not running", "Please check if server is running"
+            )
         }
     }
 }
