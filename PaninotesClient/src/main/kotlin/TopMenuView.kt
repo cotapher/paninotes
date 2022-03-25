@@ -44,16 +44,24 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val fileQuit = createAddToMenu(fileMenu, "Quit")
         menuBar.menus.add(fileMenu)
 
-        // Option:
-        val optionMenu = Menu("Option")
-        val optionSearch = createAddToMenu(optionMenu, "Search")
-        val optionTheme = createAddToMenu(optionMenu, "Use Dark Theme")
-        val optionRestoreBackup = createAddToMenu(optionMenu, "Restore Backup")
-        val optionBackupCurrentNotebook = createAddToMenu(optionMenu, "Backup Current Notebook")
-        val optionDeleteAllData = createAddToMenu(optionMenu, "Delete Backup Data")
-        val optionUsage = createAddToMenu(optionMenu, "Usage Statistics")
-        val optionExport = createAddToMenu(optionMenu, "Export To PDF")
-        menuBar.menus.add(optionMenu)
+        //View
+        val viewMenu = Menu("View")
+        val viewTheme = createAddToMenu(viewMenu, "Use Dark Theme")
+        menuBar.menus.add(viewMenu)
+
+        //Sync
+        val syncMenu = Menu("Sync")
+        val syncRestoreBackup = createAddToMenu(syncMenu, "Restore Backup")
+        val syncBackupCurrentNotebook = createAddToMenu(syncMenu, "Backup Current Notebook")
+        val syncDeleteAllData = createAddToMenu(syncMenu, "Delete Backup Data")
+        menuBar.menus.add(syncMenu)
+
+        // Tools:
+        val toolsMenu = Menu("Tools")
+        val toolsSearch = createAddToMenu(toolsMenu, "Search")
+        val toolsUsage = createAddToMenu(toolsMenu, "Usage Statistics")
+        val toolsExport = createAddToMenu(toolsMenu, "Export To PDF")
+        menuBar.menus.add(toolsMenu)
 
         // Sort
         val sortMenu = Menu("Sort")
@@ -63,13 +71,13 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val sortNoteBookZ = createAddToMenu(sortMenu, "Sort Notebook (Z-A)")
         menuBar.menus.add(sortMenu)
 
-        if (Config.darkTheme) optionTheme.text = "Use Light Theme"
+        if (Config.darkTheme) viewTheme.text = "Use Light Theme"
 
         fileMenu.id = "menu-fileMenu"
         fileNewNote.id = "menuitem-fileNewNote"
         fileSave.id = "menuitem-fileSave"
         fileQuit.id = "menuitem-fileQuit"
-        optionMenu.id = "menu-optionMenu"
+        toolsMenu.id = "menu-toolsMenu"
         sortMenu.id = "menu-sortMenu"
 
         fileNewNote.setOnAction {
@@ -127,42 +135,42 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         //need new directory, open directory
         fileSave.accelerator = KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)
         fileQuit.accelerator = KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN)
-        optionSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
+        toolsSearch.accelerator = KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN)
 
 
-        optionSearch.setOnAction {
+        toolsSearch.setOnAction {
             searchText()
         }
 
-        optionUsage.setOnAction {
+        toolsUsage.setOnAction {
             usageStats()
         }
 
-        optionTheme.setOnAction {
+        viewTheme.setOnAction {
             val ss = jMetro.scene.stylesheets
             if (jMetro.style == Style.LIGHT) {
                 ss.clear()
                 jMetro.style = Style.DARK
                 ss.add(DARK_STYLESHEET_URL)
-                optionTheme.text = "Use Light theme"
+                viewTheme.text = "Use Light theme"
             } else {
                 ss.clear()
                 jMetro.style = Style.LIGHT
                 ss.add(LIGHT_STYLESHEET_URL)
-                optionTheme.text = "Use Dark theme"
+                viewTheme.text = "Use Dark theme"
             }
         }
 
-        optionRestoreBackup.setOnAction {
+        syncRestoreBackup.setOnAction {
             model.restoreBackup()
         }
 
 
-        optionBackupCurrentNotebook.setOnAction {
+        syncBackupCurrentNotebook.setOnAction {
             model.makeBackup(model.currentOpenNotebook)
         }
 
-        optionDeleteAllData.setOnAction {
+        syncDeleteAllData.setOnAction {
             val client = HttpClient.newBuilder().build()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080/deleteAll"))
@@ -184,7 +192,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
             }
         }
 
-        optionExport.setOnAction {
+        toolsExport.setOnAction {
 
             //get current note
             if (model.currentNote != null) {
