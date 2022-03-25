@@ -9,6 +9,7 @@ import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import jfxtras.styles.jmetro.*
 import org.jsoup.Jsoup
+import org.jsoup.nodes.TextNode
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -137,8 +138,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                     dialog.headerText = "No Input"
                 } else {
                     val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
-                    println(htmlEditor.htmlText)
-                    println(noHtmlTags)
+
+                    val temp = replaceWord(noHtmlTags, entered, "SPECIAL")
 
                     val delim = " "
                     val list = noHtmlTags.split(delim)
@@ -165,7 +166,7 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
 
                     dialog.headerText = "Found " + wordIndexes.size
                     dialog.showAndWait()
-                    htmlEditor.htmlText = oldText
+                    htmlEditor.htmlText = temp
                 }
             }
         }
@@ -283,7 +284,6 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
                 alert.show()
             }
 
-
         }
 
         this.children.add(menuBar)
@@ -293,6 +293,22 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
         val menuItem = MenuItem(menuItemName)
         menu.items.add(menuItem)
         return menuItem
+    }
+
+    private fun replaceWord(html: String, word: String, new: String): String {
+        var replaced = ""
+        val doc = Jsoup.parse(html) // document
+        val els = doc.body().allElements
+        for (e in els) {
+            println("is it in here lol....")
+            val tnList = e.textNodes()
+            for (tn in tnList) {
+                val orig = tn.text()
+                tn.text(orig.replace(word, new))
+            }
+        }
+        replaced = doc.toString()
+        return replaced
     }
 
     override fun update() {
