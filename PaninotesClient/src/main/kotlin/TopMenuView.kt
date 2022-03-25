@@ -244,8 +244,8 @@ class TopMenuView(val model: Model, val htmlEditor: CustomHTMLEditor, val stage:
     private fun usageStats() {
         val usageInfo = FlatAlert(AlertType.CONFIRMATION)
         usageInfo.initOwner(stage)
-        usageInfo.headerText = "Statistics:"
-        usageInfo.title = "Usage Statistics"
+        usageInfo.headerText = "Usage Statistics:"
+        usageInfo.title = "Paninotes"
         val noHtmlTags = Jsoup.parse(htmlEditor.htmlText).text()
         val delim = " "
         val list = noHtmlTags.split(delim)
