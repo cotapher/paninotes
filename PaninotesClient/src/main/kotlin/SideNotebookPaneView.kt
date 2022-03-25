@@ -42,7 +42,7 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
             PaneView.NOTEBOOKS -> {
                 // Get a list of all the notebooks from the Model
                 val notebooks: MutableList<Notebook> = model.notebooks
-                var x = notebooks.indices.reversed()
+                val x: IntProgression
 
                 if (!model.notebookReversed) {
                     x = notebooks.indices
@@ -124,7 +124,7 @@ class SideNotebookPaneView(val model: Model, val htmlEditor: CustomHTMLEditor, v
                         model.currentOpenNotebook = null
                     }
 
-                    var y = model.currentOpenNotebook!!.notes.indices.reversed()
+                    val y: IntProgression
 
                     if (!model.notesReversed) {
                         y = model.currentOpenNotebook!!.notes.indices
